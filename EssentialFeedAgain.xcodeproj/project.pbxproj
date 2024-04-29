@@ -69,8 +69,7 @@
 		BEA633782BDFC4840088E107 /* EssentialFeedAgain */ = {
 			isa = PBXGroup;
 			children = (
-				BEA6338E2BDFC51D0088E107 /* FeedImage.swift */,
-				BEA633902BDFC6010088E107 /* FeedLoader.swift */,
+				BEA633922BDFC6AB0088E107 /* Feed Feature */,
 			);
 			path = EssentialFeedAgain;
 			sourceTree = "<group>";
@@ -80,6 +79,15 @@
 			children = (
 			);
 			path = EssentialFeedAgainTests;
+			sourceTree = "<group>";
+		};
+		BEA633922BDFC6AB0088E107 /* Feed Feature */ = {
+			isa = PBXGroup;
+			children = (
+				BEA6338E2BDFC51D0088E107 /* FeedImage.swift */,
+				BEA633902BDFC6010088E107 /* FeedLoader.swift */,
+			);
+			path = "Feed Feature";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -417,6 +425,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DV4M5VPD3C;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tszlung.EssentialFeedAgainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -433,6 +442,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DV4M5VPD3C;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tszlung.EssentialFeedAgainTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
