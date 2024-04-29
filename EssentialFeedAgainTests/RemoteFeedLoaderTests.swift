@@ -15,14 +15,14 @@ final class RemoteFeedLoader {
     }
     
     func load(for url: URL) {
-        client.get(for: url)
+        client.get(from: url)
     }
 }
 
 final class HTTPClientSpy {
     private(set) var requestedURLs = [URL]()
     
-    func get(for url: URL) {
+    func get(from url: URL) {
         requestedURLs.append(url)
     }
 }
