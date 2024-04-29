@@ -6,24 +6,7 @@
 //
 
 import XCTest
-
-final class RemoteFeedLoader {
-    private let client: HTTPClient
-    private let url: URL
-    
-    init(client: HTTPClient, url: URL) {
-        self.client = client
-        self.url = url
-    }
-    
-    func load() {
-        client.get(from: url)
-    }
-}
-
-protocol HTTPClient {
-    func get(from url: URL)
-}
+import EssentialFeedAgain
 
 final class RemoteFeedLoaderTests: XCTestCase {
     func test_init_doesNotNotifyClient() {
@@ -47,7 +30,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
-        let sut = RemoteFeedLoader(client: client, url: url)
+        let sut = RemoteFeedLoader(url: url, client: client)
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
