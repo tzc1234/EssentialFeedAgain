@@ -11,6 +11,7 @@
 		BEA6338F2BDFC51D0088E107 /* FeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6338E2BDFC51D0088E107 /* FeedImage.swift */; };
 		BEA633912BDFC6010088E107 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633902BDFC6010088E107 /* FeedLoader.swift */; };
 		BEA633942BDFC7460088E107 /* RemoteFeedLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633932BDFC7460088E107 /* RemoteFeedLoaderTests.swift */; };
+		BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +31,7 @@
 		BEA633902BDFC6010088E107 /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 		BEA633932BDFC7460088E107 /* RemoteFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoaderTests.swift; sourceTree = "<group>"; };
 		BEA633952BDFC77B0088E107 /* EssentialFeedAgain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = EssentialFeedAgain.xctestplan; path = EssentialFeedAgainTests/EssentialFeedAgain.xctestplan; sourceTree = "<group>"; };
+		BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 		BEA633822BDFC4840088E107 /* EssentialFeedAgainTests */ = {
 			isa = PBXGroup;
 			children = (
+				BEA633962BDFCB750088E107 /* Helpers */,
 				BEA633932BDFC7460088E107 /* RemoteFeedLoaderTests.swift */,
 			);
 			path = EssentialFeedAgainTests;
@@ -93,6 +96,14 @@
 				BEA633902BDFC6010088E107 /* FeedLoader.swift */,
 			);
 			path = "Feed Feature";
+			sourceTree = "<group>";
+		};
+		BEA633962BDFCB750088E107 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,6 +226,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BEA633942BDFC7460088E107 /* RemoteFeedLoaderTests.swift in Sources */,
+				BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
