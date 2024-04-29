@@ -150,7 +150,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
                                description: String? = nil,
                                location: String? = nil, 
                                url: URL = anyURL()) -> FeedImage {
-        return FeedImage(id: id, description: description, location: location, url: url)
+        FeedImage(id: id, description: description, location: location, url: url)
     }
     
     private func anyNSError() -> NSError {

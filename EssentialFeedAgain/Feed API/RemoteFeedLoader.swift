@@ -7,11 +7,7 @@
 
 import Foundation
 
-public protocol FeedLoaderTask {
-    func cancel()
-}
-
-public final class RemoteFeedLoader {
+public final class RemoteFeedLoader: FeedLoader {
     private let url: URL
     private let client: HTTPClient
     
