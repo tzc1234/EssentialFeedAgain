@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "F4EC1B5A-4C89-42AD-8670-3CA879AD311E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:EssentialFeedAgain.xcodeproj",
+          "identifier" : "BEA633752BDFC4840088E107",
+          "name" : "EssentialFeedAgain"
+        }
+      ]
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeedAgain.xcodeproj",
+        "identifier" : "BEA6337D2BDFC4840088E107",
+        "name" : "EssentialFeedAgainTests"
+      }
+    }
+  ],
+  "version" : 1
+}
