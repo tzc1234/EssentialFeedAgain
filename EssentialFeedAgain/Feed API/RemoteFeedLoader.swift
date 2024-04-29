@@ -7,6 +7,19 @@
 
 import Foundation
 
+struct RemoteFeedImage: Decodable {
+    let id: UUID
+    let description: String?
+    let location: String?
+    let image: URL
+}
+
+extension [RemoteFeedImage] {
+    var model: [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.image) }
+    }
+}
+
 public final class RemoteFeedLoader {
     private let url: URL
     private let client: HTTPClient
@@ -21,11 +34,19 @@ public final class RemoteFeedLoader {
         case invalidData
     }
     
+    private struct Root: Decodable {
+        let items: [RemoteFeedImage]
+    }
+    
     public func load(completion: @escaping (Result<[FeedImage], Swift.Error>) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case .success((_, _)):
-                completion(.failure(Error.invalidData))
+            case let .success((data, response)):
+                guard response.statusCode == 200, let root = try? JSONDecoder().decode(Root.self, from: data) else {
+                    return completion(.failure(Error.invalidData))
+                }
+                
+                return completion(.success(root.items.model))
             case .failure:
                 completion(.failure(Error.connectivity))
             }

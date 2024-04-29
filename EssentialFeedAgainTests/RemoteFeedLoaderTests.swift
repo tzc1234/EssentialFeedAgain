@@ -61,6 +61,15 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
+    func test_load_deliversEmptyFeedWhenReceivedEmptyFeedData() {
+        let (sut, client) = makeSUT()
+        
+        expect(sut, withExpected: .success([]), when: {
+            let data = Data("{\"items\":[]}".utf8)
+            client.complete(with: data)
+        })
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL = anyURL(),
@@ -81,8 +90,8 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let exp = expectation(description: "Wait for completion")
         sut.load { receivedResult in
             switch (receivedResult, expectedResult) {
-            case (.success, .success):
-                XCTFail("Should be a failure", file: file, line: line)
+            case let (.success(receivedFeed), .success(expectedFeed)):
+                XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
             case let (.failure(receivedError), .failure(expectedError)):
                 XCTAssertEqual(receivedError as? RemoteFeedLoader.Error, expectedError, file: file, line: line)
             default:
