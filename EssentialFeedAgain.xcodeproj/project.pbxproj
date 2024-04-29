@@ -17,6 +17,7 @@
 		BEA6339F2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6339E2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift */; };
 		BEA633A12BDFF97D0088E107 /* RemoteFeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */; };
 		BEA633A32BDFF9B10088E107 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633A22BDFF9B10088E107 /* HTTPClient.swift */; };
+		BEA633A52BDFFE840088E107 /* RemoteFeedImageMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633A42BDFFE840088E107 /* RemoteFeedImageMapper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		BEA6339E2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+Helpers.swift"; sourceTree = "<group>"; };
 		BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedImage.swift; sourceTree = "<group>"; };
 		BEA633A22BDFF9B10088E107 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		BEA633A42BDFFE840088E107 /* RemoteFeedImageMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedImageMapper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +126,7 @@
 			children = (
 				BEA6339A2BDFD2730088E107 /* RemoteFeedLoader.swift */,
 				BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */,
+				BEA633A42BDFFE840088E107 /* RemoteFeedImageMapper.swift */,
 				BEA633A22BDFF9B10088E107 /* HTTPClient.swift */,
 			);
 			path = "Feed API";
@@ -239,6 +242,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEA633A52BDFFE840088E107 /* RemoteFeedImageMapper.swift in Sources */,
 				BEA633912BDFC6010088E107 /* FeedLoader.swift in Sources */,
 				BEA633A32BDFF9B10088E107 /* HTTPClient.swift in Sources */,
 				BEA6339B2BDFD2730088E107 /* RemoteFeedLoader.swift in Sources */,

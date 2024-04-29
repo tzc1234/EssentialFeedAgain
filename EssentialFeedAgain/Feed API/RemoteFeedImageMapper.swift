@@ -1,0 +1,26 @@
+//
+//  RemoteFeedImageMapper.swift
+//  EssentialFeedAgain
+//
+//  Created by Tsz-Lung on 29/04/2024.
+//
+
+import Foundation
+
+enum RemoteFeedImageMapper {
+    private struct Root: Decodable {
+        let items: [RemoteFeedImage]
+    }
+    
+    static func map(from data: Data, response: HTTPURLResponse) throws -> [RemoteFeedImage] {
+        guard isOK(response.statusCode), let root = try? JSONDecoder().decode(Root.self, from: data) else {
+            throw RemoteFeedLoader.Error.invalidData
+        }
+        
+        return root.items
+    }
+    
+    private static func isOK(_ statusCode: Int) -> Bool {
+        statusCode == 200
+    }
+}

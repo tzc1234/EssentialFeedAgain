@@ -21,10 +21,6 @@ public final class RemoteFeedLoader: FeedLoader {
         case invalidData
     }
     
-    private struct Root: Decodable {
-        let items: [RemoteFeedImage]
-    }
-    
     private struct Wrapper: FeedLoaderTask {
         let task: HTTPClientTask
         
@@ -37,14 +33,21 @@ public final class RemoteFeedLoader: FeedLoader {
         Wrapper(task: client.get(from: url) { result in
             switch result {
             case let .success((data, response)):
-                guard response.statusCode == 200, let root = try? JSONDecoder().decode(Root.self, from: data) else {
-                    return completion(.failure(Error.invalidData))
+                do {
+                    let feed = try RemoteFeedImageMapper.map(from: data, response: response)
+                    completion(.success(feed.model))
+                } catch {
+                    completion(.failure(error))
                 }
-                
-                return completion(.success(root.items.model))
             case .failure:
                 completion(.failure(Error.connectivity))
             }
         })
+    }
+}
+
+extension [RemoteFeedImage] {
+    var model: [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.image) }
     }
 }
