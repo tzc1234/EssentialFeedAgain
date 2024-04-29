@@ -41,9 +41,26 @@ final class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    func test_load_deliversErrorOnNon200HTTPResponse() {
+        let (sut, client) = makeSUT()
+        
+        let exp = expectation(description: "Wait for completion")
+        sut.load { result in
+            switch result {
+            case .success:
+                XCTFail("Should not a failure")
+            case let .failure(error):
+                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
+            }
+            exp.fulfill()
+        }
+        client.complete(withStatusCode: 201)
+        wait(for: [exp], timeout: 1)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(url: URL = URL(string: "http://any-url.com")!,
+    private func makeSUT(url: URL = anyURL(),
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
@@ -69,6 +86,10 @@ final class RemoteFeedLoaderTests: XCTestCase {
         
         func complete(with error: Error, at index: Int = 0) {
             messages[index].completion(.failure(error))
+        }
+        
+        func complete(withStatusCode statusCode: Int, at index: Int = 0) {
+            messages[index].completion(.success(((), HTTPURLResponse(statusCode: statusCode))))
         }
     }
 }
