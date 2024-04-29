@@ -24,10 +24,8 @@ public final class RemoteFeedLoader {
     public func load(completion: @escaping (Result<[FeedImage], Swift.Error>) -> Void) {
         client.get(from: url) { result in
             switch result {
-            case let .success((_, response)):
-                guard response.statusCode == 200 else {
-                    return completion(.failure(Error.invalidData))
-                }
+            case .success((_, _)):
+                completion(.failure(Error.invalidData))
             case .failure:
                 completion(.failure(Error.connectivity))
             }
@@ -36,7 +34,7 @@ public final class RemoteFeedLoader {
 }
 
 public protocol HTTPClient {
-    typealias Completion = (Result<(Void, HTTPURLResponse), Error>) -> Void
+    typealias Completion = (Result<(Data, HTTPURLResponse), Error>) -> Void
     
     func get(from url: URL, completion: @escaping Completion)
 }

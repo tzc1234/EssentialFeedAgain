@@ -27,35 +27,29 @@ final class RemoteFeedLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() {
         let (sut, client) = makeSUT()
         
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            switch result {
-            case .success:
-                XCTFail("Should not a failure")
-            case let .failure(error):
-                XCTAssertEqual(error as? RemoteFeedLoader.Error, .connectivity)
-            }
-            exp.fulfill()
-        }
-        client.complete(with: anyNSError())
-        wait(for: [exp], timeout: 1)
+        expect(sut, withExpected: .failure(.connectivity), when: {
+            client.complete(with: anyNSError())
+        })
     }
     
-    func test_load_deliversErrorOnNon200HTTPResponse() {
+    func test_load_deliversErrorOnNon200HTTPResponses() {
         let (sut, client) = makeSUT()
+        let samples = [199, 201, 300, 400, 500]
         
-        let exp = expectation(description: "Wait for completion")
-        sut.load { result in
-            switch result {
-            case .success:
-                XCTFail("Should not a failure")
-            case let .failure(error):
-                XCTAssertEqual(error as? RemoteFeedLoader.Error, .invalidData)
-            }
-            exp.fulfill()
+        samples.enumerated().forEach { index, statusCode in
+            expect(sut, withExpected: .failure(.invalidData), when: {
+                client.complete(withStatusCode: statusCode, at: index)
+            })
         }
-        client.complete(withStatusCode: 201)
-        wait(for: [exp], timeout: 1)
+    }
+    
+    func test_load_deliversErrorOn200ResponseWithInvalidData() {
+        let (sut, client) = makeSUT()
+        let invalidData = Data("invalid data".utf8)
+        
+        expect(sut, withExpected: .failure(.invalidData), when: {
+            client.complete(with: invalidData)
+        })
     }
     
     // MARK: - Helpers
@@ -68,6 +62,27 @@ final class RemoteFeedLoaderTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func expect(_ sut: RemoteFeedLoader, 
+                        withExpected expectedResult: Result<[FeedImage], RemoteFeedLoader.Error>,
+                        when action: () -> Void,
+                        file: StaticString = #filePath,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for completion")
+        sut.load { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case (.success, .success):
+                XCTFail("Should be a failure", file: file, line: line)
+            case let (.failure(receivedError), .failure(expectedError)):
+                XCTAssertEqual(receivedError as? RemoteFeedLoader.Error, expectedError, file: file, line: line)
+            default:
+                XCTFail("Expect result: \(expectedResult), got \(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        action()
+        wait(for: [exp], timeout: 1)
     }
     
     private func anyNSError() -> NSError {
@@ -89,7 +104,11 @@ final class RemoteFeedLoaderTests: XCTestCase {
         }
         
         func complete(withStatusCode statusCode: Int, at index: Int = 0) {
-            messages[index].completion(.success(((), HTTPURLResponse(statusCode: statusCode))))
+            messages[index].completion(.success((Data(), HTTPURLResponse(statusCode: statusCode))))
+        }
+        
+        func complete(with data: Data, at index: Int = 0) {
+            messages[index].completion(.success((data, HTTPURLResponse(statusCode: 200))))
         }
     }
 }
