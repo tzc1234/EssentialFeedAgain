@@ -65,8 +65,29 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
         
         expect(sut, withExpected: .success([]), when: {
-            let data = Data("{\"items\":[]}".utf8)
-            client.complete(with: data)
+            let emptyFeedData = Data("{\"items\":[]}".utf8)
+            client.complete(with: emptyFeedData)
+        })
+    }
+    
+    func test_load_deliversFeedWhenReceivedFeedData() {
+        let (sut, client) = makeSUT()
+        let feed = [
+            makeFeedImage(
+                description: "a description",
+                location: "a location",
+                url: URL(string: "https://a-url.com")!
+            ),
+            makeFeedImage(
+                description: "another description",
+                location: "another location",
+                url: URL(string: "https://another-url.com")!
+            ),
+            makeFeedImage()
+        ]
+        
+        expect(sut, withExpected: .success(feed), when: {
+            client.complete(with: feed.toData())
         })
     }
     
@@ -103,6 +124,13 @@ final class RemoteFeedLoaderTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
+    private func makeFeedImage(id: UUID = UUID(),
+                               description: String? = nil,
+                               location: String? = nil, 
+                               url: URL = anyURL()) -> FeedImage {
+        return FeedImage(id: id, description: description, location: location, url: url)
+    }
+    
     private func anyNSError() -> NSError {
         NSError(domain: "any", code: 0)
     }
@@ -128,5 +156,20 @@ final class RemoteFeedLoaderTests: XCTestCase {
         func complete(with data: Data, at index: Int = 0) {
             messages[index].completion(.success((data, HTTPURLResponse(statusCode: 200))))
         }
+    }
+}
+
+private extension [FeedImage] {
+    func toData() -> Data {
+        let images = map {
+            [
+                "id": $0.id.uuidString,
+                "description": $0.description as Any,
+                "location": $0.location as Any,
+                "image": $0.url.absoluteString
+            ].compactMapValues { $0 } as [String: Any]
+        }
+        let json: [String: Any] = ["items": images]
+        return try! JSONSerialization.data(withJSONObject: json)
     }
 }
