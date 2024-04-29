@@ -24,7 +24,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         XCTAssertEqual(client.requestedURLs, [url])
     }
     
-    func test_load_deliversErrorOnClientError() {
+    func test_load_deliversConnectivityErrorOnClientError() {
         let (sut, client) = makeSUT()
         
         expect(sut, withExpected: .failure(.connectivity), when: {
@@ -32,7 +32,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_deliversErrorOnNon200HTTPResponses() {
+    func test_load_deliversInvalidDataErrorOnNon200HTTPResponses() {
         let (sut, client) = makeSUT()
         let samples = [199, 201, 300, 400, 500]
         
@@ -43,12 +43,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
-    func test_load_deliversErrorOn200ResponseWithInvalidData() {
+    func test_load_deliversInvalidDataErrorOn200ResponseWithInvalidData() {
         let (sut, client) = makeSUT()
-        let invalidData = Data("invalid data".utf8)
         
         expect(sut, withExpected: .failure(.invalidData), when: {
+            let invalidData = Data("invalid data".utf8)
             client.complete(with: invalidData)
+        })
+    }
+    
+    func test_load_deliversInvalidDataErrorOn200ResponseWithEmptyData() {
+        let (sut, client) = makeSUT()
+        
+        expect(sut, withExpected: .failure(.invalidData), when: {
+            let emptyData = Data()
+            client.complete(with: emptyData)
         })
     }
     
