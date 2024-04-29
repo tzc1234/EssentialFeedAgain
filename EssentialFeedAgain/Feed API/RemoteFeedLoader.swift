@@ -29,7 +29,7 @@ public final class RemoteFeedLoader: FeedLoader {
         }
     }
     
-    public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) -> FeedLoaderTask {
+    public func load(completion: @escaping Completion) -> FeedLoaderTask {
         Wrapper(task: client.get(from: url) { result in
             switch result {
             case let .success((data, response)):

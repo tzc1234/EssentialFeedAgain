@@ -7,8 +7,10 @@
 
 import Foundation
 
-protocol FeedLoader {
-    func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) -> FeedLoaderTask
+public protocol FeedLoader {
+    typealias Completion = (Result<[FeedImage], Error>) -> Void
+    
+    func load(completion: @escaping Completion) -> FeedLoaderTask
 }
 
 public protocol FeedLoaderTask {
