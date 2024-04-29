@@ -9,12 +9,14 @@ import XCTest
 
 final class RemoteFeedLoader {
     private let client: HTTPClient
+    private let url: URL
     
-    init(client: HTTPClient) {
+    init(client: HTTPClient, url: URL) {
         self.client = client
+        self.url = url
     }
     
-    func load(for url: URL) {
+    func load() {
         client.get(from: url)
     }
 }
@@ -31,20 +33,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     func test_load_requestsFromURL() {
-        let (sut, client) = makeSUT()
         let url = URL(string: "http://request-url.com")!
+        let (sut, client) = makeSUT(url: url)
         
-        sut.load(for: url)
+        sut.load()
         
         XCTAssertEqual(client.requestedURLs, [url])
     }
     
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath,
+    private func makeSUT(url: URL = URL(string: "http://any-url.com")!,
+                         file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
-        let sut = RemoteFeedLoader(client: client)
+        let sut = RemoteFeedLoader(client: client, url: url)
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
