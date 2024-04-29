@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BEA6337F2BDFC4840088E107 /* EssentialFeedAgain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */; };
-		BEA633842BDFC4840088E107 /* EssentialFeedAgainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633832BDFC4840088E107 /* EssentialFeedAgainTests.swift */; };
-		BEA633852BDFC4840088E107 /* EssentialFeedAgain.h in Headers */ = {isa = PBXBuildFile; fileRef = BEA633792BDFC4840088E107 /* EssentialFeedAgain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BEA6338F2BDFC51D0088E107 /* FeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6338E2BDFC51D0088E107 /* FeedImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -24,9 +23,8 @@
 
 /* Begin PBXFileReference section */
 		BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedAgain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		BEA633792BDFC4840088E107 /* EssentialFeedAgain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EssentialFeedAgain.h; sourceTree = "<group>"; };
 		BEA6337E2BDFC4840088E107 /* EssentialFeedAgainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedAgainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BEA633832BDFC4840088E107 /* EssentialFeedAgainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EssentialFeedAgainTests.swift; sourceTree = "<group>"; };
+		BEA6338E2BDFC51D0088E107 /* FeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,7 +67,7 @@
 		BEA633782BDFC4840088E107 /* EssentialFeedAgain */ = {
 			isa = PBXGroup;
 			children = (
-				BEA633792BDFC4840088E107 /* EssentialFeedAgain.h */,
+				BEA6338E2BDFC51D0088E107 /* FeedImage.swift */,
 			);
 			path = EssentialFeedAgain;
 			sourceTree = "<group>";
@@ -77,7 +75,6 @@
 		BEA633822BDFC4840088E107 /* EssentialFeedAgainTests */ = {
 			isa = PBXGroup;
 			children = (
-				BEA633832BDFC4840088E107 /* EssentialFeedAgainTests.swift */,
 			);
 			path = EssentialFeedAgainTests;
 			sourceTree = "<group>";
@@ -89,7 +86,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BEA633852BDFC4840088E107 /* EssentialFeedAgain.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +140,7 @@
 				TargetAttributes = {
 					BEA633752BDFC4840088E107 = {
 						CreatedOnToolsVersion = 15.3;
+						LastSwiftMigration = 1530;
 					};
 					BEA6337D2BDFC4840088E107 = {
 						CreatedOnToolsVersion = 15.3;
@@ -191,6 +188,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEA6338F2BDFC51D0088E107 /* FeedImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,7 +196,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BEA633842BDFC4840088E107 /* EssentialFeedAgainTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +338,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -358,6 +356,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
@@ -366,6 +365,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -374,6 +374,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -391,6 +392,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
@@ -406,6 +408,7 @@
 		BEA6338C2BDFC4840088E107 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DV4M5VPD3C;
@@ -421,6 +424,7 @@
 		BEA6338D2BDFC4840088E107 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DV4M5VPD3C;
