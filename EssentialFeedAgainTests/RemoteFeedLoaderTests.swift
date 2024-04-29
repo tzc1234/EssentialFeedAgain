@@ -117,7 +117,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     
     private func makeSUT(url: URL = anyURL(),
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
+                         line: UInt = #line) -> (sut: FeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(url: url, client: client)
         trackForMemoryLeaks(client, file: file, line: line)
@@ -125,7 +125,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-    private func expect(_ sut: RemoteFeedLoader, 
+    private func expect(_ sut: FeedLoader,
                         withExpected expectedResult: Result<[FeedImage], RemoteFeedLoaderError>,
                         when action: () -> Void,
                         file: StaticString = #filePath,
