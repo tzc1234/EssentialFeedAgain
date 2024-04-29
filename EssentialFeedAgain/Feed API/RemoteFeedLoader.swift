@@ -7,6 +7,11 @@
 
 import Foundation
 
+public enum RemoteFeedLoaderError: Error {
+    case connectivity
+    case invalidData
+}
+
 public final class RemoteFeedLoader: FeedLoader {
     private let url: URL
     private let client: HTTPClient
@@ -14,11 +19,6 @@ public final class RemoteFeedLoader: FeedLoader {
     public init(url: URL, client: HTTPClient) {
         self.url = url
         self.client = client
-    }
-    
-    public enum Error: Swift.Error {
-        case connectivity
-        case invalidData
     }
     
     private struct Wrapper: FeedLoaderTask {
@@ -29,7 +29,7 @@ public final class RemoteFeedLoader: FeedLoader {
         }
     }
     
-    public func load(completion: @escaping (Result<[FeedImage], Swift.Error>) -> Void) -> FeedLoaderTask {
+    public func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) -> FeedLoaderTask {
         Wrapper(task: client.get(from: url) { result in
             switch result {
             case let .success((data, response)):
@@ -40,7 +40,7 @@ public final class RemoteFeedLoader: FeedLoader {
                     completion(.failure(error))
                 }
             case .failure:
-                completion(.failure(Error.connectivity))
+                completion(.failure(RemoteFeedLoaderError.connectivity))
             }
         })
     }

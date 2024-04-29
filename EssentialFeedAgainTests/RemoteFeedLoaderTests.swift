@@ -126,7 +126,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
     }
     
     private func expect(_ sut: RemoteFeedLoader, 
-                        withExpected expectedResult: Result<[FeedImage], RemoteFeedLoader.Error>,
+                        withExpected expectedResult: Result<[FeedImage], RemoteFeedLoaderError>,
                         when action: () -> Void,
                         file: StaticString = #filePath,
                         line: UInt = #line) {
@@ -136,7 +136,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
             case let (.success(receivedFeed), .success(expectedFeed)):
                 XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
             case let (.failure(receivedError), .failure(expectedError)):
-                XCTAssertEqual(receivedError as? RemoteFeedLoader.Error, expectedError, file: file, line: line)
+                XCTAssertEqual(receivedError as? RemoteFeedLoaderError, expectedError, file: file, line: line)
             default:
                 XCTFail("Expect result: \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
