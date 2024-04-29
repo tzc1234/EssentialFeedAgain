@@ -19,7 +19,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let url = URL(string: "http://request-url.com")!
         let (sut, client) = makeSUT(url: url)
         
-        sut.load { _ in }
+        _ = sut.load { _ in }
         
         XCTAssertEqual(client.requestedURLs, [url])
     }
@@ -104,6 +104,15 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
+    func test_cancelTask_cancelsClientTask() {
+        let (sut, client) = makeSUT()
+        
+        let task = sut.load { _ in }
+        task.cancel()
+        
+        XCTAssertEqual(client.cancelCallCount, 1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(url: URL = anyURL(),
@@ -122,7 +131,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
                         file: StaticString = #filePath,
                         line: UInt = #line) {
         let exp = expectation(description: "Wait for completion")
-        sut.load { receivedResult in
+        _ = sut.load { receivedResult in
             switch (receivedResult, expectedResult) {
             case let (.success(receivedFeed), .success(expectedFeed)):
                 XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
@@ -154,8 +163,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
             messages.map(\.url)
         }
         
-        func get(from url: URL, completion: @escaping Completion) {
+        private struct Task: HTTPClientTask {
+            let afterCancel: () -> Void
+            
+            func cancel() {
+                afterCancel()
+            }
+        }
+        
+        private(set) var cancelCallCount = 0
+        
+        func get(from url: URL, completion: @escaping Completion) -> HTTPClientTask {
             messages.append((url, completion))
+            return Task { [weak self] in
+                self?.cancelCallCount += 1
+            }
         }
         
         func complete(with error: Error, at index: Int = 0) {

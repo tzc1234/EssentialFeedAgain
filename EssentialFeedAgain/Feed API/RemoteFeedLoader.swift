@@ -20,6 +20,10 @@ extension [RemoteFeedImage] {
     }
 }
 
+public protocol FeedLoaderTask {
+    func cancel()
+}
+
 public final class RemoteFeedLoader {
     private let url: URL
     private let client: HTTPClient
@@ -38,8 +42,16 @@ public final class RemoteFeedLoader {
         let items: [RemoteFeedImage]
     }
     
-    public func load(completion: @escaping (Result<[FeedImage], Swift.Error>) -> Void) {
-        client.get(from: url) { result in
+    private struct Wrapper: FeedLoaderTask {
+        let task: HTTPClientTask
+        
+        func cancel() {
+            task.cancel()
+        }
+    }
+    
+    public func load(completion: @escaping (Result<[FeedImage], Swift.Error>) -> Void) -> FeedLoaderTask {
+        Wrapper(task: client.get(from: url) { result in
             switch result {
             case let .success((data, response)):
                 guard response.statusCode == 200, let root = try? JSONDecoder().decode(Root.self, from: data) else {
@@ -50,12 +62,16 @@ public final class RemoteFeedLoader {
             case .failure:
                 completion(.failure(Error.connectivity))
             }
-        }
+        })
     }
 }
 
 public protocol HTTPClient {
     typealias Completion = (Result<(Data, HTTPURLResponse), Error>) -> Void
     
-    func get(from url: URL, completion: @escaping Completion)
+    func get(from url: URL, completion: @escaping Completion) -> HTTPClientTask
+}
+
+public protocol HTTPClientTask {
+    func cancel()
 }
