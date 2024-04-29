@@ -15,6 +15,7 @@
 		BEA6339B2BDFD2730088E107 /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6339A2BDFD2730088E107 /* RemoteFeedLoader.swift */; };
 		BEA6339D2BDFDC710088E107 /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6339C2BDFDC710088E107 /* CommonHelpers.swift */; };
 		BEA6339F2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6339E2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift */; };
+		BEA633A12BDFF97D0088E107 /* RemoteFeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		BEA6339A2BDFD2730088E107 /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
 		BEA6339C2BDFDC710088E107 /* CommonHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonHelpers.swift; sourceTree = "<group>"; };
 		BEA6339E2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+Helpers.swift"; sourceTree = "<group>"; };
+		BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedImage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				BEA6339A2BDFD2730088E107 /* RemoteFeedLoader.swift */,
+				BEA633A02BDFF97D0088E107 /* RemoteFeedImage.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";
@@ -236,6 +239,7 @@
 				BEA633912BDFC6010088E107 /* FeedLoader.swift in Sources */,
 				BEA6339B2BDFD2730088E107 /* RemoteFeedLoader.swift in Sources */,
 				BEA6338F2BDFC51D0088E107 /* FeedImage.swift in Sources */,
+				BEA633A12BDFF97D0088E107 /* RemoteFeedImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

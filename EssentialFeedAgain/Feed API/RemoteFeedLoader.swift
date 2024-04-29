@@ -7,19 +7,6 @@
 
 import Foundation
 
-struct RemoteFeedImage: Decodable {
-    let id: UUID
-    let description: String?
-    let location: String?
-    let image: URL
-}
-
-extension [RemoteFeedImage] {
-    var model: [FeedImage] {
-        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.image) }
-    }
-}
-
 public protocol FeedLoaderTask {
     func cancel()
 }
