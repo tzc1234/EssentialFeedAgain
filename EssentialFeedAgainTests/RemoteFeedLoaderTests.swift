@@ -8,9 +8,9 @@
 import XCTest
 
 final class RemoteFeedLoader {
-    private let client: HTTPClientSpy
+    private let client: HTTPClient
     
-    init(client: HTTPClientSpy) {
+    init(client: HTTPClient) {
         self.client = client
     }
     
@@ -19,12 +19,8 @@ final class RemoteFeedLoader {
     }
 }
 
-final class HTTPClientSpy {
-    private(set) var requestedURLs = [URL]()
-    
-    func get(from url: URL) {
-        requestedURLs.append(url)
-    }
+protocol HTTPClient {
+    func get(from url: URL)
 }
 
 final class RemoteFeedLoaderTests: XCTestCase {
@@ -52,5 +48,13 @@ final class RemoteFeedLoaderTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private final class HTTPClientSpy: HTTPClient {
+        private(set) var requestedURLs = [URL]()
+        
+        func get(from url: URL) {
+            requestedURLs.append(url)
+        }
     }
 }
