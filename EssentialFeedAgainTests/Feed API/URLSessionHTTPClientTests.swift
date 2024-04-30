@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedAgain
 
-public final class URLSessionHTTPClient {
+public final class URLSessionHTTPClient: HTTPClient {
     private let session: URLSession
     
     public init(session: URLSession) {
@@ -25,7 +25,7 @@ public final class URLSessionHTTPClient {
         }
     }
     
-    func get(from url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) -> HTTPClientTask {
+    public func get(from url: URL, completion: @escaping Completion) -> HTTPClientTask {
         let task = session.dataTask(with: url) { data, response, error in
             if let data, let httpResponse = response as? HTTPURLResponse {
                 completion(.success((data, httpResponse)))
@@ -100,7 +100,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
 
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> HTTPClient {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [URLProtocolStub.self]
         let session = URLSession(configuration: configuration)
