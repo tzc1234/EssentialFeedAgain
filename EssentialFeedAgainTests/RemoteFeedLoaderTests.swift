@@ -70,31 +70,21 @@ final class RemoteFeedLoaderTests: XCTestCase {
         })
     }
     
-    func test_load_deliversOneFeedOn200ResponseWithOneFeedData() {
-        let (sut, client) = makeSUT()
-        let feed = [
-            makeFeedImage(
-                description: "a description",
-                location: "a location",
-                url: URL(string: "https://a-url.com")!
-            )
-        ]
-        
-        expect(sut, withExpected: .success(feed), when: {
-            client.complete(withStatusCode: 200, data: feed.toJSONData())
-        })
-    }
-    
     func test_load_deliversFeedOn200ResponseWithFeedData() {
         let (sut, client) = makeSUT()
         let feed = [
             makeFeedImage(
                 description: "a description",
+                location: "a location",
                 url: URL(string: "https://a-url.com")!
             ),
             makeFeedImage(
-                location: "a location",
+                description: "another description",
                 url: URL(string: "https://another-url.com")!
+            ),
+            makeFeedImage(
+                location: "another location",
+                url: URL(string: "https://another-different-url.com")!
             ),
             makeFeedImage()
         ]
