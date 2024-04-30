@@ -16,9 +16,11 @@ public final class URLSessionHTTPClient {
     
     public struct UnexpectedRepresentationError: Error {}
     
-    func get(from url: URL, completion: @escaping (Result<Void, Error>) -> Void) {
+    func get(from url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
         let task = session.dataTask(with: url) { data, response, error in
-            if let error {
+            if let data, let httpResponse = response as? HTTPURLResponse {
+                completion(.success((data, httpResponse)))
+            } else if let error {
                 completion(.failure(error))
             } else {
                 completion(.failure(UnexpectedRepresentationError()))
@@ -60,6 +62,16 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertNotNil(errorFor((data: anyData(), response: nonHTTPURLResponse(), error: anyNSError())))
         XCTAssertNotNil(errorFor((data: anyData(), response: anyHTTPURLResponse(), error: anyNSError())))
     }
+    
+    func test_get_succeedsOnHTTPURLResponseWithData() throws {
+        let expectedData = Data("data".utf8)
+        let httpResponse = anyHTTPURLResponse()
+        let (data, response) = try XCTUnwrap(valueFor((data: expectedData, response: httpResponse, error: nil)))
+        
+        XCTAssertEqual(data, expectedData)
+        XCTAssertEqual(response.url, httpResponse.url)
+        XCTAssertEqual(response.statusCode, httpResponse.statusCode)
+    }
 
     // MARK: - Helpers
     
@@ -72,25 +84,50 @@ final class URLSessionHTTPClientTests: XCTestCase {
         return sut
     }
     
+    private func valueFor(_ value: (data: Data?, response: URLResponse?, error: Error?),
+                          file: StaticString = #filePath,
+                          line: UInt = #line) -> (Data, HTTPURLResponse)? {
+        let result = resultFor(value, file: file, line: line)
+        
+        var receivedValue: (Data, HTTPURLResponse)?
+        switch result {
+        case let .success(value):
+            receivedValue = value
+        case .failure:
+            XCTFail("Should be a success", file: file, line: line)
+        }
+        return receivedValue
+    }
+    
     private func errorFor(_ value: (data: Data?, response: URLResponse?, error: Error?)? = nil,
                           file: StaticString = #filePath,
                           line: UInt = #line) -> Error? {
+        let result = resultFor(value, file: file, line: line)
+        
+        var receivedError: Error?
+        switch result {
+        case .success:
+            XCTFail("Should be a failure", file: file, line: line)
+        case let .failure(error):
+            receivedError = error
+        }
+        return receivedError
+    }
+    
+    private func resultFor(_ value: (data: Data?, response: URLResponse?, error: Error?)? = nil,
+                           file: StaticString = #filePath,
+                           line: UInt = #line) -> Result<(Data, HTTPURLResponse), Error> {
         let sut = makeSUT(file: file, line: line)
         value.map { URLProtocolStub.stub(data: $0, response: $1, error: $2) }
         
-        var receivedError: Error?
+        var receivedResult: Result<(Data, HTTPURLResponse), Error>?
         let exp = expectation(description: "Wait for completion")
         sut.get(from: anyURL()) { result in
-            switch result {
-            case .success:
-                XCTFail("Should be a failure", file: file, line: line)
-            case let .failure(error):
-                receivedError = error
-            }
+            receivedResult = result
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1)
-        return receivedError
+        return receivedResult!
     }
     
     private func anyData() -> Data {
@@ -138,6 +175,14 @@ final class URLSessionHTTPClientTests: XCTestCase {
         
         override func startLoading() {
             let stub = Self.stub
+            
+            if let data = stub?.data {
+                client?.urlProtocol(self, didLoad: data)
+            }
+            
+            if let response = stub?.response {
+                client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+            }
             
             if let error = stub?.error {
                 client?.urlProtocol(self, didFailWithError: error)
