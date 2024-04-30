@@ -72,11 +72,20 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(response.url, httpResponse.url)
         XCTAssertEqual(response.statusCode, httpResponse.statusCode)
     }
+    
+    func test_get_succeedsOnHTTPURLResponseWithNilData() throws {
+        let httpResponse = anyHTTPURLResponse()
+        let (data, response) = try XCTUnwrap(valueFor((data: nil, response: httpResponse, error: nil)))
+        
+        XCTAssertTrue(data.isEmpty)
+        XCTAssertEqual(response.url, httpResponse.url)
+        XCTAssertEqual(response.statusCode, httpResponse.statusCode)
+    }
 
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
-        var configuration = URLSessionConfiguration.ephemeral
+        let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [URLProtocolStub.self]
         let session = URLSession(configuration: configuration)
         let sut = URLSessionHTTPClient(session: session)
@@ -131,7 +140,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
     }
     
     private func anyData() -> Data {
-        Data()
+        Data("any".utf8)
     }
     
     private func nonHTTPURLResponse() -> URLResponse {
