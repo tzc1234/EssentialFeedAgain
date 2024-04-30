@@ -152,10 +152,6 @@ final class RemoteFeedLoaderTests: XCTestCase {
                                url: URL = anyURL()) -> FeedImage {
         FeedImage(id: id, description: description, location: location, url: url)
     }
-    
-    private func anyNSError() -> NSError {
-        NSError(domain: "any", code: 0)
-    }
 }
 
 private extension [FeedImage] {
