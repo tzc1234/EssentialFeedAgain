@@ -38,7 +38,8 @@ final class RemoteFeedLoaderTests: XCTestCase {
         
         samples.enumerated().forEach { index, statusCode in
             expect(sut, withExpected: .failure(.invalidData), when: {
-                client.complete(withStatusCode: statusCode, at: index)
+                let validData = emptyFeedData()
+                client.complete(withStatusCode: statusCode, data: validData, at: index)
             })
         }
     }
@@ -65,8 +66,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         let (sut, client) = makeSUT()
         
         expect(sut, withExpected: .success([]), when: {
-            let emptyFeedData = Data("{\"items\":[]}".utf8)
-            client.complete(withStatusCode: 200, data: emptyFeedData)
+            client.complete(withStatusCode: 200, data: emptyFeedData())
         })
     }
     
@@ -141,6 +141,10 @@ final class RemoteFeedLoaderTests: XCTestCase {
                                location: String? = nil, 
                                url: URL = anyURL()) -> FeedImage {
         FeedImage(id: id, description: description, location: location, url: url)
+    }
+    
+    private func emptyFeedData() -> Data {
+        Data("{\"items\":[]}".utf8)
     }
 }
 
