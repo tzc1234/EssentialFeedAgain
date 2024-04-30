@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BE4CFBA72BE0F03A008F7224 /* HTTPClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4CFBA62BE0F03A008F7224 /* HTTPClientSpy.swift */; };
+		BE4CFBAB2BE14F40008F7224 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */; };
 		BEA6337F2BDFC4840088E107 /* EssentialFeedAgain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */; };
 		BEA6338F2BDFC51D0088E107 /* FeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6338E2BDFC51D0088E107 /* FeedImage.swift */; };
 		BEA633912BDFC6010088E107 /* FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633902BDFC6010088E107 /* FeedLoader.swift */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		BE4CFBA62BE0F03A008F7224 /* HTTPClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientSpy.swift; sourceTree = "<group>"; };
+		BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 		BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedAgain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEA6337E2BDFC4840088E107 /* EssentialFeedAgainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedAgainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEA6338E2BDFC51D0088E107 /* FeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImage.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 			children = (
 				BE4CFBA92BE116E6008F7224 /* Helpers */,
 				BEA633932BDFC7460088E107 /* RemoteFeedLoaderTests.swift */,
+				BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";
@@ -275,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BEA6339F2BDFDC9C0088E107 /* HTTPURLResponse+Helpers.swift in Sources */,
+				BE4CFBAB2BE14F40008F7224 /* URLSessionHTTPClientTests.swift in Sources */,
 				BEA6339D2BDFDC710088E107 /* CommonHelpers.swift in Sources */,
 				BEA633942BDFC7460088E107 /* RemoteFeedLoaderTests.swift in Sources */,
 				BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
