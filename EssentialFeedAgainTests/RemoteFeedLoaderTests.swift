@@ -81,7 +81,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         ]
         
         expect(sut, withExpected: .success(feed), when: {
-            client.complete(withStatusCode: 200, data: feed.toData())
+            client.complete(withStatusCode: 200, data: feed.toJSONData())
         })
     }
     
@@ -100,7 +100,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         ]
         
         expect(sut, withExpected: .success(feed), when: {
-            client.complete(withStatusCode: 200, data: feed.toData())
+            client.complete(withStatusCode: 200, data: feed.toJSONData())
         })
     }
     
@@ -155,7 +155,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
 }
 
 private extension [FeedImage] {
-    func toData() -> Data {
+    func toJSONData() -> Data {
         let images = map {
             [
                 "id": $0.id.uuidString,
