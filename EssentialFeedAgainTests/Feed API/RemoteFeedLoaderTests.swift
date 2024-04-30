@@ -138,8 +138,8 @@ final class RemoteFeedLoaderTests: XCTestCase {
             switch (receivedResult, expectedResult) {
             case let (.success(receivedFeed), .success(expectedFeed)):
                 XCTAssertEqual(receivedFeed, expectedFeed, file: file, line: line)
-            case let (.failure(receivedError), .failure(expectedError)):
-                XCTAssertEqual(receivedError as? RemoteFeedLoaderError, expectedError, file: file, line: line)
+            case let (.failure(receivedError as RemoteFeedLoaderError), .failure(expectedError)):
+                XCTAssertEqual(receivedError, expectedError, file: file, line: line)
             default:
                 XCTFail("Expect result: \(expectedResult), got \(receivedResult) instead", file: file, line: line)
             }
