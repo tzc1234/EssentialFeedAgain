@@ -35,11 +35,7 @@ final class HTTPClientSpy: HTTPClient {
         messages[index].completion(.failure(error))
     }
     
-    func complete(withStatusCode statusCode: Int, at index: Int = 0) {
-        messages[index].completion(.success((Data(), HTTPURLResponse(statusCode: statusCode))))
-    }
-    
-    func complete(with data: Data, at index: Int = 0) {
-        messages[index].completion(.success((data, HTTPURLResponse(statusCode: 200))))
+    func complete(withStatusCode statusCode: Int, data: Data = Data(), at index: Int = 0) {
+        messages[index].completion(.success((data, HTTPURLResponse(statusCode: statusCode))))
     }
 }

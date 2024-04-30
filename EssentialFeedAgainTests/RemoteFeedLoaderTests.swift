@@ -48,7 +48,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         
         expect(sut, withExpected: .failure(.invalidData), when: {
             let invalidData = Data("invalid data".utf8)
-            client.complete(with: invalidData)
+            client.complete(withStatusCode: 200, data: invalidData)
         })
     }
     
@@ -57,20 +57,20 @@ final class RemoteFeedLoaderTests: XCTestCase {
         
         expect(sut, withExpected: .failure(.invalidData), when: {
             let emptyData = Data()
-            client.complete(with: emptyData)
+            client.complete(withStatusCode: 200, data: emptyData)
         })
     }
     
-    func test_load_deliversEmptyFeedWhenReceivedEmptyFeedData() {
+    func test_load_deliversEmptyFeedOn200ResponseWithEmptyFeedData() {
         let (sut, client) = makeSUT()
         
         expect(sut, withExpected: .success([]), when: {
             let emptyFeedData = Data("{\"items\":[]}".utf8)
-            client.complete(with: emptyFeedData)
+            client.complete(withStatusCode: 200, data: emptyFeedData)
         })
     }
     
-    func test_load_deliversOneFeedWhenReceivedOneFeedData() {
+    func test_load_deliversOneFeedOn200ResponseWithOneFeedData() {
         let (sut, client) = makeSUT()
         let feed = [
             makeFeedImage(
@@ -81,11 +81,11 @@ final class RemoteFeedLoaderTests: XCTestCase {
         ]
         
         expect(sut, withExpected: .success(feed), when: {
-            client.complete(with: feed.toData())
+            client.complete(withStatusCode: 200, data: feed.toData())
         })
     }
     
-    func test_load_deliversFeedWhenReceivedFeedData() {
+    func test_load_deliversFeedOn200ResponseWithFeedData() {
         let (sut, client) = makeSUT()
         let feed = [
             makeFeedImage(
@@ -100,7 +100,7 @@ final class RemoteFeedLoaderTests: XCTestCase {
         ]
         
         expect(sut, withExpected: .success(feed), when: {
-            client.complete(with: feed.toData())
+            client.complete(withStatusCode: 200, data: feed.toData())
         })
     }
     
