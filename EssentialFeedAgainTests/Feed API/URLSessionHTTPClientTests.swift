@@ -37,6 +37,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
     
     func test_get_failsOnRequestError() throws {
         let expectedError = anyNSError()
+        
         let requestError = try XCTUnwrap(errorFor((data: nil, response: nil, error: expectedError)) as? NSError)
         
         XCTAssertEqual(requestError.domain, expectedError.domain)
@@ -55,9 +56,10 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertNotNil(errorFor((data: anyData(), response: anyHTTPURLResponse(), error: anyNSError())))
     }
     
-    func test_get_succeedsOnHTTPURLResponseWithData() throws {
+    func test_get_succeedsOnHTTPURLResponseAndData() throws {
         let expectedData = Data("data".utf8)
         let httpResponse = anyHTTPURLResponse()
+        
         let (data, response) = try XCTUnwrap(valueFor((data: expectedData, response: httpResponse, error: nil)))
         
         XCTAssertEqual(data, expectedData)
@@ -65,11 +67,13 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(response.statusCode, httpResponse.statusCode)
     }
     
-    func test_get_succeedsOnHTTPURLResponseWithNilData() throws {
+    func test_get_succeedsWithEmptyDataOnHTTPURLResponseAndNilData() throws {
         let httpResponse = anyHTTPURLResponse()
+        
         let (data, response) = try XCTUnwrap(valueFor((data: nil, response: httpResponse, error: nil)))
         
-        XCTAssertTrue(data.isEmpty)
+        let emptyData = Data()
+        XCTAssertEqual(data, emptyData)
         XCTAssertEqual(response.url, httpResponse.url)
         XCTAssertEqual(response.statusCode, httpResponse.statusCode)
     }
