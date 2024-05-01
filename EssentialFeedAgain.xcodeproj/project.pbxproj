@@ -52,7 +52,7 @@
 		BEA6338E2BDFC51D0088E107 /* FeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImage.swift; sourceTree = "<group>"; };
 		BEA633902BDFC6010088E107 /* FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoader.swift; sourceTree = "<group>"; };
 		BEA633932BDFC7460088E107 /* RemoteFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoaderTests.swift; sourceTree = "<group>"; };
-		BEA633952BDFC77B0088E107 /* EssentialFeedAgain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = EssentialFeedAgain.xctestplan; path = EssentialFeedAgainTests/EssentialFeedAgain.xctestplan; sourceTree = "<group>"; };
+		BEA633952BDFC77B0088E107 /* EssentialFeedAgain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedAgain.xctestplan; sourceTree = "<group>"; };
 		BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 		BEA6339A2BDFD2730088E107 /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
 		BEA6339C2BDFDC710088E107 /* CommonHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonHelpers.swift; sourceTree = "<group>"; };
@@ -62,7 +62,8 @@
 		BEA633A42BDFFE840088E107 /* RemoteFeedImageMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedImageMapper.swift; sourceTree = "<group>"; };
 		BEA8284B2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedAgainAPIEndToEndTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EssentialFeedAgainAPIEndToEndTests.swift; sourceTree = "<group>"; };
-		BEA828552BE2959D00E553CB /* EssentialFeedAgainAPIEndToEndTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = EssentialFeedAgainAPIEndToEndTests.xctestplan; path = EssentialFeedAgainAPIEndToEndTests/EssentialFeedAgainAPIEndToEndTests.xctestplan; sourceTree = "<group>"; };
+		BEA828552BE2959D00E553CB /* EssentialFeedAgainAPIEndToEndTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedAgainAPIEndToEndTests.xctestplan; sourceTree = "<group>"; };
+		BEA828572BE29B6000E553CB /* Mac_CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mac_CI.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,8 +115,7 @@
 		BEA6336C2BDFC4830088E107 = {
 			isa = PBXGroup;
 			children = (
-				BEA633952BDFC77B0088E107 /* EssentialFeedAgain.xctestplan */,
-				BEA828552BE2959D00E553CB /* EssentialFeedAgainAPIEndToEndTests.xctestplan */,
+				BEA828572BE29B6000E553CB /* Mac_CI.xctestplan */,
 				BEA633782BDFC4840088E107 /* EssentialFeedAgain */,
 				BEA633822BDFC4840088E107 /* EssentialFeedAgainTests */,
 				BEA8284C2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests */,
@@ -145,6 +145,7 @@
 		BEA633822BDFC4840088E107 /* EssentialFeedAgainTests */ = {
 			isa = PBXGroup;
 			children = (
+				BEA633952BDFC77B0088E107 /* EssentialFeedAgain.xctestplan */,
 				BEA633962BDFCB750088E107 /* Helpers */,
 				BE4CFBA82BE116D8008F7224 /* Feed API */,
 			);
@@ -184,6 +185,7 @@
 		BEA8284C2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests */ = {
 			isa = PBXGroup;
 			children = (
+				BEA828552BE2959D00E553CB /* EssentialFeedAgainAPIEndToEndTests.xctestplan */,
 				BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */,
 			);
 			path = EssentialFeedAgainAPIEndToEndTests;
