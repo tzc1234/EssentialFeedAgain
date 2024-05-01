@@ -23,10 +23,12 @@ final class URLSessionHTTPClientTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
     
-    func test_get_failsOnRequestError() {
-        let requestError = errorFor((data: nil, response: nil, error: anyNSError()))
+    func test_get_failsOnRequestError() throws {
+        let expectedError = anyNSError()
+        let requestError = try XCTUnwrap(errorFor((data: nil, response: nil, error: expectedError)) as? NSError)
         
-        XCTAssertNotNil(requestError)
+        XCTAssertEqual(requestError.domain, expectedError.domain)
+        XCTAssertEqual(requestError.code, expectedError.code)
     }
     
     func test_get_failsOnAllUnexpectedRepresentationErrors() {
