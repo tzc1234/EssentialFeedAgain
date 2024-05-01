@@ -9,6 +9,18 @@ import XCTest
 import EssentialFeedAgain
 
 final class URLSessionHTTPClientTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        
+        URLProtocolStub.reset()
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        
+        URLProtocolStub.reset()
+    }
+    
     func test_get_requestsFromURL() {
         let sut = makeSUT()
         let url = URL(string: "https://request-url.com")!
@@ -160,6 +172,10 @@ final class URLSessionHTTPClientTests: XCTestCase {
         
         static func stub(data: Data?, response: URLResponse?, error: Error?) {
             stub = Stub(data: data, response: response, error: error, observer: nil)
+        }
+        
+        static func reset() {
+            stub = nil
         }
         
         override class func canInit(with request: URLRequest) -> Bool {
