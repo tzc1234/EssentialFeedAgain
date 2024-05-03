@@ -1,5 +1,5 @@
 //
-//  RemoteFeedLoaderTests.swift
+//  LoadFeedFromRemoteUseCaseTests.swift
 //  EssentialFeedAgainTests
 //
 //  Created by Tsz-Lung on 29/04/2024.
@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeedAgain
 
-final class RemoteFeedLoaderTests: XCTestCase {
+final class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     func test_init_doesNotNotifyClient() {
         let (_, client) = makeSUT()
         
