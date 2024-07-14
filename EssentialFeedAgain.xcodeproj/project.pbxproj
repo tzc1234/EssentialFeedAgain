@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BE1248D12C44470600F48A89 /* LoadFeedFromRemoteUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1248D02C44470600F48A89 /* LoadFeedFromRemoteUseCaseTests.swift */; };
+		BE1248D32C44514800F48A89 /* XCTestCase+AssertThrows.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1248D22C44514800F48A89 /* XCTestCase+AssertThrows.swift */; };
 		BE4CFBA72BE0F03A008F7224 /* HTTPClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4CFBA62BE0F03A008F7224 /* HTTPClientSpy.swift */; };
 		BE4CFBAB2BE14F40008F7224 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */; };
 		BE4CFBAD2BE1613A008F7224 /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4CFBAC2BE1613A008F7224 /* URLSessionHTTPClient.swift */; };
@@ -45,6 +46,7 @@
 
 /* Begin PBXFileReference section */
 		BE1248D02C44470600F48A89 /* LoadFeedFromRemoteUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadFeedFromRemoteUseCaseTests.swift; sourceTree = "<group>"; };
+		BE1248D22C44514800F48A89 /* XCTestCase+AssertThrows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+AssertThrows.swift"; sourceTree = "<group>"; };
 		BE4CFBA62BE0F03A008F7224 /* HTTPClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientSpy.swift; sourceTree = "<group>"; };
 		BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 		BE4CFBAC2BE1613A008F7224 /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 			children = (
 				BEA6339C2BDFDC710088E107 /* CommonHelpers.swift */,
 				BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */,
+				BE1248D22C44514800F48A89 /* XCTestCase+AssertThrows.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -348,6 +351,7 @@
 				BE4CFBAB2BE14F40008F7224 /* URLSessionHTTPClientTests.swift in Sources */,
 				BEA6339D2BDFDC710088E107 /* CommonHelpers.swift in Sources */,
 				BE1248D12C44470600F48A89 /* LoadFeedFromRemoteUseCaseTests.swift in Sources */,
+				BE1248D32C44514800F48A89 /* XCTestCase+AssertThrows.swift in Sources */,
 				BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE4CFBA72BE0F03A008F7224 /* HTTPClientSpy.swift in Sources */,
 			);

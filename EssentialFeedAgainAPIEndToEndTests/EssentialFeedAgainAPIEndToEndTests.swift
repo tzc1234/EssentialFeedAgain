@@ -9,43 +9,30 @@ import XCTest
 import EssentialFeedAgain
 
 final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
-    func test_endToEndTestServerGETFeedResult_matchesFixedTestAccountData() {
-        switch getFeedResult() {
-        case let .success(feed):
-            XCTAssertEqual(feed.count, 8, "Expected 8 feed images in the test account")
-            XCTAssertEqual(feed[0], expectedImage(at: 0))
-            XCTAssertEqual(feed[1], expectedImage(at: 1))
-            XCTAssertEqual(feed[2], expectedImage(at: 2))
-            XCTAssertEqual(feed[3], expectedImage(at: 3))
-            XCTAssertEqual(feed[4], expectedImage(at: 4))
-            XCTAssertEqual(feed[5], expectedImage(at: 5))
-            XCTAssertEqual(feed[6], expectedImage(at: 6))
-            XCTAssertEqual(feed[7], expectedImage(at: 7))
-        case let .failure(error):
-            XCTFail("Expected successful feed result, got \(error) instead")
-        default:
-            XCTFail("Expected successful feed result, got no result instead")
-        }
+    func test_endToEndTestServerGETFeedResult_matchesFixedTestAccountData() async throws {
+        let feed = try await getFeedResult()
+        
+        XCTAssertEqual(feed.count, 8, "Expected 8 feed images in the test account")
+        XCTAssertEqual(feed[0], expectedImage(at: 0))
+        XCTAssertEqual(feed[1], expectedImage(at: 1))
+        XCTAssertEqual(feed[2], expectedImage(at: 2))
+        XCTAssertEqual(feed[3], expectedImage(at: 3))
+        XCTAssertEqual(feed[4], expectedImage(at: 4))
+        XCTAssertEqual(feed[5], expectedImage(at: 5))
+        XCTAssertEqual(feed[6], expectedImage(at: 6))
+        XCTAssertEqual(feed[7], expectedImage(at: 7))
     }
     
     // MARK: - Helpers
     
-    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) -> FeedLoader.Result? {
+    private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) async throws -> [FeedImage] {
         let configuration = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: configuration)
         let client = URLSessionHTTPClient(session: session)
         let loader = RemoteFeedLoader(url: testServerURL(), client: client)
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
-        
-        let exp = expectation(description: "Wait for completion")
-        var receivedResult: FeedLoader.Result?
-        _ = loader.load { result in
-            receivedResult = result
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 5)
-        return receivedResult
+        return try await loader.load()
     }
     
     private func testServerURL() -> URL {
