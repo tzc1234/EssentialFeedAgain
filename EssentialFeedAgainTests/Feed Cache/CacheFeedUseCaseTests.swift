@@ -19,12 +19,13 @@ final class LocalFeedLoader {
     
     func save(_ feed: [FeedImage]) async throws {
         try await store.deleteCachedFeed()
-        await store.insert(feed, timestamp: currentDate())
+        try await store.insert(feed, timestamp: currentDate())
     }
 }
 
 final class FeedStore {
     typealias DeletionStub = Result<Void, Error>
+    typealias InsertionStub = Result<Void, Error>
     
     enum Message: Equatable {
         case deleteCachedFeed
@@ -34,9 +35,11 @@ final class FeedStore {
     private(set) var messages = [Message]()
     
     private var deletionStubs: [DeletionStub]
+    private var insertionStubs: [InsertionStub]
     
-    init(deletionStubs: [DeletionStub]) {
+    init(deletionStubs: [DeletionStub], insertionStubs: [InsertionStub]) {
         self.deletionStubs = deletionStubs
+        self.insertionStubs = insertionStubs
     }
     
     func deleteCachedFeed() async throws {
@@ -44,8 +47,9 @@ final class FeedStore {
         try deletionStubs.removeFirst().get()
     }
     
-    func insert(_ feed: [FeedImage], timestamp: Date) async {
+    func insert(_ feed: [FeedImage], timestamp: Date) async throws {
         messages.append(.insert(feed, timestamp))
+        try insertionStubs.removeFirst().get()
     }
 }
 
@@ -70,7 +74,8 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let timestamp = Date()
         let (sut, store) = makeSUT(
             currentDate: { timestamp },
-            deletionStubs: [.success(())]
+            deletionStubs: [.success(())],
+            insertionStubs: [.success(())]
         )
         let feed = [uniqueImage(), uniqueImage()]
         
@@ -87,13 +92,25 @@ final class CacheFeedUseCaseTests: XCTestCase {
         await assertThrowsError(try await sut.save(feed))
     }
     
+    func test_save_failsOnInsertionError() async {
+        let insertionError = anyNSError()
+        let (sut, store) = makeSUT(
+            deletionStubs: [.success(())],
+            insertionStubs: [.failure(insertionError)]
+        )
+        let feed = [uniqueImage(), uniqueImage()]
+        
+        await assertThrowsError(try await sut.save(feed))
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
                          deletionStubs: [FeedStore.DeletionStub] = [],
+                         insertionStubs: [FeedStore.InsertionStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
-        let store = FeedStore(deletionStubs: deletionStubs)
+        let store = FeedStore(deletionStubs: deletionStubs, insertionStubs: insertionStubs)
         let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
