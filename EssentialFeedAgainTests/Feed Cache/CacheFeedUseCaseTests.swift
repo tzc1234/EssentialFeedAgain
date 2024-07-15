@@ -17,14 +17,16 @@ final class LocalFeedLoader {
     
     func save(_ feed: [FeedImage]) async throws {
         try await store.deleteCachedFeed()
+        await store.insert(feed)
     }
 }
 
 final class FeedStore {
     typealias DeletionStub = Result<Void, Error>
     
-    enum Message {
+    enum Message: Equatable {
         case deleteCachedFeed
+        case insertion([FeedImage])
     }
     
     private(set) var messages = [Message]()
@@ -38,6 +40,10 @@ final class FeedStore {
     func deleteCachedFeed() async throws {
         messages.append(.deleteCachedFeed)
         try deletionStubs.removeFirst().get()
+    }
+    
+    func insert(_ feed: [FeedImage]) async {
+        messages.append(.insertion(feed))
     }
 }
 
@@ -54,7 +60,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         try await sut.save(feed)
         
-        XCTAssertEqual(store.messages, [.deleteCachedFeed])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insertion(feed)])
     }
     
     func test_save_doesNotRequestCacheInsertionOnDeletionError() async {
@@ -65,6 +71,15 @@ final class CacheFeedUseCaseTests: XCTestCase {
         await assertThrowsError(try await sut.save(feed))
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed])
+    }
+    
+    func test_save_requestsNewCacheInsertionOnSuccessfulDeletion() async throws {
+        let (sut, store) = makeSUT(deletionStubs: [.success(())])
+        let feed = [uniqueImage(), uniqueImage()]
+        
+        try await sut.save(feed)
+        
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insertion(feed)])
     }
     
     // MARK: - Helpers
