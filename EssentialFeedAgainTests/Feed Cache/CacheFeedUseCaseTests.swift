@@ -63,7 +63,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     func test_save_doesNotRequestCacheInsertionOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
-        let feed = [uniqueImage(), uniqueImage()]
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
         try? await sut.save(feed)
         
@@ -77,7 +77,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.success(())]
         )
-        let feed = [uniqueImage(), uniqueImage()]
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
         try await sut.save(feed)
         
@@ -87,7 +87,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     func test_save_failsOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, _) = makeSUT(deletionStubs: [.failure(deletionError)])
-        let feed = [uniqueImage(), uniqueImage()]
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
         await assertThrowsError(try await sut.save(feed))
     }
@@ -98,7 +98,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.failure(insertionError)]
         )
-        let feed = [uniqueImage(), uniqueImage()]
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
         await assertThrowsError(try await sut.save(feed))
     }
@@ -108,7 +108,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.success(())]
         )
-        let feed = [uniqueImage(), uniqueImage()]
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
         await assertNoThrow(try await sut.save(feed))
     }
@@ -127,7 +127,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
-    private func uniqueImage() -> FeedImage {
+    private func uniqueFeedImage() -> FeedImage {
         FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
     }
 }
