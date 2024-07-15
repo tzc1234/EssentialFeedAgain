@@ -19,7 +19,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let deletionError = anyNSError()
         let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
         
-        try? await sut.save(uniqueItems().feed)
+        try? await sut.save(uniqueImageFeed().models)
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed])
     }
@@ -31,18 +31,18 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.success(())]
         )
-        let items = uniqueItems()
+        let feed = uniqueImageFeed()
         
-        try await sut.save(items.feed)
+        try await sut.save(feed.models)
         
-        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(items.local, timestamp)])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(feed.local, timestamp)])
     }
     
     func test_save_failsOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, _) = makeSUT(deletionStubs: [.failure(deletionError)])
         
-        await assertThrowsError(try await sut.save(uniqueItems().feed))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
     }
     
     func test_save_failsOnInsertionError() async {
@@ -52,7 +52,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             insertionStubs: [.failure(insertionError)]
         )
         
-        await assertThrowsError(try await sut.save(uniqueItems().feed))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion() async {
@@ -61,7 +61,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
             insertionStubs: [.success(())]
         )
         
-        await assertNoThrow(try await sut.save(uniqueItems().feed))
+        await assertNoThrow(try await sut.save(uniqueImageFeed().models))
     }
     
     // MARK: - Helpers
@@ -78,15 +78,15 @@ final class CacheFeedUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
-    private func uniqueItems() -> (feed: [FeedImage], local: [LocalFeedImage]) {
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
+    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
+        let feed = [uniqueImage(), uniqueImage()]
         let localFeed = feed.map {
             LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
         }
         return (feed, localFeed)
     }
     
-    private func uniqueFeedImage() -> FeedImage {
+    private func uniqueImage() -> FeedImage {
         FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
     }
 }
