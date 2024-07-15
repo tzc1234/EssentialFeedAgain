@@ -47,13 +47,13 @@ final class URLSessionHTTPClientTests: XCTestCase {
     }
     
     func test_get_failsOnAllUnexpectedRepresentationErrors() async {
-        await assertNotNil(await errorFor((data: anyData(), response: nil, error: anyNSError())))
-        await assertNotNil(await errorFor((data: anyData(), response: nonHTTPURLResponse(), error: nil)))
-        await assertNotNil(await errorFor((data: nil, response: nonHTTPURLResponse(), error: nil)))
-        await assertNotNil(await errorFor((data: nil, response: nonHTTPURLResponse(), error: anyNSError())))
-        await assertNotNil(await errorFor((data: nil, response: anyHTTPURLResponse(), error: anyNSError())))
-        await assertNotNil(await errorFor((data: anyData(), response: nonHTTPURLResponse(), error: anyNSError())))
-        await assertNotNil(await errorFor((data: anyData(), response: anyHTTPURLResponse(), error: anyNSError())))
+        await assertErrorNotNil(when: (data: anyData(), response: nil, error: anyNSError()))
+        await assertErrorNotNil(when: (data: anyData(), response: nonHTTPURLResponse(), error: nil))
+        await assertErrorNotNil(when: (data: nil, response: nonHTTPURLResponse(), error: nil))
+        await assertErrorNotNil(when: (data: nil, response: nonHTTPURLResponse(), error: anyNSError()))
+        await assertErrorNotNil(when: (data: nil, response: anyHTTPURLResponse(), error: anyNSError()))
+        await assertErrorNotNil(when: (data: anyData(), response: nonHTTPURLResponse(), error: anyNSError()))
+        await assertErrorNotNil(when: (data: anyData(), response: anyHTTPURLResponse(), error: anyNSError()))
     }
     
     func test_get_succeedsOnHTTPURLResponseAndData() async throws {
@@ -106,12 +106,11 @@ final class URLSessionHTTPClientTests: XCTestCase {
         return sut
     }
     
-    private func assertNotNil(_ expression: @autoclosure () async -> Any?,
-                              _ message: @autoclosure () -> String = "",
-                              file: StaticString = #filePath,
-                              line: UInt = #line) async {
-        let value = await expression()
-        XCTAssertNotNil(value, message(), file: file, line: line)
+    private func assertErrorNotNil(when value: Value,
+                                   file: StaticString = #filePath,
+                                   line: UInt = #line) async {
+        let error = await errorFor(value, file: file, line: line)
+        XCTAssertNotNil(error, file: file, line: line)
     }
     
     private func valueFor(_ value: Value,
@@ -125,24 +124,24 @@ final class URLSessionHTTPClientTests: XCTestCase {
         }
     }
     
-    private func errorFor(_ value: Value? = nil,
+    private func errorFor(_ value: Value,
                           file: StaticString = #filePath,
                           line: UInt = #line) async -> Error? {
         
         do {
             _ = try await resultFor(value, file: file, line: line)
-            XCTFail("Should be a failure", file: file, line: line)
+            XCTFail("Should be an error", file: file, line: line)
             return nil
         } catch {
             return error
         }
     }
     
-    private func resultFor(_ value: Value? = nil,
+    private func resultFor(_ value: Value,
                            file: StaticString = #filePath,
                            line: UInt = #line) async throws -> (Data, HTTPURLResponse) {
         let sut = makeSUT(file: file, line: line)
-        value.map { URLProtocolStub.stub(data: $0, response: $1, error: $2) }
+        URLProtocolStub.stub(data: value.data, response: value.response, error: value.error)
         return try await sut.get(from: anyURL())
     }
     
