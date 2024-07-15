@@ -33,10 +33,13 @@ final class CacheFeedUseCaseTests: XCTestCase {
             insertionStubs: [.success(())]
         )
         let feed = [uniqueFeedImage(), uniqueFeedImage()]
+        let localFeed = feed.map {
+            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
+        }
         
         try await sut.save(feed)
         
-        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(feed, timestamp)])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(localFeed, timestamp)])
     }
     
     func test_save_failsOnDeletionError() async {

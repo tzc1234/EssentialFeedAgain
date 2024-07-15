@@ -14,7 +14,7 @@ final class FeedStoreSpy: FeedStore {
     
     enum Message: Equatable {
         case deleteCachedFeed
-        case insert([FeedImage], Date)
+        case insert([LocalFeedImage], Date)
     }
     
     private(set) var messages = [Message]()
@@ -32,7 +32,7 @@ final class FeedStoreSpy: FeedStore {
         try deletionStubs.removeFirst().get()
     }
     
-    func insert(_ feed: [FeedImage], timestamp: Date) async throws {
+    func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws {
         messages.append(.insert(feed, timestamp))
         try insertionStubs.removeFirst().get()
     }

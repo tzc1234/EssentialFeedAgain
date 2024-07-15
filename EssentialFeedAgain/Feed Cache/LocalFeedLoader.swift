@@ -18,6 +18,12 @@ public final class LocalFeedLoader {
     
     public func save(_ feed: [FeedImage]) async throws {
         try await store.deleteCachedFeed()
-        try await store.insert(feed, timestamp: currentDate())
+        try await store.insert(feed.toLocal(), timestamp: currentDate())
+    }
+}
+
+private extension [FeedImage] {
+    func toLocal() -> [LocalFeedImage] {
+        map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }
