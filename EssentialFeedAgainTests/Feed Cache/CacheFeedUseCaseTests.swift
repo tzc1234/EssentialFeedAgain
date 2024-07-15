@@ -27,8 +27,8 @@ final class FeedStore {
     typealias DeletionStub = Result<Void, Error>
     
     enum Message: Equatable {
-        case deletion
-        case insertion([FeedImage], Date)
+        case deleteCachedFeed
+        case insert([FeedImage], Date)
     }
     
     private(set) var messages = [Message]()
@@ -40,12 +40,12 @@ final class FeedStore {
     }
     
     func deleteCachedFeed() async throws {
-        messages.append(.deletion)
+        messages.append(.deleteCachedFeed)
         try deletionStubs.removeFirst().get()
     }
     
     func insert(_ feed: [FeedImage], timestamp: Date) async {
-        messages.append(.insertion(feed, timestamp))
+        messages.append(.insert(feed, timestamp))
     }
 }
 
@@ -63,7 +63,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         await assertThrowsError(try await sut.save(feed))
         
-        XCTAssertEqual(store.messages, [.deletion])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed])
     }
     
     func test_save_requestsNewCacheInsertionWithTimestampOnSuccessfulDeletion() async throws {
@@ -76,7 +76,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         
         try await sut.save(feed)
         
-        XCTAssertEqual(store.messages, [.deletion, .insertion(feed, timestamp)])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(feed, timestamp)])
     }
     
     // MARK: - Helpers
