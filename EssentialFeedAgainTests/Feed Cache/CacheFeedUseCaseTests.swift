@@ -21,9 +21,19 @@ final class FeedStore {
 
 final class CacheFeedUseCaseTests: XCTestCase {
     func test_init_doesNotNotifyStoreUponInit() {
-        let store = FeedStore()
-        _ = LocalFeedLoader(store: store)
+        let (_, store) = makeSUT()
         
         XCTAssertTrue(store.messages.isEmpty)
+    }
+    
+    // MARK: - Helpers
+    
+    private func makeSUT(file: StaticString = #filePath, 
+                         line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
+        let store = FeedStore()
+        let sut = LocalFeedLoader(store: store)
+        trackForMemoryLeaks(store, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, store)
     }
 }
