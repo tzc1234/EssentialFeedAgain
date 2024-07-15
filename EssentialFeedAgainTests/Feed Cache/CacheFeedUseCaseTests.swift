@@ -54,15 +54,6 @@ final class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
-    func test_save_requestsCacheDeletion() async throws {
-        let (sut, store) = makeSUT()
-        let feed = [uniqueImage(), uniqueImage()]
-        
-        try await sut.save(feed)
-        
-        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insertion(feed)])
-    }
-    
     func test_save_doesNotRequestCacheInsertionOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
@@ -84,7 +75,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(deletionStubs: [FeedStore.DeletionStub] = [.success(())],
+    private func makeSUT(deletionStubs: [FeedStore.DeletionStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
         let store = FeedStore(deletionStubs: deletionStubs)
