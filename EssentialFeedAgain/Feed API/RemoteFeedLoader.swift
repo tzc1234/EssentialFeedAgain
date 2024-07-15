@@ -21,30 +21,13 @@ public final class RemoteFeedLoader: FeedLoader {
         self.client = client
     }
     
-    private struct Wrapper: FeedLoaderTask {
-        let task: HTTPClientTask
-        
-        func cancel() {
-            task.cancel()
+    public func load() async throws -> [FeedImage] {
+        guard let (data, response) = try? await client.get(from: url) else {
+            throw RemoteFeedLoaderError.connectivity
         }
-    }
-    
-    public func load(completion: @escaping Completion) -> FeedLoaderTask {
-        Wrapper(task: client.get(from: url) { [weak self] result in
-            guard self != nil else { return }
-            
-            switch result {
-            case let .success((data, response)):
-                do {
-                    let feed = try RemoteFeedImageMapper.map(from: data, response: response)
-                    completion(.success(feed.model))
-                } catch {
-                    completion(.failure(error))
-                }
-            case .failure:
-                completion(.failure(RemoteFeedLoaderError.connectivity))
-            }
-        })
+        
+        let feed = try RemoteFeedImageMapper.map(from: data, response: response)
+        return feed.model
     }
 }
 

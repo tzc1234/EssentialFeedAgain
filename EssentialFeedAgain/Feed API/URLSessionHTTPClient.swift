@@ -16,25 +16,12 @@ public final class URLSessionHTTPClient: HTTPClient {
     
     public struct UnexpectedRepresentationError: Error {}
     
-    private struct Wrapper: HTTPClientTask {
-        let task: URLSessionTask
+    public func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
+        let (data, response) = try await session.data(from: url)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw UnexpectedRepresentationError()
+        }
         
-        func cancel() {
-            task.cancel()
-        }
-    }
-    
-    public func get(from url: URL, completion: @escaping Completion) -> HTTPClientTask {
-        let task = session.dataTask(with: url) { data, response, error in
-            if let data, let httpResponse = response as? HTTPURLResponse {
-                completion(.success((data, httpResponse)))
-            } else if let error {
-                completion(.failure(error))
-            } else {
-                completion(.failure(UnexpectedRepresentationError()))
-            }
-        }
-        task.resume()
-        return Wrapper(task: task)
+        return (data, httpResponse)
     }
 }
