@@ -23,11 +23,6 @@ final class LocalFeedLoader {
     }
 }
 
-protocol FeedStore {
-    func deleteCachedFeed() async throws
-    func insert(_ feed: [FeedImage], timestamp: Date) async throws
-}
-
 final class CacheFeedUseCaseTests: XCTestCase {
     func test_init_doesNotNotifyStoreUponInit() {
         let (_, store) = makeSUT()
