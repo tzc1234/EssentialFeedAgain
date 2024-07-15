@@ -15,20 +15,29 @@ final class LocalFeedLoader {
         self.store = store
     }
     
-    func save(_ feed: [FeedImage]) async {
-        await store.deleteCachedFeed()
+    func save(_ feed: [FeedImage]) async throws {
+        try await store.deleteCachedFeed()
     }
 }
 
 final class FeedStore {
+    typealias DeletionStub = Result<Void, Error>
+    
     enum Message {
         case deleteCachedFeed
     }
     
     private(set) var messages = [Message]()
     
-    func deleteCachedFeed() async {
+    private var deletionStubs: [DeletionStub]
+    
+    init(deletionStubs: [DeletionStub]) {
+        self.deletionStubs = deletionStubs
+    }
+    
+    func deleteCachedFeed() async throws {
         messages.append(.deleteCachedFeed)
+        try deletionStubs.removeFirst().get()
     }
 }
 
@@ -39,20 +48,31 @@ final class CacheFeedUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
-    func test_save_requestsCacheDeletion() async {
+    func test_save_requestsCacheDeletion() async throws {
         let (sut, store) = makeSUT()
         let feed = [uniqueImage(), uniqueImage()]
         
-        await sut.save(feed)
+        try await sut.save(feed)
+        
+        XCTAssertEqual(store.messages, [.deleteCachedFeed])
+    }
+    
+    func test_save_doesNotRequestCacheInsertionOnDeletionError() async {
+        let deletionError = anyNSError()
+        let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
+        let feed = [uniqueImage(), uniqueImage()]
+        
+        await assertThrowsError(try await sut.save(feed))
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed])
     }
     
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, 
+    private func makeSUT(deletionStubs: [FeedStore.DeletionStub] = [.success(())],
+                         file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStore) {
-        let store = FeedStore()
+        let store = FeedStore(deletionStubs: deletionStubs)
         let sut = LocalFeedLoader(store: store)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
