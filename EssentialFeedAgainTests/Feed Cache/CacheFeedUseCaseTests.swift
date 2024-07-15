@@ -18,9 +18,8 @@ final class CacheFeedUseCaseTests: XCTestCase {
     func test_save_doesNotRequestCacheInsertionOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
-        try? await sut.save(feed)
+        try? await sut.save(uniqueItems().feed)
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed])
     }
@@ -32,22 +31,18 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.success(())]
         )
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
-        let localFeed = feed.map {
-            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
-        }
+        let items = uniqueItems()
         
-        try await sut.save(feed)
+        try await sut.save(items.feed)
         
-        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(localFeed, timestamp)])
+        XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(items.local, timestamp)])
     }
     
     func test_save_failsOnDeletionError() async {
         let deletionError = anyNSError()
         let (sut, _) = makeSUT(deletionStubs: [.failure(deletionError)])
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
-        await assertThrowsError(try await sut.save(feed))
+        await assertThrowsError(try await sut.save(uniqueItems().feed))
     }
     
     func test_save_failsOnInsertionError() async {
@@ -56,9 +51,8 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.failure(insertionError)]
         )
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
-        await assertThrowsError(try await sut.save(feed))
+        await assertThrowsError(try await sut.save(uniqueItems().feed))
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion() async {
@@ -66,9 +60,8 @@ final class CacheFeedUseCaseTests: XCTestCase {
             deletionStubs: [.success(())],
             insertionStubs: [.success(())]
         )
-        let feed = [uniqueFeedImage(), uniqueFeedImage()]
         
-        await assertNoThrow(try await sut.save(feed))
+        await assertNoThrow(try await sut.save(uniqueItems().feed))
     }
     
     // MARK: - Helpers
@@ -83,6 +76,14 @@ final class CacheFeedUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func uniqueItems() -> (feed: [FeedImage], local: [LocalFeedImage]) {
+        let feed = [uniqueFeedImage(), uniqueFeedImage()]
+        let localFeed = feed.map {
+            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
+        }
+        return (feed, localFeed)
     }
     
     private func uniqueFeedImage() -> FeedImage {
