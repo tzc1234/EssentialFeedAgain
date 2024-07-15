@@ -61,7 +61,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
         let feed = [uniqueImage(), uniqueImage()]
         
-        await assertThrowsError(try await sut.save(feed))
+        try? await sut.save(feed)
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed])
     }
@@ -77,6 +77,14 @@ final class CacheFeedUseCaseTests: XCTestCase {
         try await sut.save(feed)
         
         XCTAssertEqual(store.messages, [.deleteCachedFeed, .insert(feed, timestamp)])
+    }
+    
+    func test_save_failsOnDeletionError() async {
+        let deletionError = anyNSError()
+        let (sut, store) = makeSUT(deletionStubs: [.failure(deletionError)])
+        let feed = [uniqueImage(), uniqueImage()]
+        
+        await assertThrowsError(try await sut.save(feed))
     }
     
     // MARK: - Helpers
