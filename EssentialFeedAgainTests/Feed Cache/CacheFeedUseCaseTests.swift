@@ -8,21 +8,6 @@
 import XCTest
 import EssentialFeedAgain
 
-final class LocalFeedLoader {
-    private let store: FeedStore
-    private let currentDate: () -> Date
-    
-    init(store: FeedStore, currentDate: @escaping () -> Date) {
-        self.store = store
-        self.currentDate = currentDate
-    }
-    
-    func save(_ feed: [FeedImage]) async throws {
-        try await store.deleteCachedFeed()
-        try await store.insert(feed, timestamp: currentDate())
-    }
-}
-
 final class CacheFeedUseCaseTests: XCTestCase {
     func test_init_doesNotNotifyStoreUponInit() {
         let (_, store) = makeSUT()
