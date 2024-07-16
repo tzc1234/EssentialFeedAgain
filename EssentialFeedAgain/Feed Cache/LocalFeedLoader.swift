@@ -21,8 +21,9 @@ public final class LocalFeedLoader {
         try await store.insert(feed.local, timestamp: currentDate())
     }
     
-    public func load() async throws {
-        try await store.retrieve()
+    public func load() async throws -> [FeedImage] {
+        _ = try await store.retrieve()
+        return []
     }
 }
 

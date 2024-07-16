@@ -11,7 +11,7 @@ import EssentialFeedAgain
 final class FeedStoreSpy: FeedStore {
     typealias DeletionStub = Result<Void, Error>
     typealias InsertionStub = Result<Void, Error>
-    typealias RetrieveStub = Result<Void, Error>
+    typealias RetrieveStub = Result<[LocalFeedImage], Error>
     
     enum Message: Equatable {
         case deleteCachedFeed
@@ -23,9 +23,9 @@ final class FeedStoreSpy: FeedStore {
     
     private var deletionStubs: [DeletionStub]
     private var insertionStubs: [InsertionStub]
-    private var retrievalStubs: [InsertionStub]
+    private var retrievalStubs: [RetrieveStub]
     
-    init(deletionStubs: [DeletionStub], insertionStubs: [InsertionStub], retrievalStubs: [InsertionStub]) {
+    init(deletionStubs: [DeletionStub], insertionStubs: [InsertionStub], retrievalStubs: [RetrieveStub]) {
         self.deletionStubs = deletionStubs
         self.insertionStubs = insertionStubs
         self.retrievalStubs = retrievalStubs
@@ -41,8 +41,8 @@ final class FeedStoreSpy: FeedStore {
         try insertionStubs.removeFirst().get()
     }
     
-    func retrieve() async throws {
+    func retrieve() async throws -> [LocalFeedImage] {
         messages.append(.retrieve)
-        try retrievalStubs.removeFirst().get()
+        return try retrievalStubs.removeFirst().get()
     }
 }

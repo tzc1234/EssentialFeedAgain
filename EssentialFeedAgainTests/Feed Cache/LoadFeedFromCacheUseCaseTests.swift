@@ -16,9 +16,9 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     }
     
     func test_load_requestsCacheRetrieval() async throws {
-        let (sut, store) = makeSUT(retrievalStubs: [.success(())])
+        let (sut, store) = makeSUT(retrievalStubs: [.success([])])
         
-        try await sut.load()
+        _ = try await sut.load()
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
@@ -27,9 +27,18 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let retrievalError = anyNSError()
         let (sut, _) = makeSUT(retrievalStubs: [.failure(retrievalError)])
         
-        await assertThrowsError(try await sut.load()) { error in
+        await assertThrowsError(_ = try await sut.load()) { error in
             XCTAssertEqual(error as NSError, retrievalError)
         }
+    }
+    
+    func test_load_deliversNoImagesOnEmptyCache() async throws {
+        let emptyCache = [LocalFeedImage]()
+        let (sut, _) = makeSUT(retrievalStubs: [.success(emptyCache)])
+        
+        let receivedImages = try await sut.load()
+        
+        XCTAssertTrue(receivedImages.isEmpty)
     }
 
     // MARK: - Helpers
