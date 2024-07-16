@@ -63,6 +63,21 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
     }
+    
+    func test_validateCache_deletesOnExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            deletionStubs: [.success(())],
+            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
+        )
+        
+        await sut.validateCache()
+        
+        XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
+    }
 
     // MARK: - Helpers
     

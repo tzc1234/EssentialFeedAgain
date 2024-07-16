@@ -77,10 +77,10 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     func test_load_deliversNoCachedImagesOnExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
-        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, _) = makeSUT(
             currentDate: { fixCurrentDate },
-            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
         )
         
         let receivedImages = try await sut.load()
@@ -126,6 +126,20 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
             retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+        )
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
+    
+    func test_load_hasNoSideEffectsOnExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
         )
         
         _ = try? await sut.load()
