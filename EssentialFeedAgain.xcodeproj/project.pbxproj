@@ -34,6 +34,7 @@
 		BEF303DC2C468237004E3280 /* FeedCacheHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF303DB2C468237004E3280 /* FeedCacheHelpers.swift */; };
 		BEF303DE2C46A30A004E3280 /* FeedCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF303DD2C46A30A004E3280 /* FeedCachePolicy.swift */; };
 		BEF303E02C46B46B004E3280 /* ValidateFeedCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF303DF2C46B46B004E3280 /* ValidateFeedCacheUseCaseTests.swift */; };
+		BEF303E22C46BC17004E3280 /* Date+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF303E12C46BC17004E3280 /* Date+TestHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +85,7 @@
 		BEF303DB2C468237004E3280 /* FeedCacheHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCacheHelpers.swift; sourceTree = "<group>"; };
 		BEF303DD2C46A30A004E3280 /* FeedCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCachePolicy.swift; sourceTree = "<group>"; };
 		BEF303DF2C46B46B004E3280 /* ValidateFeedCacheUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidateFeedCacheUseCaseTests.swift; sourceTree = "<group>"; };
+		BEF303E12C46BC17004E3280 /* Date+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TestHelpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 			children = (
 				BE83ED292C458AE2000509DA /* FeedStoreSpy.swift */,
 				BEF303DB2C468237004E3280 /* FeedCacheHelpers.swift */,
+				BEF303E12C46BC17004E3280 /* Date+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -411,6 +414,7 @@
 				BE1248D32C44514800F48A89 /* XCTestCase+AssertThrows.swift in Sources */,
 				BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE4CFBA72BE0F03A008F7224 /* HTTPClientSpy.swift in Sources */,
+				BEF303E22C46BC17004E3280 /* Date+TestHelpers.swift in Sources */,
 				BEF303DA2C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift in Sources */,
 				BEF303DC2C468237004E3280 /* FeedCacheHelpers.swift in Sources */,
 				BE83ED2A2C458AE2000509DA /* FeedStoreSpy.swift in Sources */,
