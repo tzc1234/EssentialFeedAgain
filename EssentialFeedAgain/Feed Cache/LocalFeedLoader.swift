@@ -22,13 +22,19 @@ public final class LocalFeedLoader {
     }
     
     public func load() async throws -> [FeedImage] {
-        _ = try await store.retrieve()
-        return []
+        let (feed, timestamp) = try await store.retrieve()
+        return feed.models
     }
 }
 
 private extension [FeedImage] {
     var local: [LocalFeedImage] {
         map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
+    }
+}
+
+private extension [LocalFeedImage] {
+    var models: [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }

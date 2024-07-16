@@ -16,7 +16,8 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     }
     
     func test_load_requestsCacheRetrieval() async throws {
-        let (sut, store) = makeSUT(retrievalStubs: [.success([])])
+        let anyCache = [LocalFeedImage]()
+        let (sut, store) = makeSUT(retrievalStubs: [success(with: anyCache, timestamp: .now)])
         
         _ = try await sut.load()
         
@@ -34,11 +35,29 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     func test_load_deliversNoImagesOnEmptyCache() async throws {
         let emptyCache = [LocalFeedImage]()
-        let (sut, _) = makeSUT(retrievalStubs: [.success(emptyCache)])
+        let fixCurrentDate = Date.now
+        let (sut, _) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: emptyCache, timestamp: fixCurrentDate)]
+        )
         
         let receivedImages = try await sut.load()
         
         XCTAssertTrue(receivedImages.isEmpty)
+    }
+    
+    func test_load_deliversCachedImagesOnNonExpiredCache() async throws {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
+        let (sut, _) = makeSUT(
+            currentDate: { nonExpiredTimestamp }, 
+            retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
+        )
+        
+        let receivedImages = try await sut.load()
+        
+        XCTAssertEqual(receivedImages, feed.models)
     }
 
     // MARK: - Helpers
@@ -58,5 +77,37 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func success(with feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
+        .success((feed, timestamp))
+    }
+    
+    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
+        let feed = [uniqueImage(), uniqueImage()]
+        let localFeed = feed.map {
+            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
+        }
+        return (feed, localFeed)
+    }
+    
+    private func uniqueImage() -> FeedImage {
+        FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
+    }
+}
+
+private extension Date {
+    func minusMaxCacheAgeInDays() -> Date {
+        adding(days: -feedCacheMaxAgeInDays)
+    }
+    
+    private var feedCacheMaxAgeInDays: Int { 7 }
+    
+    func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
+        calendar.date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        self + seconds
     }
 }

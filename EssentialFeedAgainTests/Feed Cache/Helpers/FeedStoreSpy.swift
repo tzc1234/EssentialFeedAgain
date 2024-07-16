@@ -11,7 +11,7 @@ import EssentialFeedAgain
 final class FeedStoreSpy: FeedStore {
     typealias DeletionStub = Result<Void, Error>
     typealias InsertionStub = Result<Void, Error>
-    typealias RetrieveStub = Result<[LocalFeedImage], Error>
+    typealias RetrieveStub = Result<([LocalFeedImage], Date), Error>
     
     enum Message: Equatable {
         case deleteCachedFeed
@@ -41,7 +41,7 @@ final class FeedStoreSpy: FeedStore {
         try insertionStubs.removeFirst().get()
     }
     
-    func retrieve() async throws -> [LocalFeedImage] {
+    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date){
         messages.append(.retrieve)
         return try retrievalStubs.removeFirst().get()
     }
