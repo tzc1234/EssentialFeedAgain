@@ -30,6 +30,7 @@
 		BEA8284E2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */; };
 		BEA8284F2BE2955900E553CB /* EssentialFeedAgain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */; };
 		BEA828562BE29A4D00E553CB /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */; };
+		BEF303DA2C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF303D92C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 		BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EssentialFeedAgainAPIEndToEndTests.swift; sourceTree = "<group>"; };
 		BEA828552BE2959D00E553CB /* EssentialFeedAgainAPIEndToEndTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedAgainAPIEndToEndTests.xctestplan; sourceTree = "<group>"; };
 		BEA828572BE29B6000E553CB /* Mac_CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mac_CI.xctestplan; sourceTree = "<group>"; };
+		BEF303D92C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadFeedFromCacheUseCaseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 			children = (
 				BE83ED282C458AD7000509DA /* Helpers */,
 				BE83ED262C457555000509DA /* CacheFeedUseCaseTests.swift */,
+				BEF303D92C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift */,
 			);
 			path = "Feed Cache";
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				BE1248D32C44514800F48A89 /* XCTestCase+AssertThrows.swift in Sources */,
 				BEA633982BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE4CFBA72BE0F03A008F7224 /* HTTPClientSpy.swift in Sources */,
+				BEF303DA2C46731C004E3280 /* LoadFeedFromCacheUseCaseTests.swift in Sources */,
 				BE83ED2A2C458AE2000509DA /* FeedStoreSpy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
