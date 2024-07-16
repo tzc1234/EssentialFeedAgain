@@ -118,6 +118,20 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
+    
+    func test_load_hasNoSideEffectsOnExpirationCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+        )
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
 
     // MARK: - Helpers
     

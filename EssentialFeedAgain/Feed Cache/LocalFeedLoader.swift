@@ -32,7 +32,12 @@ public final class LocalFeedLoader {
     
     public func validateCache() async {
         do {
-            _ = try await store.retrieve()
+            let (_, timestamp) = try await store.retrieve()
+            guard !FeedCachePolicy.validate(timestamp, against: currentDate()) else {
+                return
+            }
+            
+            try? await store.deleteCachedFeed()
         } catch {
             try? await store.deleteCachedFeed()
         }
