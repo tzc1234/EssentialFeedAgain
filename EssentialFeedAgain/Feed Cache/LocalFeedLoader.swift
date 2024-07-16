@@ -24,7 +24,7 @@ extension LocalFeedLoader {
     }
 }
 
-extension LocalFeedLoader {
+extension LocalFeedLoader: FeedLoader {
     public func load() async throws -> [FeedImage] {
         let (feed, timestamp) = try await store.retrieve()
         guard FeedCachePolicy.validate(timestamp, against: currentDate()) else {
