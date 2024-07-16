@@ -73,6 +73,20 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         
         XCTAssertTrue(receivedImages.isEmpty)
     }
+    
+    func test_load_deliversNoCachedImagesOnExpiredCache() async throws {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, _) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+        )
+        
+        let receivedImages = try await sut.load()
+        
+        XCTAssertTrue(receivedImages.isEmpty)
+    }
 
     // MARK: - Helpers
     
