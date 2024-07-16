@@ -71,7 +71,7 @@ final class CacheFeedUseCaseTests: XCTestCase {
                          insertionStubs: [FeedStoreSpy.InsertionStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
-        let store = FeedStoreSpy(deletionStubs: deletionStubs, insertionStubs: insertionStubs)
+        let store = FeedStoreSpy(deletionStubs: deletionStubs, insertionStubs: insertionStubs, retrievalStubs: [])
         let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
