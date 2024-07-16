@@ -87,6 +87,14 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         
         XCTAssertTrue(receivedImages.isEmpty)
     }
+    
+    func test_load_hasNoSideEffectOnRetrievalError() async {
+        let (sut, store) = makeSUT(retrievalStubs: [.failure(anyNSError())])
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
 
     // MARK: - Helpers
     

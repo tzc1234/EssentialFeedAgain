@@ -29,6 +29,11 @@ public final class LocalFeedLoader {
         
         return feed.models
     }
+    
+    public func validateCache() async {
+        _ = try? await store.retrieve()
+        try? await store.deleteCachedFeed()
+    }
 }
 
 private extension [FeedImage] {
