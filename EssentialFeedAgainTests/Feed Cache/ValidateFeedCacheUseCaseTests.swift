@@ -15,7 +15,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
-    func test_validate_deletesCacheOnRetrievalError() async {
+    func test_validateCache_deletesCacheOnRetrievalError() async {
         let (sut, store) = makeSUT(
             deletionStubs: [.success(())],
             retrievalStubs: [.failure(anyNSError())]
@@ -24,6 +24,15 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
+    }
+    
+    func test_validateCache_doesNotDeleteCacheOnEmptyCache() async {
+        let emptyCache = [LocalFeedImage]()
+        let (sut, store) = makeSUT(retrievalStubs: [success(with: emptyCache, timestamp: .now)])
+        
+        await sut.validateCache()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
     }
 
     // MARK: - Helpers
@@ -43,5 +52,9 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
+    }
+    
+    private func success(with feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
+        .success((feed, timestamp))
     }
 }

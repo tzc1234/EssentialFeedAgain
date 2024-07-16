@@ -31,8 +31,11 @@ public final class LocalFeedLoader {
     }
     
     public func validateCache() async {
-        _ = try? await store.retrieve()
-        try? await store.deleteCachedFeed()
+        do {
+            _ = try await store.retrieve()
+        } catch {
+            try? await store.deleteCachedFeed()
+        }
     }
 }
 
