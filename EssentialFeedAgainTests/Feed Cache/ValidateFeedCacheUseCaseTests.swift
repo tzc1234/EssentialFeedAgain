@@ -83,13 +83,12 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
                          deletionStubs: [FeedStoreSpy.DeletionStub] = [],
-                         insertionStubs: [FeedStoreSpy.InsertionStub] = [],
                          retrievalStubs: [FeedStoreSpy.RetrieveStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy(
             deletionStubs: deletionStubs,
-            insertionStubs: insertionStubs,
+            insertionStubs: [],
             retrievalStubs: retrievalStubs
         )
         let sut = LocalFeedLoader(store: store, currentDate: currentDate)
