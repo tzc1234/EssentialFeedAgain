@@ -20,10 +20,25 @@ public final class LocalFeedLoader {
         try await store.deleteCachedFeed()
         try await store.insert(feed.local, timestamp: currentDate())
     }
+    
+    public func load() async throws -> [FeedImage] {
+        let (feed, timestamp) = try await store.retrieve()
+        guard FeedCachePolicy.validate(timestamp, against: currentDate()) else {
+            return []
+        }
+        
+        return feed.models
+    }
 }
 
 private extension [FeedImage] {
     var local: [LocalFeedImage] {
         map { LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
+    }
+}
+
+private extension [LocalFeedImage] {
+    var models: [FeedImage] {
+        map { FeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url) }
     }
 }

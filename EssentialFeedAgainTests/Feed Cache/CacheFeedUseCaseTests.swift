@@ -42,7 +42,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let deletionError = anyNSError()
         let (sut, _) = makeSUT(deletionStubs: [.failure(deletionError)])
         
-        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models)) { error in
+            XCTAssertEqual(error as NSError, deletionError)
+        }
     }
     
     func test_save_failsOnInsertionError() async {
@@ -52,7 +54,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
             insertionStubs: [.failure(insertionError)]
         )
         
-        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models)) { error in
+            XCTAssertEqual(error as NSError, insertionError)
+        }
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion() async {
@@ -71,22 +75,10 @@ final class CacheFeedUseCaseTests: XCTestCase {
                          insertionStubs: [FeedStoreSpy.InsertionStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalFeedLoader, store: FeedStoreSpy) {
-        let store = FeedStoreSpy(deletionStubs: deletionStubs, insertionStubs: insertionStubs)
+        let store = FeedStoreSpy(deletionStubs: deletionStubs, insertionStubs: insertionStubs, retrievalStubs: [])
         let sut = LocalFeedLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
-    }
-    
-    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
-        let feed = [uniqueImage(), uniqueImage()]
-        let localFeed = feed.map {
-            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
-        }
-        return (feed, localFeed)
-    }
-    
-    private func uniqueImage() -> FeedImage {
-        FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
     }
 }
