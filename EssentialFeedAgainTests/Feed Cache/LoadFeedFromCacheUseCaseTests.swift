@@ -51,7 +51,7 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let fixCurrentDate = Date.now
         let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
         let (sut, _) = makeSUT(
-            currentDate: { nonExpiredTimestamp }, 
+            currentDate: { fixCurrentDate }, 
             retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
         )
         
@@ -81,18 +81,6 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     private func success(with feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
         .success((feed, timestamp))
-    }
-    
-    private func uniqueImageFeed() -> (models: [FeedImage], local: [LocalFeedImage]) {
-        let feed = [uniqueImage(), uniqueImage()]
-        let localFeed = feed.map {
-            LocalFeedImage(id: $0.id, description: $0.description, location: $0.location, url: $0.url)
-        }
-        return (feed, localFeed)
-    }
-    
-    private func uniqueImage() -> FeedImage {
-        FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
     }
 }
 
