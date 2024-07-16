@@ -42,7 +42,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
         let deletionError = anyNSError()
         let (sut, _) = makeSUT(deletionStubs: [.failure(deletionError)])
         
-        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models)) { error in
+            XCTAssertEqual(error as NSError, deletionError)
+        }
     }
     
     func test_save_failsOnInsertionError() async {
@@ -52,7 +54,9 @@ final class CacheFeedUseCaseTests: XCTestCase {
             insertionStubs: [.failure(insertionError)]
         )
         
-        await assertThrowsError(try await sut.save(uniqueImageFeed().models))
+        await assertThrowsError(try await sut.save(uniqueImageFeed().models)) { error in
+            XCTAssertEqual(error as NSError, insertionError)
+        }
     }
     
     func test_save_succeedsOnSuccessfulCacheInsertion() async {
