@@ -20,6 +20,10 @@ public final class LocalFeedLoader {
         try await store.deleteCachedFeed()
         try await store.insert(feed.local, timestamp: currentDate())
     }
+    
+    public func load() async {
+        await store.retrieve()
+    }
 }
 
 private extension [FeedImage] {
