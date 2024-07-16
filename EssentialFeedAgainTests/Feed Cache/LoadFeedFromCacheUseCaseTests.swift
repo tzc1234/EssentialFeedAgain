@@ -51,13 +51,27 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
         let fixCurrentDate = Date.now
         let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
         let (sut, _) = makeSUT(
-            currentDate: { fixCurrentDate }, 
+            currentDate: { fixCurrentDate },
             retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
         )
         
         let receivedImages = try await sut.load()
         
         XCTAssertEqual(receivedImages, feed.models)
+    }
+    
+    func test_load_deliversNoCachedImagesOnExpirationCache() async throws {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
+        let (sut, _) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+        )
+        
+        let receivedImages = try await sut.load()
+        
+        XCTAssertTrue(receivedImages.isEmpty)
     }
 
     // MARK: - Helpers

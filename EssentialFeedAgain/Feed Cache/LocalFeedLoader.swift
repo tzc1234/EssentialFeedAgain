@@ -8,6 +8,8 @@
 import Foundation
 
 public final class LocalFeedLoader {
+    private let calendar = Calendar(identifier: .gregorian)
+    
     private let store: FeedStore
     private let currentDate: () -> Date
     
@@ -23,8 +25,20 @@ public final class LocalFeedLoader {
     
     public func load() async throws -> [FeedImage] {
         let (feed, timestamp) = try await store.retrieve()
+        guard validate(timestamp) else { return [] }
+        
         return feed.models
     }
+    
+    private func validate(_ timestamp: Date) -> Bool {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheAgeInDays, to: timestamp) else {
+            return false
+        }
+        
+        return currentDate() < maxCacheAge
+    }
+    
+    private var maxCacheAgeInDays: Int { 7 }
 }
 
 private extension [FeedImage] {
