@@ -15,12 +15,16 @@ public final class LocalFeedLoader {
         self.store = store
         self.currentDate = currentDate
     }
-    
+}
+
+extension LocalFeedLoader {
     public func save(_ feed: [FeedImage]) async throws {
         try await store.deleteCachedFeed()
         try await store.insert(feed.local, timestamp: currentDate())
     }
-    
+}
+
+extension LocalFeedLoader: FeedLoader {
     public func load() async throws -> [FeedImage] {
         let (feed, timestamp) = try await store.retrieve()
         guard FeedCachePolicy.validate(timestamp, against: currentDate()) else {
@@ -28,6 +32,21 @@ public final class LocalFeedLoader {
         }
         
         return feed.models
+    }
+}
+
+extension LocalFeedLoader {
+    public func validateCache() async {
+        do {
+            let (_, timestamp) = try await store.retrieve()
+            guard !FeedCachePolicy.validate(timestamp, against: currentDate()) else {
+                return
+            }
+            
+            try? await store.deleteCachedFeed()
+        } catch {
+            try? await store.deleteCachedFeed()
+        }
     }
 }
 

@@ -77,15 +77,74 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     func test_load_deliversNoCachedImagesOnExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
-        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, _) = makeSUT(
             currentDate: { fixCurrentDate },
-            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
         )
         
         let receivedImages = try await sut.load()
         
         XCTAssertTrue(receivedImages.isEmpty)
+    }
+    
+    func test_load_hasNoSideEffectOnRetrievalError() async {
+        let (sut, store) = makeSUT(retrievalStubs: [.failure(anyNSError())])
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
+    
+    func test_load_hasNoSideEffectsOnEmptyCache() async {
+        let emptyCache = [LocalFeedImage]()
+        let (sut, store) = makeSUT(retrievalStubs: [success(with: emptyCache, timestamp: .now)])
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
+    
+    func test_load_hasNoSideEffectsOnNonExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
+        )
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
+    
+    func test_load_hasNoSideEffectsOnExpirationCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+        )
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
+    }
+    
+    func test_load_hasNoSideEffectsOnExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixCurrentDate = Date.now
+        let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, store) = makeSUT(
+            currentDate: { fixCurrentDate },
+            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
+        )
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(store.messages, [.retrieve])
     }
 
     // MARK: - Helpers
@@ -103,21 +162,5 @@ final class LoadFeedFromCacheUseCaseTests: XCTestCase {
     
     private func success(with feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
         .success((feed, timestamp))
-    }
-}
-
-private extension Date {
-    func minusMaxCacheAgeInDays() -> Date {
-        adding(days: -feedCacheMaxAgeInDays)
-    }
-    
-    private var feedCacheMaxAgeInDays: Int { 7 }
-    
-    func adding(days: Int, calendar: Calendar = Calendar(identifier: .gregorian)) -> Date {
-        calendar.date(byAdding: .day, value: days, to: self)!
-    }
-    
-    func adding(seconds: TimeInterval) -> Date {
-        self + seconds
     }
 }
