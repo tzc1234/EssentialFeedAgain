@@ -125,6 +125,21 @@ final class CodableFeedStoreTests: XCTestCase {
         await assertThrowsError(_ = try await sut.retrieve())
     }
     
+    func test_insert_overridesPreviouslyInsertedCacheValues() async throws {
+        let sut = makeSUT()
+        
+        try await sut.insert(uniqueImageFeed().local, timestamp: .now)
+        
+        let lastFeed = uniqueImageFeed().local
+        let lastTimestamp = Date.now
+        try await sut.insert(lastFeed, timestamp: lastTimestamp)
+        
+        let received = try await sut.retrieve()
+        
+        XCTAssertEqual(received?.feed, lastFeed)
+        XCTAssertEqual(received?.timestamp, lastTimestamp)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
