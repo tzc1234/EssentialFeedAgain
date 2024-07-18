@@ -22,4 +22,14 @@ final class CodableFeedStoreTests: XCTestCase {
         
         XCTAssertTrue(received.feed.isEmpty)
     }
+    
+    func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() async throws {
+        let sut = CodableFeedStore()
+        
+        let firstReceived = try await sut.retrieve()
+        let lastReceived = try await sut.retrieve()
+        
+        XCTAssertTrue(firstReceived.feed.isEmpty)
+        XCTAssertTrue(lastReceived.feed.isEmpty)
+    }
 }
