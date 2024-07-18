@@ -106,7 +106,7 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertEqual(secondReceived?.feed, feed)
     }
     
-    func test_retrieve_deliversFailureOnRetrievalError() async {
+    func test_retrieve_deliversErrorOnRetrievalError() async {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
@@ -138,6 +138,15 @@ final class CodableFeedStoreTests: XCTestCase {
         
         XCTAssertEqual(received?.feed, lastFeed)
         XCTAssertEqual(received?.timestamp, lastTimestamp)
+    }
+    
+    func test_insert_deliversErrorOnInsertionError() async {
+        let invalidStoreURL = URL(string: "invalid:\\store-url")
+        let sut = makeSUT(storeURL: invalidStoreURL)
+        let feed = uniqueImageFeed().local
+        let timestamp = Date.now
+        
+        await assertThrowsError(try await sut.insert(feed, timestamp: timestamp))
     }
     
     // MARK: - Helpers
