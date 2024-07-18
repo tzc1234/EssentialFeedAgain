@@ -101,11 +101,15 @@ final class CodableFeedStoreTests: XCTestCase {
         return sut
     }
     
-    private func testSpecificStoreURL() -> URL {
-        FileManager.default.temporaryDirectory.appending(path: "image-feed.store")
-    }
-    
     private func removeAllArtefactsAfterTest() {
         try? FileManager.default.removeItem(at: testSpecificStoreURL())
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        FileManager
+            .default
+            .urls(for: .cachesDirectory, in: .userDomainMask)
+            .first!
+            .appending(path: "\(type(of: self)).store")
     }
 }
