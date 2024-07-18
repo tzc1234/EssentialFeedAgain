@@ -176,6 +176,13 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertNil(received)
     }
     
+    func test_delete_deliversErrorOnDeletionError() async {
+        let noDeletionPermissionURL = cachesDirectory()
+        let sut = makeSUT(storeURL: noDeletionPermissionURL)
+        
+        await assertThrowsError(try await sut.deleteCachedFeed())
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
@@ -189,10 +196,10 @@ final class CodableFeedStoreTests: XCTestCase {
     }
     
     private func testSpecificStoreURL() -> URL {
-        FileManager
-            .default
-            .urls(for: .cachesDirectory, in: .userDomainMask)
-            .first!
-            .appending(path: "\(type(of: self)).store")
+        cachesDirectory().appending(path: "\(type(of: self)).store")
+    }
+    
+    private func cachesDirectory() -> URL {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
     }
 }
