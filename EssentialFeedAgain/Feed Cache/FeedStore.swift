@@ -10,5 +10,5 @@ import Foundation
 public protocol FeedStore {
     func deleteCachedFeed() async throws
     func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws
-    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)
+    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)?
 }

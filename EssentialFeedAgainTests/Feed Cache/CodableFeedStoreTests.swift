@@ -20,9 +20,9 @@ final class CodableFeedStore {
         self.storeURL = storeURL
     }
     
-    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date) {
+    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
         guard let data = try? Data(contentsOf: storeURL) else {
-            return ([], Date.now)
+            return nil
         }
         
         let cached = try JSONDecoder().decode(Cache.self, from: data)
@@ -47,7 +47,7 @@ final class CodableFeedStoreTests: XCTestCase {
         
         let received = try await sut.retrieve()
         
-        XCTAssertTrue(received.feed.isEmpty)
+        XCTAssertNil(received)
     }
     
     func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() async throws {
@@ -56,8 +56,8 @@ final class CodableFeedStoreTests: XCTestCase {
         let firstReceived = try await sut.retrieve()
         let lastReceived = try await sut.retrieve()
         
-        XCTAssertTrue(firstReceived.feed.isEmpty)
-        XCTAssertTrue(lastReceived.feed.isEmpty)
+        XCTAssertNil(firstReceived)
+        XCTAssertNil(lastReceived)
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValue() async throws {
@@ -68,7 +68,7 @@ final class CodableFeedStoreTests: XCTestCase {
         try await sut.insert(feed, timestamp: timestamp)
         let received = try await sut.retrieve()
         
-        XCTAssertEqual(received.feed, feed)
+        XCTAssertEqual(received?.feed, feed)
     }
     
     // MARK: - Helpers

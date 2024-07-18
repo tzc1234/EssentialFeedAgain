@@ -41,7 +41,7 @@ final class FeedStoreSpy: FeedStore {
         try insertionStubs.removeFirst().get()
     }
     
-    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date){
+    func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
         messages.append(.retrieve)
         return try retrievalStubs.removeFirst().get()
     }
