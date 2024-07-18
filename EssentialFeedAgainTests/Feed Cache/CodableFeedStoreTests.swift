@@ -55,6 +55,10 @@ final class CodableFeedStore {
         let encoded = try JSONEncoder().encode(Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp))
         try encoded.write(to: storeURL)
     }
+    
+    func deleteCachedFeed() async throws {
+        
+    }
 }
 
 final class CodableFeedStoreTests: XCTestCase {
@@ -147,6 +151,15 @@ final class CodableFeedStoreTests: XCTestCase {
         let timestamp = Date.now
         
         await assertThrowsError(try await sut.insert(feed, timestamp: timestamp))
+    }
+    
+    func test_delete_hasNoSideEffectsOnEmptyCache() async throws {
+        let sut = makeSUT()
+        
+        try await sut.deleteCachedFeed()
+        let received = try await sut.retrieve()
+        
+        XCTAssertNil(received)
     }
     
     // MARK: - Helpers
