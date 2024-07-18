@@ -47,8 +47,8 @@ final class CodableFeedStore {
             return nil
         }
         
-        let cached = try JSONDecoder().decode(Cache.self, from: data)
-        return (cached.localFeed, cached.timestamp)
+        let cache = try JSONDecoder().decode(Cache.self, from: data)
+        return (cache.localFeed, cache.timestamp)
     }
     
     func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws {
@@ -104,6 +104,14 @@ final class CodableFeedStoreTests: XCTestCase {
         
         XCTAssertEqual(firstReceived?.feed, feed)
         XCTAssertEqual(secondReceived?.feed, feed)
+    }
+    
+    func test_retrieve_deliversFailureOnRetrievalError() async {
+        let sut = makeSUT()
+        
+        try! "invalid data".write(to: testSpecificStoreURL(), atomically: false, encoding: .utf8)
+        
+        await assertThrowsError(_ = try await sut.retrieve())
     }
     
     // MARK: - Helpers
