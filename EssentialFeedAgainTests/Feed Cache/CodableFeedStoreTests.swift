@@ -93,6 +93,19 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertEqual(received?.feed, feed)
     }
     
+    func test_retrieveTwice_hasNoSideEffectsOnNonEmptyCache() async throws {
+        let sut = makeSUT()
+        let feed = uniqueImageFeed().local
+        let timestamp = Date.now
+        
+        try await sut.insert(feed, timestamp: timestamp)
+        let firstReceived = try await sut.retrieve()
+        let lastReceived = try await sut.retrieve()
+        
+        XCTAssertEqual(firstReceived?.feed, feed)
+        XCTAssertEqual(lastReceived?.feed, feed)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
