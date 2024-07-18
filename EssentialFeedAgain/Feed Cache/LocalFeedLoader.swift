@@ -26,20 +26,20 @@ extension LocalFeedLoader {
 
 extension LocalFeedLoader: FeedLoader {
     public func load() async throws -> [FeedImage] {
-        let (feed, timestamp) = try await store.retrieve()
-        guard FeedCachePolicy.validate(timestamp, against: currentDate()) else {
+        let cache = try await store.retrieve()
+        guard let cache, FeedCachePolicy.validate(cache.timestamp, against: currentDate()) else {
             return []
         }
         
-        return feed.models
+        return cache.feed.models
     }
 }
 
 extension LocalFeedLoader {
     public func validateCache() async {
         do {
-            let (_, timestamp) = try await store.retrieve()
-            guard !FeedCachePolicy.validate(timestamp, against: currentDate()) else {
+            let cache = try await store.retrieve()
+            guard let cache, !FeedCachePolicy.validate(cache.timestamp, against: currentDate()) else {
                 return
             }
             
