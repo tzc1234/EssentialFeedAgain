@@ -115,6 +115,16 @@ final class CodableFeedStoreTests: XCTestCase {
         await assertThrowsError(_ = try await sut.retrieve())
     }
     
+    func test_retrieveTwice_hasNoSideEffectsOnFailure() async {
+        let storeURL = testSpecificStoreURL()
+        let sut = makeSUT(storeURL: storeURL)
+        
+        try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
+        
+        await assertThrowsError(_ = try await sut.retrieve())
+        await assertThrowsError(_ = try await sut.retrieve())
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(storeURL: URL? = nil, file: StaticString = #filePath, line: UInt = #line) -> CodableFeedStore {
