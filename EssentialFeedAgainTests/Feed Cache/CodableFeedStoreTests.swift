@@ -10,8 +10,30 @@ import EssentialFeedAgain
 
 final class CodableFeedStore {
     private struct Cache: Codable {
-        let feed: [LocalFeedImage]
+        let feed: [CodableFeedImage]
         let timestamp: Date
+        
+        var localFeed: [LocalFeedImage] {
+            feed.map(\.local)
+        }
+    }
+    
+    private struct CodableFeedImage: Codable {
+        let id: UUID
+        let description: String?
+        let location: String?
+        let url: URL
+        
+        init(_ image: LocalFeedImage) {
+            self.id = image.id
+            self.description = image.description
+            self.location = image.location
+            self.url = image.url
+        }
+        
+        var local: LocalFeedImage {
+            LocalFeedImage(id: id, description: description, location: location, url: url)
+        }
     }
     
     private let storeURL: URL
@@ -26,11 +48,11 @@ final class CodableFeedStore {
         }
         
         let cached = try JSONDecoder().decode(Cache.self, from: data)
-        return (cached.feed, cached.timestamp)
+        return (cached.localFeed, cached.timestamp)
     }
     
     func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws {
-        let encoded = try JSONEncoder().encode(Cache(feed: feed, timestamp: timestamp))
+        let encoded = try JSONEncoder().encode(Cache(feed: feed.map(CodableFeedImage.init), timestamp: timestamp))
         try encoded.write(to: storeURL)
     }
 }
