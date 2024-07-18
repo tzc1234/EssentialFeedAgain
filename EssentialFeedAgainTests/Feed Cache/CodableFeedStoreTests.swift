@@ -76,10 +76,10 @@ final class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         
         let firstReceived = try await sut.retrieve()
-        let lastReceived = try await sut.retrieve()
+        let secondReceived = try await sut.retrieve()
         
         XCTAssertNil(firstReceived)
-        XCTAssertNil(lastReceived)
+        XCTAssertNil(secondReceived)
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValue() async throws {
@@ -100,10 +100,10 @@ final class CodableFeedStoreTests: XCTestCase {
         
         try await sut.insert(feed, timestamp: timestamp)
         let firstReceived = try await sut.retrieve()
-        let lastReceived = try await sut.retrieve()
+        let secondReceived = try await sut.retrieve()
         
         XCTAssertEqual(firstReceived?.feed, feed)
-        XCTAssertEqual(lastReceived?.feed, feed)
+        XCTAssertEqual(secondReceived?.feed, feed)
     }
     
     // MARK: - Helpers
