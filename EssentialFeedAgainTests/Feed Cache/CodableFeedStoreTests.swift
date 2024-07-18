@@ -57,7 +57,11 @@ final class CodableFeedStore {
     }
     
     func deleteCachedFeed() async throws {
+        guard FileManager.default.fileExists(atPath: storeURL.path()) else {
+            return
+        }
         
+        try FileManager.default.removeItem(at: storeURL)
     }
 }
 
@@ -156,6 +160,16 @@ final class CodableFeedStoreTests: XCTestCase {
     func test_delete_hasNoSideEffectsOnEmptyCache() async throws {
         let sut = makeSUT()
         
+        try await sut.deleteCachedFeed()
+        let received = try await sut.retrieve()
+        
+        XCTAssertNil(received)
+    }
+    
+    func test_delete_emptiesPreviouslyInsertedCache() async throws {
+        let sut = makeSUT()
+        
+        try await sut.insert(uniqueImageFeed().local, timestamp: .now)
         try await sut.deleteCachedFeed()
         let received = try await sut.retrieve()
         
