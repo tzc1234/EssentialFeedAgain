@@ -82,7 +82,7 @@ final class CodableFeedStoreTests: XCTestCase {
         XCTAssertNil(secondReceived)
     }
     
-    func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValue() async throws {
+    func test_retrieve_deliversFoundValuesOnNonEmptyCache() async throws {
         let sut = makeSUT()
         let feed = uniqueImageFeed().local
         let timestamp = Date.now
