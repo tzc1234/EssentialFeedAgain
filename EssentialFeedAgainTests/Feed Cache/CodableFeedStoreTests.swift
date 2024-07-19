@@ -8,6 +8,37 @@
 import XCTest
 import EssentialFeedAgain
 
+protocol FeedStoreSpecs {
+    func test_retrieve_deliversEmptyOnEmptyCache() async throws
+    func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() async throws
+    func test_retrieve_deliversFoundValuesOnNonEmptyCache() async throws
+    func test_retrieveTwice_hasNoSideEffectsOnNonEmptyCache() async throws
+    
+    func test_insert_deliversNoErrorOnEmptyCache() async
+    func test_insert_deliversNoErrorOnNonEmptyCache() async throws
+    func test_insert_overridesPreviouslyInsertedCacheValues() async throws
+    
+    func test_delete_deliversNoErrorOnEmptyCache() async
+    func test_delete_hasNoSideEffectsOnEmptyCache() async throws
+    func test_delete_deliversNoErrorOnNonEmptyCache() async throws
+    func test_delete_emptiesPreviouslyInsertedCache() async throws
+}
+
+protocol FailableRetrieveFeedStoreSpecs {
+    func test_retrieve_deliversErrorOnRetrievalError() async
+    func test_retrieveTwice_hasNoSideEffectsOnRetrievalError() async
+}
+
+protocol FailableInsertFeedStoreSpecs {
+    func test_insert_deliversErrorOnInsertionError() async
+    func test_insert_hasNoSideEffectsOnInsertionError() async throws
+}
+
+protocol FailableDeleteFeedStoreSpecs {
+    func test_delete_deliversErrorOnDeletionError() async
+    func test_delete_hasNoSideEffectsOnDeletionError() async
+}
+
 final class CodableFeedStoreTests: XCTestCase {
     override func tearDown() async throws {
         try await super.tearDown()
@@ -66,7 +97,7 @@ final class CodableFeedStoreTests: XCTestCase {
         await assertThrowsError(_ = try await sut.retrieve())
     }
     
-    func test_retrieveTwice_hasNoSideEffectsOnFailure() async {
+    func test_retrieveTwice_hasNoSideEffectsOnRetrievalError() async {
         let storeURL = testSpecificStoreURL()
         let sut = makeSUT(storeURL: storeURL)
         
@@ -74,6 +105,22 @@ final class CodableFeedStoreTests: XCTestCase {
         
         await assertThrowsError(_ = try await sut.retrieve())
         await assertThrowsError(_ = try await sut.retrieve())
+    }
+    
+    func test_insert_deliversNoErrorOnEmptyCache() async {
+        let sut = makeSUT()
+        
+        await assertNoThrow(try await sut.insert(uniqueImageFeed().local, timestamp: .now))
+    }
+    
+    func test_insert_deliversNoErrorOnNonEmptyCache() async throws {
+        let sut = makeSUT()
+        
+        try await sut.insert(uniqueImageFeed().local, timestamp: .now)
+        
+        let lastFeed = uniqueImageFeed().local
+        let lastTimestamp = Date.now
+        await assertNoThrow(try await sut.insert(lastFeed, timestamp: lastTimestamp))
     }
     
     func test_insert_overridesPreviouslyInsertedCacheValues() async throws {
@@ -100,6 +147,24 @@ final class CodableFeedStoreTests: XCTestCase {
         await assertThrowsError(try await sut.insert(feed, timestamp: timestamp))
     }
     
+    func test_insert_hasNoSideEffectsOnInsertionError() async throws {
+        let invalidStoreURL = URL(string: "invalid:\\store-url")
+        let sut = makeSUT(storeURL: invalidStoreURL)
+        let feed = uniqueImageFeed().local
+        let timestamp = Date.now
+        
+        try? await sut.insert(feed, timestamp: timestamp)
+        let received = try await sut.retrieve()
+        
+        XCTAssertNil(received)
+    }
+    
+    func test_delete_deliversNoErrorOnEmptyCache() async {
+        let sut = makeSUT()
+        
+        await assertNoThrow(try await sut.deleteCachedFeed())
+    }
+    
     func test_delete_hasNoSideEffectsOnEmptyCache() async throws {
         let sut = makeSUT()
         
@@ -107,6 +172,14 @@ final class CodableFeedStoreTests: XCTestCase {
         let received = try await sut.retrieve()
         
         XCTAssertNil(received)
+    }
+    
+    func test_delete_deliversNoErrorOnNonEmptyCache() async throws {
+        let sut = makeSUT()
+        
+        try await sut.insert(uniqueImageFeed().local, timestamp: .now)
+        
+        await assertNoThrow(try await sut.deleteCachedFeed())
     }
     
     func test_delete_emptiesPreviouslyInsertedCache() async throws {
@@ -124,6 +197,16 @@ final class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT(storeURL: noDeletionPermissionURL)
         
         await assertThrowsError(try await sut.deleteCachedFeed())
+    }
+    
+    func test_delete_hasNoSideEffectsOnDeletionError() async throws {
+        let noDeletionPermissionURL = cachesDirectory()
+        let sut = makeSUT(storeURL: noDeletionPermissionURL)
+        
+        try? await sut.deleteCachedFeed()
+        let received = try await sut.retrieve()
+        
+        XCTAssertNil(received)
     }
     
     // MARK: - Helpers
