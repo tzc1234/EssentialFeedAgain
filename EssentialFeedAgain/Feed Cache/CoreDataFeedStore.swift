@@ -25,17 +25,12 @@ public final class CoreDataFeedStore: FeedStore {
             let request = NSFetchRequest<ManagedCache>(entityName: String(describing: ManagedCache.self))
             request.returnsObjectsAsFaults = false
             request.fetchLimit = 1
+            
             guard let cache = try context.fetch(request).first else {
                 return nil
             }
-            
-            let feed = cache.feed
-                .compactMap { $0 as? ManagedFeedImage }
-                .map {
-                    LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)
-                }
            
-            return (feed, cache.timestamp)
+            return (cache.localFeed, cache.timestamp)
         }
     }
     
@@ -43,14 +38,7 @@ public final class CoreDataFeedStore: FeedStore {
         try await perform { context in
             let managedCache = ManagedCache(context: context)
             managedCache.timestamp = timestamp
-            managedCache.feed = NSOrderedSet(array: feed.map { local in
-                let managedFeedImage = ManagedFeedImage(context: context)
-                managedFeedImage.id = local.id
-                managedFeedImage.imageDescription = local.description
-                managedFeedImage.location = local.location
-                managedFeedImage.url = local.url
-                return managedFeedImage
-            })
+            managedCache.feed = ManagedCache.images(from: feed, in: context)
             
             try context.save()
         }
@@ -116,6 +104,21 @@ extension CoreDataFeedStore {
 final class ManagedCache: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var feed: NSOrderedSet
+    
+    static func images(from localFeed: [LocalFeedImage], in context: NSManagedObjectContext) -> NSOrderedSet {
+        NSOrderedSet(array: localFeed.map { local in
+            let managed = ManagedFeedImage(context: context)
+            managed.id = local.id
+            managed.imageDescription = local.description
+            managed.location = local.location
+            managed.url = local.url
+            return managed
+        })
+    }
+    
+    var localFeed: [LocalFeedImage] {
+        feed.compactMap { ($0 as? ManagedFeedImage)?.local }
+    }
 }
 
 @objc(ManagedFeedImage)
@@ -125,4 +128,8 @@ final class ManagedFeedImage: NSManagedObject {
     @NSManaged var location: String?
     @NSManaged var url: URL
     @NSManaged var cache: ManagedCache
+    
+    var local: LocalFeedImage {
+        LocalFeedImage(id: id, description: imageDescription, location: location, url: url)
+    }
 }
