@@ -22,11 +22,7 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
         try await perform { context in
-            let request = NSFetchRequest<ManagedCache>(entityName: String(describing: ManagedCache.self))
-            request.returnsObjectsAsFaults = false
-            request.fetchLimit = 1
-            
-            guard let cache = try context.fetch(request).first else {
+            guard let cache = try ManagedCache.find(in: context) else {
                 return nil
             }
            
@@ -104,6 +100,13 @@ extension CoreDataFeedStore {
 final class ManagedCache: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var feed: NSOrderedSet
+    
+    static func find(in context: NSManagedObjectContext) throws -> ManagedCache? {
+        let request = NSFetchRequest<ManagedCache>(entityName: String(describing: ManagedCache.self))
+        request.returnsObjectsAsFaults = false
+        request.fetchLimit = 1
+        return try context.fetch(request).first
+    }
     
     static func images(from localFeed: [LocalFeedImage], in context: NSManagedObjectContext) -> NSOrderedSet {
         NSOrderedSet(array: localFeed.map { local in
