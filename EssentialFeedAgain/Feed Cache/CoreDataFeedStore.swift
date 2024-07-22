@@ -21,11 +21,39 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
-        nil
+        try await context.perform { [context] in
+            let request = NSFetchRequest<ManagedCache>(entityName: String(describing: ManagedCache.self))
+            request.returnsObjectsAsFaults = false
+            request.fetchLimit = 1
+            guard let cache = try context.fetch(request).first else {
+                return nil
+            }
+            
+            let feed = cache.feed
+                .compactMap { $0 as? ManagedFeedImage }
+                .map {
+                    LocalFeedImage(id: $0.id, description: $0.imageDescription, location: $0.location, url: $0.url)
+                }
+           
+            return (feed, cache.timestamp)
+        }
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws {
-        
+        try await context.perform { [context] in
+            let managedCache = ManagedCache(context: context)
+            managedCache.timestamp = timestamp
+            managedCache.feed = NSOrderedSet(array: feed.map { local in
+                let managedFeedImage = ManagedFeedImage(context: context)
+                managedFeedImage.id = local.id
+                managedFeedImage.imageDescription = local.description
+                managedFeedImage.location = local.location
+                managedFeedImage.url = local.url
+                return managedFeedImage
+            })
+            
+            try context.save()
+        }
     }
     
     public func deleteCachedFeed() async throws {
