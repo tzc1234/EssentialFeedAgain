@@ -21,7 +21,7 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
-        try await context.perform { [context] in
+        try await perform { context in
             let request = NSFetchRequest<ManagedCache>(entityName: String(describing: ManagedCache.self))
             request.returnsObjectsAsFaults = false
             request.fetchLimit = 1
@@ -40,7 +40,7 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date) async throws {
-        try await context.perform { [context] in
+        try await perform { context in
             let managedCache = ManagedCache(context: context)
             managedCache.timestamp = timestamp
             managedCache.feed = NSOrderedSet(array: feed.map { local in
@@ -58,6 +58,12 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func deleteCachedFeed() async throws {
         
+    }
+    
+    private func perform<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
+        try await context.perform { [context] in
+            try block(context)
+        }
     }
     
     deinit {
