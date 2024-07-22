@@ -8,8 +8,16 @@
 import CoreData
 
 public final class CoreDataFeedStore: FeedStore {
-    public init() {
+    private let container: NSPersistentContainer
+    private let context: NSManagedObjectContext
+    
+    public init(storeURL: URL) throws {
+        guard let model = Self.model else {
+            throw LoadingError.modelNotFound
+        }
         
+        self.container = try Self.loadContainer(for: storeURL, with: model)
+        self.context = container.newBackgroundContext()
     }
     
     public func retrieve() async throws -> (feed: [LocalFeedImage], timestamp: Date)? {
@@ -22,6 +30,51 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func deleteCachedFeed() async throws {
         
+    }
+    
+    deinit {
+        cleanUpReferencesToPersistentStore()
+    }
+    
+    private func cleanUpReferencesToPersistentStore() {
+        context.performAndWait {
+            let coordinator = container.persistentStoreCoordinator
+            try? coordinator.persistentStores.forEach(coordinator.remove)
+        }
+    }
+}
+
+extension CoreDataFeedStore {
+    enum LoadingError: Error {
+        case modelNotFound
+        case loadContainerFailed
+    }
+    
+    private static let modelName = "FeedStore"
+    private static let model = getModel()
+    
+    private static func getModel() -> NSManagedObjectModel? {
+        guard let url = Bundle(for: Self.self).url(forResource: modelName, withExtension: "momd") else {
+            return nil
+        }
+        
+        return NSManagedObjectModel(contentsOf: url)
+    }
+    
+    private static func loadContainer(for url: URL, with model: NSManagedObjectModel) throws -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: modelName, managedObjectModel: model)
+        container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: url)]
+        
+        var loadError: Error?
+        container.loadPersistentStores { _, error in
+            loadError = error
+        }
+        
+        if loadError != nil {
+            throw LoadingError.loadContainerFailed
+        }
+        
+        return container
     }
 }
 

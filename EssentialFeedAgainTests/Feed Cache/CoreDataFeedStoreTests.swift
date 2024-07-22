@@ -10,13 +10,13 @@ import EssentialFeedAgain
 
 final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache() async throws {
-        let sut = makeSUT()
+        let sut = try makeSUT()
         
         try await assertThatRetrieveDeliversEmptyOnEmptyCache(on: sut)
     }
     
     func test_retrieveTwice_hasNoSideEffectsOnEmptyCache() async throws {
-        let sut = makeSUT()
+        let sut = try makeSUT()
         
         try await assertThatRetrieveTwiceHasNoSideEffectsOnEmptyCache(on: sut)
     }
@@ -59,8 +59,8 @@ final class CoreDataFeedStoreTests: XCTestCase, FeedStoreSpecs {
     
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> FeedStore {
-        let sut = CoreDataFeedStore()
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> FeedStore {
+        let sut = try CoreDataFeedStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

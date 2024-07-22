@@ -16,7 +16,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
                                                      line: UInt = #line) async throws {
         let received = try await sut.retrieve()
         
-        XCTAssertNil(received)
+        XCTAssertNil(received, file: file, line: line)
     }
     
     func assertThatRetrieveTwiceHasNoSideEffectsOnEmptyCache(on sut: FeedStore,
@@ -25,8 +25,8 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let firstReceived = try await sut.retrieve()
         let secondReceived = try await sut.retrieve()
         
-        XCTAssertNil(firstReceived)
-        XCTAssertNil(secondReceived)
+        XCTAssertNil(firstReceived, file: file, line: line)
+        XCTAssertNil(secondReceived, file: file, line: line)
     }
     
     func assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on sut: FeedStore,
@@ -38,7 +38,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         try await sut.insert(feed, timestamp: timestamp)
         let received = try await sut.retrieve()
         
-        XCTAssertEqual(received?.feed, feed)
+        XCTAssertEqual(received?.feed, feed, file: file, line: line)
     }
     
     func assertThatRetrieveTwiceHasNoSideEffectsOnNonEmptyCache(on sut: FeedStore,
