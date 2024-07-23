@@ -34,6 +34,20 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         XCTAssertEqual(received, feed)
     }
     
+    func test_save_overridesItemsSavedOnSeparateInstances() async throws {
+        let sutPerformFirstSave = try makeSUT()
+        let sutPerformLastSave = try makeSUT()
+        let sutPerformLoad = try makeSUT()
+        let firstFeed = uniqueImageFeed().models
+        let lastFeed = uniqueImageFeed().models
+        
+        try await sutPerformFirstSave.save(firstFeed)
+        try await sutPerformLastSave.save(lastFeed)
+        let received = try await sutPerformLoad.load()
+        
+        XCTAssertEqual(received, lastFeed)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> LocalFeedLoader {
