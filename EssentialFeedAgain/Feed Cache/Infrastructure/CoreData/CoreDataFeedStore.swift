@@ -42,7 +42,7 @@ public final class CoreDataFeedStore: FeedStore {
     
     public func deleteCachedFeed() async throws {
         try await perform { context in
-            try ManagedCache.deleteCache(in: context)
+            try ManagedCache.delete(in: context)
         }
     }
     

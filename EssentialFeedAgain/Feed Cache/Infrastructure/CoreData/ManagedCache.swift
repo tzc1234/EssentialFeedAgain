@@ -13,11 +13,11 @@ final class ManagedCache: NSManagedObject {
     @NSManaged var feed: NSOrderedSet
     
     static func newUniqueInstance(in context: NSManagedObjectContext) throws -> ManagedCache {
-        try deleteCache(in: context)
+        try delete(in: context)
         return ManagedCache(context: context)
     }
     
-    static func deleteCache(in context: NSManagedObjectContext) throws {
+    static func delete(in context: NSManagedObjectContext) throws {
         try ManagedCache.find(in: context).map(context.delete).map(context.save)
     }
     
