@@ -60,7 +60,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func assertThatInsertDeliversNoErrorOnEmptyCache(on sut: FeedStore,
                                                      file: StaticString = #filePath,
                                                      line: UInt = #line) async {
-        await assertNoThrow(try await sut.insert(uniqueImageFeed().local, timestamp: .now))
+        await assertNoThrow(try await sut.insert(uniqueImageFeed().local, timestamp: .now), file: file, line: line)
     }
     
     func assertThatInsertDeliversNoErrorOnNonEmptyCache(on sut: FeedStore,
