@@ -51,8 +51,8 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let firstReceived = try await sut.retrieve()
         let secondReceived = try await sut.retrieve()
         
-        XCTAssertEqual(firstReceived?.feed, feed)
-        XCTAssertEqual(secondReceived?.feed, feed)
+        XCTAssertEqual(firstReceived?.feed, feed, file: file, line: line)
+        XCTAssertEqual(secondReceived?.feed, feed, file: file, line: line)
     }
     
     // MARK: - Insert
