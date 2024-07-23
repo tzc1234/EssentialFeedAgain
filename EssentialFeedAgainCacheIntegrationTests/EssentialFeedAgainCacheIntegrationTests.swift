@@ -9,6 +9,12 @@ import XCTest
 import EssentialFeedAgain
 
 final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
+    override func tearDown() async throws {
+        try await super.tearDown()
+        
+        try removeAllArtefactsAfterTest()
+    }
+    
     func test_load_deliversNoItemsOnEmptyCache() async throws {
         let sut = try makeSUT()
         
@@ -25,6 +31,10 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func removeAllArtefactsAfterTest() throws {
+        try FileManager.default.removeItem(at: testSpecificStoreURL())
     }
     
     private func testSpecificStoreURL() -> URL {
