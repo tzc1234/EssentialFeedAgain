@@ -16,7 +16,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
                                                      line: UInt = #line) async throws {
         let received = try await sut.retrieve()
         
-        XCTAssertNil(received)
+        XCTAssertNil(received, file: file, line: line)
     }
     
     func assertThatRetrieveTwiceHasNoSideEffectsOnEmptyCache(on sut: FeedStore,
@@ -25,8 +25,8 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let firstReceived = try await sut.retrieve()
         let secondReceived = try await sut.retrieve()
         
-        XCTAssertNil(firstReceived)
-        XCTAssertNil(secondReceived)
+        XCTAssertNil(firstReceived, file: file, line: line)
+        XCTAssertNil(secondReceived, file: file, line: line)
     }
     
     func assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on sut: FeedStore,
@@ -38,7 +38,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         try await sut.insert(feed, timestamp: timestamp)
         let received = try await sut.retrieve()
         
-        XCTAssertEqual(received?.feed, feed)
+        XCTAssertEqual(received?.feed, feed, file: file, line: line)
     }
     
     func assertThatRetrieveTwiceHasNoSideEffectsOnNonEmptyCache(on sut: FeedStore,
@@ -51,8 +51,8 @@ extension FeedStoreSpecs where Self: XCTestCase {
         let firstReceived = try await sut.retrieve()
         let secondReceived = try await sut.retrieve()
         
-        XCTAssertEqual(firstReceived?.feed, feed)
-        XCTAssertEqual(secondReceived?.feed, feed)
+        XCTAssertEqual(firstReceived?.feed, feed, file: file, line: line)
+        XCTAssertEqual(secondReceived?.feed, feed, file: file, line: line)
     }
     
     // MARK: - Insert
@@ -60,7 +60,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func assertThatInsertDeliversNoErrorOnEmptyCache(on sut: FeedStore,
                                                      file: StaticString = #filePath,
                                                      line: UInt = #line) async {
-        await assertNoThrow(try await sut.insert(uniqueImageFeed().local, timestamp: .now))
+        await assertNoThrow(try await sut.insert(uniqueImageFeed().local, timestamp: .now), file: file, line: line)
     }
     
     func assertThatInsertDeliversNoErrorOnNonEmptyCache(on sut: FeedStore,
@@ -70,7 +70,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         
         let lastFeed = uniqueImageFeed().local
         let lastTimestamp = Date.now
-        await assertNoThrow(try await sut.insert(lastFeed, timestamp: lastTimestamp))
+        await assertNoThrow(try await sut.insert(lastFeed, timestamp: lastTimestamp), file: file, line: line)
     }
     
     func assertThatInsertOverridesPreviouslyInsertedCacheValues(on sut: FeedStore,
@@ -84,8 +84,8 @@ extension FeedStoreSpecs where Self: XCTestCase {
         
         let received = try await sut.retrieve()
         
-        XCTAssertEqual(received?.feed, lastFeed)
-        XCTAssertEqual(received?.timestamp, lastTimestamp)
+        XCTAssertEqual(received?.feed, lastFeed, file: file, line: line)
+        XCTAssertEqual(received?.timestamp, lastTimestamp, file: file, line: line)
     }
     
     // MARK: - Delete
@@ -93,7 +93,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
     func assertThatDeleteDeliversNoErrorOnEmptyCache(on sut: FeedStore,
                                                      file: StaticString = #filePath,
                                                      line: UInt = #line) async {
-        await assertNoThrow(try await sut.deleteCachedFeed())
+        await assertNoThrow(try await sut.deleteCachedFeed(), file: file, line: line)
     }
     
     func assertThatDeleteHasNoSideEffectsOnEmptyCache(on sut: FeedStore,
@@ -102,7 +102,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
         try await sut.deleteCachedFeed()
         let received = try await sut.retrieve()
         
-        XCTAssertNil(received)
+        XCTAssertNil(received, file: file, line: line)
     }
     
     func assertThatDeleteDeliversNoErrorOnNonEmptyCache(on sut: FeedStore,
@@ -110,7 +110,7 @@ extension FeedStoreSpecs where Self: XCTestCase {
                                                         line: UInt = #line) async throws {
         try await sut.insert(uniqueImageFeed().local, timestamp: .now)
         
-        await assertNoThrow(try await sut.deleteCachedFeed())
+        await assertNoThrow(try await sut.deleteCachedFeed(), file: file, line: line)
     }
     
     func assertThatDeleteEmptiesPreviouslyInsertedCache(on sut: FeedStore,
@@ -120,6 +120,6 @@ extension FeedStoreSpecs where Self: XCTestCase {
         try await sut.deleteCachedFeed()
         let received = try await sut.retrieve()
         
-        XCTAssertNil(received)
+        XCTAssertNil(received, file: file, line: line)
     }
 }
