@@ -181,15 +181,31 @@
 		BE83ED2B2C458B42000509DA /* Feed Cache */ = {
 			isa = PBXGroup;
 			children = (
+				BE8D929C2C4FA47300714FD5 /* Infrastructure */,
 				BE83ED2E2C458B91000509DA /* LocalFeedLoader.swift */,
 				BEF303DD2C46A30A004E3280 /* FeedCachePolicy.swift */,
 				BE83ED302C459993000509DA /* LocalFeedImage.swift */,
 				BE83ED2C2C458B61000509DA /* FeedStore.swift */,
 				BE3101A72C4934B400846B22 /* CodableFeedStore.swift */,
+			);
+			path = "Feed Cache";
+			sourceTree = "<group>";
+		};
+		BE8D929C2C4FA47300714FD5 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				BE8D929D2C4FA49500714FD5 /* CoreData */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		BE8D929D2C4FA49500714FD5 /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
 				BEECB2312C4E9D4100D2B5A7 /* CoreDataFeedStore.swift */,
 				BEECB2332C4EA16D00D2B5A7 /* FeedStore.xcdatamodeld */,
 			);
-			path = "Feed Cache";
+			path = CoreData;
 			sourceTree = "<group>";
 		};
 		BEA6336C2BDFC4830088E107 = {
@@ -816,8 +832,7 @@
 				BEECB2342C4EA16D00D2B5A7 /* FeedStore.xcdatamodel */,
 			);
 			currentVersion = BEECB2342C4EA16D00D2B5A7 /* FeedStore.xcdatamodel */;
-			name = FeedStore.xcdatamodeld;
-			path = "/Users/lung/Documents/practice/EssentialFeedAgain/EssentialFeedAgain/Feed Cache/FeedStore.xcdatamodeld";
+			path = FeedStore.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};
