@@ -33,6 +33,13 @@
         "identifier" : "BEA6337D2BDFC4840088E107",
         "name" : "EssentialFeedAgainTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:EssentialFeedAgain.xcodeproj",
+        "identifier" : "BE8D92A52C4FE84B00714FD5",
+        "name" : "EssentialFeedAgainCacheIntegrationTests"
+      }
     }
   ],
   "version" : 1
