@@ -41,7 +41,9 @@ public final class CoreDataFeedStore: FeedStore {
     }
     
     public func deleteCachedFeed() async throws {
-        
+        try await perform { context in
+            try ManagedCache.deleteCache(in: context)
+        }
     }
     
     private func perform<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
@@ -102,8 +104,12 @@ final class ManagedCache: NSManagedObject {
     @NSManaged var feed: NSOrderedSet
     
     static func newUniqueInstance(in context: NSManagedObjectContext) throws -> ManagedCache {
-        try find(in: context).map(context.delete)
+        try deleteCache(in: context)
         return ManagedCache(context: context)
+    }
+    
+    static func deleteCache(in context: NSManagedObjectContext) throws {
+        try ManagedCache.find(in: context).map(context.delete).map(context.save)
     }
     
     static func find(in context: NSManagedObjectContext) throws -> ManagedCache? {
