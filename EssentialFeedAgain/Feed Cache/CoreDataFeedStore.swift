@@ -13,7 +13,7 @@ public final class CoreDataFeedStore: FeedStore {
     
     public init(storeURL: URL) throws {
         guard let model = Self.model else {
-            throw LoadingError.modelNotFound
+            throw SetupError.modelNotFound
         }
         
         self.container = try Self.loadContainer(for: storeURL, with: model)
@@ -63,7 +63,7 @@ public final class CoreDataFeedStore: FeedStore {
 }
 
 extension CoreDataFeedStore {
-    enum LoadingError: Error {
+    enum SetupError: Error {
         case modelNotFound
         case loadContainerFailed
     }
@@ -89,7 +89,7 @@ extension CoreDataFeedStore {
         }
         
         if loadError != nil {
-            throw LoadingError.loadContainerFailed
+            throw SetupError.loadContainerFailed
         }
         
         return container
@@ -120,7 +120,7 @@ final class ManagedCache: NSManagedObject {
     }
     
     var localFeed: [LocalFeedImage] {
-        feed.compactMap { ($0 as? ManagedFeedImage)?.local }
+        feed.compactMap { $0 as? ManagedFeedImage }.map(\.local)
     }
 }
 
