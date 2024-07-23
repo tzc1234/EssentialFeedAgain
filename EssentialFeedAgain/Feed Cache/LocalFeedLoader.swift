@@ -11,7 +11,7 @@ public final class LocalFeedLoader {
     private let store: FeedStore
     private let currentDate: () -> Date
     
-    public init(store: FeedStore, currentDate: @escaping () -> Date) {
+    public init(store: FeedStore, currentDate: @escaping () -> Date = Date.init) {
         self.store = store
         self.currentDate = currentDate
     }
