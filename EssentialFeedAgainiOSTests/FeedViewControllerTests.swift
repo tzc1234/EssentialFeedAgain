@@ -6,7 +6,6 @@
 //
 
 import XCTest
-import UIKit
 import EssentialFeedAgain
 import EssentialFeedAgainiOS
 
@@ -17,15 +16,15 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadCallCount, 0)
         
         sut.simulateAppearance()
-        await sut.completeLoadingTask()
+        await sut.completeFeedLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 1)
         
         sut.simulateUserInitiatedFeedReload()
-        await sut.completeLoadingTask()
+        await sut.completeFeedLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 2)
         
         sut.simulateUserInitiatedFeedReload()
-        await sut.completeLoadingTask()
+        await sut.completeFeedLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 3)
     }
     
@@ -36,13 +35,13 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulateAppearance()
         XCTAssertTrue(sut.isShowingLoadingIndicator)
         
-        await sut.completeLoadingTask()
+        await sut.completeFeedLoadingTask()
         XCTAssertFalse(sut.isShowingLoadingIndicator)
         
         sut.simulateUserInitiatedFeedReload()
         XCTAssertTrue(sut.isShowingLoadingIndicator)
         
-        await sut.completeLoadingTask()
+        await sut.completeFeedLoadingTask()
         XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
     
@@ -95,7 +94,7 @@ extension FeedViewController {
         refreshControl?.isRefreshing == true
     }
     
-    func completeLoadingTask() async {
+    func completeFeedLoadingTask() async {
         await loadingTask?.value
     }
 }
