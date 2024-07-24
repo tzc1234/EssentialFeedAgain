@@ -67,15 +67,15 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     @MainActor
-    func test_pullToRefresh_loadsFeed() async {
+    func test_userInitiateFeedReload_loadsFeed() async {
         let (sut, loader) = makeSUT()
         sut.simulateAppearance()
         
-        sut.refreshControl?.simulatePullToRefresh()
+        sut.simulateUserInitiatedFeedReload()
         await sut.completeLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 2)
         
-        sut.refreshControl?.simulatePullToRefresh()
+        sut.simulateUserInitiatedFeedReload()
         await sut.completeLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 3)
     }
@@ -101,23 +101,23 @@ final class FeedViewControllerTests: XCTestCase {
     }
     
     @MainActor
-    func test_pullToRefresh_showsLoadingIndicatorOnLoadingTaskCompletion() async {
+    func test_userInitiateFeedReload_showsLoadingIndicatorOnLoadingTaskCompletion() async {
         let (sut, _) = makeSUT()
         sut.simulateAppearance()
         await sut.completeLoadingTask()
         
-        sut.refreshControl?.simulatePullToRefresh()
+        sut.simulateUserInitiatedFeedReload()
         
         XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
     }
     
     @MainActor
-    func test_pullToRefresh_hidesLoadingIndicatorOnLoadingTaskCompletion() async {
+    func test_userInitiateFeedReload_hidesLoadingIndicatorOnLoadingTaskCompletion() async {
         let (sut, _) = makeSUT()
         sut.simulateAppearance()
         await sut.completeLoadingTask()
         
-        sut.refreshControl?.simulatePullToRefresh()
+        sut.simulateUserInitiatedFeedReload()
         await sut.completeLoadingTask()
         
         XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
@@ -162,6 +162,10 @@ extension FeedViewController {
         }
         
         self.refreshControl = spy
+    }
+    
+    func simulateUserInitiatedFeedReload() {
+        refreshControl?.simulatePullToRefresh()
     }
     
     func completeLoadingTask() async {
