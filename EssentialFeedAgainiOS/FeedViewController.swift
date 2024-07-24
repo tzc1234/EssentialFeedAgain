@@ -11,6 +11,7 @@ import EssentialFeedAgain
 public final class FeedViewController: UITableViewController {
     public private(set) var loadingTask: Task<Void, Never>?
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
+    private var tableModels = [FeedImage]()
     
     private var loader: FeedLoader?
     
@@ -41,8 +42,22 @@ public final class FeedViewController: UITableViewController {
         loadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
             
-            _ = try? await loader?.load()
+            tableModels = (try? await loader?.load()) ?? []
+            tableView.reloadData()
             refreshControl?.endRefreshing()
         }
+    }
+    
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tableModels.count
+    }
+    
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let model = tableModels[indexPath.row]
+        let cell = FeedImageCell()
+        cell.locationContainer.isHidden = (model.location == nil)
+        cell.locationLabel.text = model.location
+        cell.descriptionLabel.text = model.description
+        return cell
     }
 }
