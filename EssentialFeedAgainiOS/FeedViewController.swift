@@ -20,9 +20,7 @@ public final class FeedViewController: UITableViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { nil }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,8 +44,8 @@ public final class FeedViewController: UITableViewController {
         loadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
             
-            if let model = try? await loader.load() {
-                tableModels = model
+            if let feed = try? await loader.load() {
+                tableModels = feed
             }
             tableView.reloadData()
             refreshControl?.endRefreshing()
