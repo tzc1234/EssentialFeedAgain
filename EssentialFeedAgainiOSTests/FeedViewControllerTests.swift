@@ -39,7 +39,8 @@ final class FeedViewController: UITableViewController {
     }
     
     @objc private func load() {
-        loadingTask = Task { [weak self] in
+        refreshControl?.beginRefreshing()
+        loadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
             
             _ = try? await loader?.load()
@@ -99,10 +100,21 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
     }
     
+    @MainActor
+    func test_pullToRefresh_showsLoadingIndicatorOnLoadingTaskCompletion() async {
+        let (sut, _) = makeSUT()
+        sut.simulateAppearance()
+        await sut.completeLoadingTask()
+        
+        sut.refreshControl?.simulatePullToRefresh()
+        
+        XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath,
-                        line: UInt = #line) -> (sut: FeedViewController, loader: LoaderSpy) {
+                         line: UInt = #line) -> (sut: FeedViewController, loader: LoaderSpy) {
         let loader = LoaderSpy()
         let sut = FeedViewController(loader: loader)
         trackForMemoryLeaks(loader, file: file, line: line)
