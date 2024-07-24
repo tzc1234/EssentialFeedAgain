@@ -39,8 +39,11 @@ final class FeedViewController: UITableViewController {
     }
     
     @objc private func load() {
-        loadingTask = Task {
+        loadingTask = Task { [weak self] in
+            guard let self else { return }
+            
             _ = try? await loader?.load()
+            refreshControl?.endRefreshing()
         }
     }
 }
@@ -81,9 +84,19 @@ final class FeedViewControllerTests: XCTestCase {
         let (sut, _) = makeSUT()
         sut.simulateAppearance()
         
-        await sut.completeLoadingTask()
+        XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
+    }
+    
+    @MainActor
+    func test_viewAppeared_hidesLoadingIndicator() async {
+        let (sut, _) = makeSUT()
+        sut.simulateAppearance()
         
         XCTAssertEqual(sut.refreshControl?.isRefreshing, true)
+        
+        await sut.completeLoadingTask()
+        
+        XCTAssertEqual(sut.refreshControl?.isRefreshing, false)
     }
     
     // MARK: - Helpers
