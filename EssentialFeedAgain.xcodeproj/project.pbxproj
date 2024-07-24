@@ -36,6 +36,7 @@
 		BEA633A52BDFFE840088E107 /* RemoteFeedImageMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633A42BDFFE840088E107 /* RemoteFeedImageMapper.swift */; };
 		BEA7ED082C50F63C004FF429 /* EssentialFeedAgainiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA7ED002C50F63C004FF429 /* EssentialFeedAgainiOS.framework */; };
 		BEA7ED182C50FCCB004FF429 /* FeedViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA7ED172C50FCCB004FF429 /* FeedViewControllerTests.swift */; };
+		BEA7ED192C51030F004FF429 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */; };
 		BEA8284E2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */; };
 		BEA8284F2BE2955900E553CB /* EssentialFeedAgain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */; };
 		BEA828562BE29A4D00E553CB /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */; };
@@ -687,6 +688,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BEA7ED182C50FCCB004FF429 /* FeedViewControllerTests.swift in Sources */,
+				BEA7ED192C51030F004FF429 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
