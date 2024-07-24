@@ -8,15 +8,22 @@
 import UIKit
 import EssentialFeedAgain
 
+public protocol FeedImageDataLoader {
+    func loadImageData(from url: URL) async
+}
+
 public final class FeedViewController: UITableViewController {
-    public private(set) var loadingTask: Task<Void, Never>?
+    public private(set) var feedLoadingTask: Task<Void, Never>?
+    public private(set) var imageDataLoadingTasks = [Int: Task<Void, Never>]()
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     private var tableModels = [FeedImage]()
     
-    private let loader: FeedLoader
+    private let feedLoader: FeedLoader
+    private let imageDataLoader: FeedImageDataLoader
     
-    public init(loader: FeedLoader) {
-        self.loader = loader
+    public init(feedLoader: FeedLoader, imageDataLoader: FeedImageDataLoader) {
+        self.feedLoader = feedLoader
+        self.imageDataLoader = imageDataLoader
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,10 +48,10 @@ public final class FeedViewController: UITableViewController {
     
     @objc private func load() {
         refreshControl?.beginRefreshing()
-        loadingTask = Task { @MainActor [weak self] in
+        feedLoadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
             
-            if let feed = try? await loader.load() {
+            if let feed = try? await feedLoader.load() {
                 tableModels = feed
             }
             tableView.reloadData()
@@ -62,6 +69,11 @@ public final class FeedViewController: UITableViewController {
         cell.locationContainer.isHidden = (model.location == nil)
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
+        
+        imageDataLoadingTasks[indexPath.row] = Task { @MainActor [weak self] in
+            await self?.imageDataLoader.loadImageData(from: model.url)
+        }
+        
         return cell
     }
 }
