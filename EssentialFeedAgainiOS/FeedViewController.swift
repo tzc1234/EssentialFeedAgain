@@ -14,7 +14,7 @@ public protocol FeedImageDataLoader {
 
 public final class FeedViewController: UITableViewController {
     public private(set) var feedLoadingTask: Task<Void, Never>?
-    public private(set) var imageDataLoadingTasks = [Int: Task<Void, Never>]()
+    public private(set) var imageDataLoadingTasks = [IndexPath: Task<Void, Never>]()
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     private var tableModels = [FeedImage]()
     
@@ -70,10 +70,17 @@ public final class FeedViewController: UITableViewController {
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
         
-        imageDataLoadingTasks[indexPath.row] = Task { @MainActor [weak self] in
+        imageDataLoadingTasks[indexPath] = Task { @MainActor [weak self] in
+            guard !Task.isCancelled else { return }
+            
             await self?.imageDataLoader.loadImageData(from: model.url)
         }
         
         return cell
+    }
+    
+    public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        imageDataLoadingTasks[indexPath]?.cancel()
+        imageDataLoadingTasks[indexPath] = nil
     }
 }

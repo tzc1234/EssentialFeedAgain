@@ -106,6 +106,28 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url])
     }
     
+    @MainActor
+    func test_feedImageView_cancelsImageLoadingWhenNotVisibleAnymore() async throws {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, _) = makeSUT(feedStubs: [.success([image0, image1])])
+        sut.simulateAppearance()
+        
+        await sut.completeFeedLoadingTask()
+        let view0 = sut.simulateFeedImageViewVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        let task0 = try XCTUnwrap(sut.imageDataLoadingTask(at: 0))
+        let task1 = try XCTUnwrap(sut.imageDataLoadingTask(at: 1))
+        
+        sut.simulateFeedImageViewNotVisible(for: view0, at: 0)
+        XCTAssertTrue(task0.isCancelled)
+        XCTAssertFalse(task1.isCancelled)
+        
+        sut.simulateFeedImageViewNotVisible(for: view1, at: 1)
+        XCTAssertTrue(task0.isCancelled)
+        XCTAssertTrue(task1.isCancelled)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
@@ -228,8 +250,13 @@ extension FeedViewController {
         await feedLoadingTask?.value
     }
     
-    func completeImageDataLoadingTask(at index: Int) async {
-        await imageDataLoadingTasks[index]?.value
+    func completeImageDataLoadingTask(at row: Int) async {
+        await imageDataLoadingTask(at: row)?.value
+    }
+    
+    func imageDataLoadingTask(at row: Int) -> Task<Void, Never>? {
+        let index = IndexPath(row: row, section: feedImagesSection)
+        return imageDataLoadingTasks[index]
     }
     
     func simulateUserInitiatedFeedReload() {
@@ -252,8 +279,17 @@ extension FeedViewController {
     
     private var feedImagesSection: Int { 0 }
     
-    func simulateFeedImageViewVisible(at index: Int) {
-        _ = feedImageView(at: index)
+    @discardableResult
+    func simulateFeedImageViewVisible(at index: Int) -> FeedImageCell? {
+        feedImageView(at: index)
+    }
+    
+    func simulateFeedImageViewNotVisible(for cell: FeedImageCell? = nil, at row: Int) {
+        let view = cell ?? simulateFeedImageViewVisible(at: row)
+        
+        let delegate = tableView.delegate
+        let index = IndexPath(row: row, section: feedImagesSection)
+        delegate?.tableView?(tableView, didEndDisplaying: view!, forRowAt: index)
     }
 }
 
