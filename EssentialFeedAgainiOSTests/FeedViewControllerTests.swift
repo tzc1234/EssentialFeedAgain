@@ -46,7 +46,7 @@ final class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        await sut.loadingTask?.value
+        await sut.completeLoadingTask()
         
         XCTAssertEqual(loader.loadCallCount, 1)
     }
@@ -57,11 +57,11 @@ final class FeedViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         
         sut.refreshControl?.simulatePullToRefresh()
-        await sut.loadingTask?.value
+        await sut.completeLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 2)
         
         sut.refreshControl?.simulatePullToRefresh()
-        await sut.loadingTask?.value
+        await sut.completeLoadingTask()
         XCTAssertEqual(loader.loadCallCount, 3)
     }
     
@@ -83,6 +83,12 @@ final class FeedViewControllerTests: XCTestCase {
             loadCallCount += 1
             return []
         }
+    }
+}
+
+extension FeedViewController {
+    func completeLoadingTask() async {
+        await loadingTask?.value
     }
 }
 
