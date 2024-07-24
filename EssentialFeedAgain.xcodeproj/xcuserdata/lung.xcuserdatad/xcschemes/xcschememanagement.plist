@@ -19,6 +19,11 @@
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>EssentialFeedAgainiOS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>Mac_CI.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -38,6 +43,16 @@
 			<true/>
 		</dict>
 		<key>BEA6337D2BDFC4840088E107</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BEA7ECFF2C50F63C004FF429</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BEA7ED062C50F63C004FF429</key>
 		<dict>
 			<key>primary</key>
 			<true/>
