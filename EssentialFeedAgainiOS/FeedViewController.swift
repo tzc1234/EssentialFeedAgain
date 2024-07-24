@@ -13,11 +13,15 @@ public final class FeedViewController: UITableViewController {
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     private var tableModels = [FeedImage]()
     
-    private var loader: FeedLoader?
+    private let loader: FeedLoader
     
-    public convenience init(loader: FeedLoader) {
-        self.init()
+    public init(loader: FeedLoader) {
         self.loader = loader
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     public override func viewDidLoad() {
@@ -42,7 +46,9 @@ public final class FeedViewController: UITableViewController {
         loadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
             
-            tableModels = (try? await loader?.load()) ?? []
+            if let model = try? await loader.load() {
+                tableModels = model
+            }
             tableView.reloadData()
             refreshControl?.endRefreshing()
         }

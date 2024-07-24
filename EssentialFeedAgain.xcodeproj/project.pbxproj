@@ -41,6 +41,7 @@
 		BEA7ED1F2C51189D004FF429 /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA7ED1E2C51189D004FF429 /* RefreshControlSpy.swift */; };
 		BEA7ED212C5118DD004FF429 /* UIRefreshControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA7ED202C5118DD004FF429 /* UIRefreshControl+TestHelpers.swift */; };
 		BEA7ED232C51394E004FF429 /* FeedImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA7ED222C51394E004FF429 /* FeedImageCell.swift */; };
+		BEA7ED242C5144DE004FF429 /* CommonHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6339C2BDFDC710088E107 /* CommonHelpers.swift */; };
 		BEA8284E2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA8284D2BE2955900E553CB /* EssentialFeedAgainAPIEndToEndTests.swift */; };
 		BEA8284F2BE2955900E553CB /* EssentialFeedAgain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEA633762BDFC4840088E107 /* EssentialFeedAgain.framework */; };
 		BEA828562BE29A4D00E553CB /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA633972BDFCB810088E107 /* XCTestCase+MemoryLeakTracking.swift */; };
@@ -713,6 +714,7 @@
 				BEA7ED1F2C51189D004FF429 /* RefreshControlSpy.swift in Sources */,
 				BEA7ED212C5118DD004FF429 /* UIRefreshControl+TestHelpers.swift in Sources */,
 				BEA7ED182C50FCCB004FF429 /* FeedViewControllerTests.swift in Sources */,
+				BEA7ED242C5144DE004FF429 /* CommonHelpers.swift in Sources */,
 				BEA7ED192C51030F004FF429 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
