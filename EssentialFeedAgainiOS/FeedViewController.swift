@@ -35,9 +35,9 @@ public final class FeedViewController: UITableViewController {
         tableView.prefetchDataSource = self
         tableView.register(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.cellIdentifier)
         refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(load), for: .valueChanged)
+        refreshControl?.addTarget(self, action: #selector(loadFeed), for: .valueChanged)
         onViewIsAppearing = { vc in
-            vc.load()
+            vc.loadFeed()
             vc.onViewIsAppearing = nil
         }
     }
@@ -48,7 +48,7 @@ public final class FeedViewController: UITableViewController {
         onViewIsAppearing?(self)
     }
     
-    @objc private func load() {
+    @objc private func loadFeed() {
         refreshControl?.beginRefreshing()
         feedLoadingTask = Task { @MainActor [weak self] in
             guard let self else { return }
