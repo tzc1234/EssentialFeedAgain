@@ -487,9 +487,3 @@ extension FeedImageCell {
         retryButton.simulateTap()
     }
 }
-
-extension UIButton {
-    func simulateTap() {
-        simulate(.touchUpInside)
-    }
-}
