@@ -205,6 +205,31 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertTrue(view.isShowingRetryAction)
     }
     
+    @MainActor
+    func test_feedImageViewRetryAction_retriesImageLoad() async throws {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT(
+            feedStubs: [.success([image0, image1])],
+            imageDataStubs: [.failure(anyNSError()), .failure(anyNSError())]
+        )
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url])
+        
+        view0.simulateRetryAction()
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url, image0.url])
+        
+        view1.simulateRetryAction()
+        await sut.completeImageDataLoadingTask(at: 1)
+        XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url, image0.url, image1.url])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
@@ -403,5 +428,19 @@ extension FeedImageCell {
     
     var isShowingRetryAction: Bool {
         !retryButton.isHidden
+    }
+    
+    func simulateRetryAction() {
+        retryButton.simulateTap()
+    }
+}
+
+extension UIButton {
+    func simulateTap() {
+        allTargets.forEach { target in
+            actions(forTarget: target, forControlEvent: .touchUpInside)?.forEach { action in
+                (target as NSObject).perform(Selector(action))
+            }
+        }
     }
 }
