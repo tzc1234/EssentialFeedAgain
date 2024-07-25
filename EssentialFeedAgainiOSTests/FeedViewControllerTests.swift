@@ -147,12 +147,34 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertFalse(view1.isShowingLoadingIndicator)
     }
     
+    @MainActor
+    func test_feedImageView_rendersImageLoadedFromURL() async throws {
+        let imageData0 = UIImage.makeData(withColor: .gray)
+        let imageData1 = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(
+            feedStubs: [.success([makeImage(), makeImage()])],
+            imageDataStubs: [.success(imageData0), .success(imageData1)]
+        )
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
+        XCTAssertNil(view0.renderedImage)
+        XCTAssertNil(view1.renderedImage)
+        
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertEqual(view0.renderedImage, imageData0)
+        XCTAssertEqual(view1.renderedImage, imageData1)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
+                         imageDataStubs: [LoaderSpy.ImageDataStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedViewController, loader: LoaderSpy) {
-        let loader = LoaderSpy(feedStubs: feedStubs)
+        let loader = LoaderSpy(feedStubs: feedStubs, imageDataStubs: imageDataStubs)
         let sut = FeedViewController(feedLoader: loader, imageDataLoader: loader)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -223,8 +245,9 @@ final class FeedViewControllerTests: XCTestCase {
         private(set) var loadFeedCallCount = 0
         private var feedStubs: [FeedStub]
         
-        init(feedStubs: [FeedStub]) {
+        init(feedStubs: [FeedStub], imageDataStubs: [ImageDataStub]) {
             self.feedStubs = feedStubs
+            self.imageDataStubs = imageDataStubs
         }
         
         func load() async throws -> [FeedImage] {
@@ -237,10 +260,18 @@ final class FeedViewControllerTests: XCTestCase {
         
         // MARK: - FeedImageDataLoader
         
-        private(set) var loadImageURLs = [URL]()
+        typealias ImageDataStub = Result<Data, Error>
         
-        func loadImageData(from url: URL) async {
+        private(set) var loadImageURLs = [URL]()
+        private var imageDataStubs: [ImageDataStub]
+        
+        @MainActor
+        func loadImageData(from url: URL) async throws -> Data {
             loadImageURLs.append(url)
+            
+            guard !imageDataStubs.isEmpty else { return Data() }
+            
+            return try imageDataStubs.removeFirst().get()
         }
     }
 }
@@ -327,5 +358,9 @@ extension FeedImageCell {
     
     var isShowingLoadingIndicator: Bool {
         feedImageContainer.isShimmering
+    }
+    
+    var renderedImage: Data? {
+        feedImageView.image?.pngData()
     }
 }

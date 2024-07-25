@@ -9,7 +9,7 @@ import UIKit
 import EssentialFeedAgain
 
 public protocol FeedImageDataLoader {
-    func loadImageData(from url: URL) async
+    func loadImageData(from url: URL) async throws -> Data
 }
 
 public final class FeedViewController: UITableViewController {
@@ -69,11 +69,14 @@ public final class FeedViewController: UITableViewController {
         cell.locationContainer.isHidden = (model.location == nil)
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
-        
+        cell.feedImageView.image = nil
         cell.feedImageContainer.isShimmering = true
         imageDataLoadingTasks[indexPath] = Task { @MainActor [weak self, weak cell] in
             if !Task.isCancelled {
-                await self?.imageDataLoader.loadImageData(from: model.url)
+                if let data = try? await self?.imageDataLoader.loadImageData(from: model.url),
+                   let image = UIImage(data: data) {
+                    cell?.feedImageView.image = image
+                }
             }
             
             cell?.feedImageContainer.isShimmering = false
