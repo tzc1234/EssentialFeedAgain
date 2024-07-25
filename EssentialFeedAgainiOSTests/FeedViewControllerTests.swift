@@ -128,6 +128,25 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertTrue(task1.isCancelled)
     }
     
+    @MainActor
+    func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() async throws {
+        let (sut, _) = makeSUT(feedStubs: [.success([makeImage(), makeImage()])])
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
+        XCTAssertTrue(view0.isShowingLoadingIndicator)
+        XCTAssertTrue(view1.isShowingLoadingIndicator)
+        
+        // A strange behaviour of Task.value (complete a task).
+        // There are two imageDataLoadingTasks, when only one imageDataLoadingTask completed,
+        // all imageDataLoadingTasks will be completed at once. Cannot complete tasks one by one in a test.
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertFalse(view0.isShowingLoadingIndicator)
+        XCTAssertFalse(view1.isShowingLoadingIndicator)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
@@ -304,5 +323,9 @@ extension FeedImageCell {
     
     var descriptionText: String? {
         descriptionLabel.text
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        feedImageContainer.isShimmering
     }
 }

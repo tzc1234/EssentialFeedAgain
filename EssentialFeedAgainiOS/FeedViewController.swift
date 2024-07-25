@@ -70,10 +70,13 @@ public final class FeedViewController: UITableViewController {
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
         
-        imageDataLoadingTasks[indexPath] = Task { @MainActor [weak self] in
-            guard !Task.isCancelled else { return }
+        cell.feedImageContainer.isShimmering = true
+        imageDataLoadingTasks[indexPath] = Task { @MainActor [weak self, weak cell] in
+            if !Task.isCancelled {
+                await self?.imageDataLoader.loadImageData(from: model.url)
+            }
             
-            await self?.imageDataLoader.loadImageData(from: model.url)
+            cell?.feedImageContainer.isShimmering = false
         }
         
         return cell
