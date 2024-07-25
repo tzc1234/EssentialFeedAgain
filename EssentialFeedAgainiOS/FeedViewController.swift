@@ -94,8 +94,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        imageDataLoadingTasks[indexPath]?.cancel()
-        imageDataLoadingTasks[indexPath] = nil
+        cancelImageDataLoad(for: indexPath)
     }
     
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
@@ -107,5 +106,14 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
                 _ = try? await self?.imageDataLoader.loadImageData(from: url)
             }
         }
+    }
+    
+    public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
+        indexPaths.forEach(cancelImageDataLoad)
+    }
+    
+    private func cancelImageDataLoad(for indexPath: IndexPath) {
+        imageDataLoadingTasks[indexPath]?.cancel()
+        imageDataLoadingTasks[indexPath] = nil
     }
 }

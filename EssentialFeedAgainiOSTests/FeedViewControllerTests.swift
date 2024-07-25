@@ -249,6 +249,28 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url])
     }
     
+    @MainActor
+    func test_feedImageView_cancelsImageURLPreloadingWhenNotNearVisibleAnymore() async throws {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, _) = makeSUT(feedStubs: [.success([image0, image1])])
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        sut.simulateFeedImageViewNearVisible(at: 0)
+        sut.simulateFeedImageViewNearVisible(at: 1)
+        let task0 = try XCTUnwrap(sut.imageDataLoadingTask(at: 0))
+        let task1 = try XCTUnwrap(sut.imageDataLoadingTask(at: 1))
+        
+        sut.simulateFeedImageViewNotNearVisible(at: 0)
+        XCTAssertTrue(task0.isCancelled)
+        XCTAssertFalse(task1.isCancelled)
+        
+        sut.simulateFeedImageViewNotNearVisible(at: 1)
+        XCTAssertTrue(task0.isCancelled)
+        XCTAssertTrue(task1.isCancelled)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
@@ -415,18 +437,24 @@ extension FeedViewController {
         feedImageView(at: index)
     }
     
-    func simulateFeedImageViewNotVisible(for cell: FeedImageCell? = nil, at row: Int) {
-        let view = cell ?? simulateFeedImageViewVisible(at: row)
+    func simulateFeedImageViewNotVisible(for cell: FeedImageCell?, at row: Int) {
+        guard let cell else { return }
         
         let delegate = tableView.delegate
         let index = IndexPath(row: row, section: feedImagesSection)
-        delegate?.tableView?(tableView, didEndDisplaying: view!, forRowAt: index)
+        delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: index)
     }
     
     func simulateFeedImageViewNearVisible(at row: Int) {
         let ds = tableView.prefetchDataSource
         let index = IndexPath(row: row, section: feedImagesSection)
         ds?.tableView(tableView, prefetchRowsAt: [index])
+    }
+    
+    func simulateFeedImageViewNotNearVisible(at row: Int) {
+        let ds = tableView.prefetchDataSource
+        let index = IndexPath(row: row, section: feedImagesSection)
+        ds?.tableView?(tableView, cancelPrefetchingForRowsAt: [index])
     }
 }
 
