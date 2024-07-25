@@ -66,9 +66,7 @@ extension FeedViewController {
         feedImageView(at: index)
     }
     
-    func simulateFeedImageViewNotVisible(for cell: FeedImageCell?, at row: Int) {
-        guard let cell else { return }
-        
+    func simulateFeedImageViewNotVisible(for cell: FeedImageCell, at row: Int) {
         let delegate = tableView.delegate
         let index = IndexPath(row: row, section: feedImagesSection)
         delegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: index)
@@ -84,5 +82,11 @@ extension FeedViewController {
         let ds = tableView.prefetchDataSource
         let index = IndexPath(row: row, section: feedImagesSection)
         ds?.tableView?(tableView, cancelPrefetchingForRowsAt: [index])
+    }
+    
+    func simulateFeedImageViewBecomingVisibleAgain(for cell: FeedImageCell, at row: Int) {
+        let delegate = tableView.delegate
+        let index = IndexPath(row: row, section: feedImagesSection)
+        delegate?.tableView?(tableView, willDisplay: cell, forRowAt: index)
     }
 }

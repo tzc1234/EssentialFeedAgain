@@ -65,8 +65,19 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = tableModels[indexPath.row]
         let cell = FeedImageCell()
+        configure(cell, for: indexPath)
+        return cell
+    }
+    
+    public override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        configure(cell, for: indexPath)
+    }
+    
+    private func configure(_ cell: UITableViewCell, for indexPath: IndexPath) {
+        guard let cell = cell as? FeedImageCell else { return }
+        
+        let model = tableModels[indexPath.row]
         cell.locationContainer.isHidden = (model.location == nil)
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
@@ -89,8 +100,6 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         
         cell.onRetry = loadImageData
         loadImageData()
-        
-        return cell
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {

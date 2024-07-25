@@ -114,8 +114,8 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulateAppearance()
         
         await sut.completeFeedLoadingTask()
-        let view0 = sut.simulateFeedImageViewVisible(at: 0)
-        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
         let task0 = try XCTUnwrap(sut.imageDataLoadingTask(at: 0))
         let task1 = try XCTUnwrap(sut.imageDataLoadingTask(at: 1))
         
@@ -126,6 +126,42 @@ final class FeedViewControllerTests: XCTestCase {
         sut.simulateFeedImageViewNotVisible(for: view1, at: 1)
         XCTAssertTrue(task0.isCancelled)
         XCTAssertTrue(task1.isCancelled)
+    }
+    
+    @MainActor
+    func test_feedImageView_loadsImageURLAgainWhenBecomingVisibleAgain() async throws {
+        let image0 = makeImage(url: URL(string: "https://url-0.com")!)
+        let image1 = makeImage(url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT(feedStubs: [.success([image0, image1])])
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
+        await sut.completeImageDataLoadingTask(at: 0)
+        await sut.completeImageDataLoadingTask(at: 1)
+        XCTAssertEqual(loader.loadImageURLs, [image0.url, image1.url])
+        
+        sut.simulateFeedImageViewNotVisible(for: view0, at: 0)
+        sut.simulateFeedImageViewNotVisible(for: view1, at: 1)
+        XCTAssertEqual(
+            loader.loadImageURLs, [image0.url, image1.url],
+            "Load image URLs no changes when views are not visible"
+        )
+        
+        sut.simulateFeedImageViewBecomingVisibleAgain(for: view0, at: 0)
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertEqual(
+            loader.loadImageURLs, [image0.url, image1.url, image0.url],
+            "Load 1st image URL again when 1st view is visible again"
+        )
+        
+        sut.simulateFeedImageViewBecomingVisibleAgain(for: view1, at: 1)
+        await sut.completeImageDataLoadingTask(at: 1)
+        XCTAssertEqual(
+            loader.loadImageURLs, [image0.url, image1.url, image0.url, image1.url],
+            "Load 2nd image URL again when 2nd view is visible again"
+        )
     }
     
     @MainActor
