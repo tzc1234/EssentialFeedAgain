@@ -12,7 +12,7 @@ public protocol FeedImageDataLoader {
     func loadImageData(from url: URL) async throws -> Data
 }
 
-public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
+public final class FeedViewController: UITableViewController {
     public private(set) var feedLoadingTask: Task<Void, Never>?
     public private(set) var imageDataLoadingTasks = [IndexPath: Task<Void, Never>]()
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
@@ -107,6 +107,13 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         cancelImageDataLoad(for: indexPath)
     }
     
+    private func cancelImageDataLoad(for indexPath: IndexPath) {
+        imageDataLoadingTasks[indexPath]?.cancel()
+        imageDataLoadingTasks[indexPath] = nil
+    }
+}
+
+extension FeedViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
             let url = tableModels[indexPath.row].url
@@ -120,10 +127,5 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach(cancelImageDataLoad)
-    }
-    
-    private func cancelImageDataLoad(for indexPath: IndexPath) {
-        imageDataLoadingTasks[indexPath]?.cancel()
-        imageDataLoadingTasks[indexPath] = nil
     }
 }
