@@ -70,16 +70,20 @@ public final class FeedViewController: UITableViewController {
         cell.locationLabel.text = model.location
         cell.descriptionLabel.text = model.description
         cell.feedImageView.image = nil
+        cell.retryButton.isHidden = true
         cell.feedImageContainer.isShimmering = true
         imageDataLoadingTasks[indexPath] = Task { @MainActor [weak self, weak cell] in
-            if !Task.isCancelled {
-                if let data = try? await self?.imageDataLoader.loadImageData(from: model.url),
-                   let image = UIImage(data: data) {
-                    cell?.feedImageView.image = image
-                }
-            }
+            defer { cell?.feedImageContainer.isShimmering = false }
             
-            cell?.feedImageContainer.isShimmering = false
+            guard let self, !Task.isCancelled else { return }
+            
+            do {
+                let data = try await imageDataLoader.loadImageData(from: model.url)
+                let image = UIImage(data: data)
+                cell?.feedImageView.image = image
+            } catch {
+                cell?.retryButton.isHidden = false
+            }
         }
         
         return cell

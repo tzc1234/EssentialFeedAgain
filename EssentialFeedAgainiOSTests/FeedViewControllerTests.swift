@@ -168,6 +168,26 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(view1.renderedImage, imageData1)
     }
     
+    @MainActor
+    func test_feedImageViewRetryButton_isVisibleOnImageLoadError() async throws {
+        let imageData = UIImage.makeData(withColor: .gray)
+        let (sut, _) = makeSUT(
+            feedStubs: [.success([makeImage(), makeImage()])],
+            imageDataStubs: [.success(imageData), .failure(anyNSError())]
+        )
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view0 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 1))
+        XCTAssertFalse(view0.isShowingRetryAction)
+        XCTAssertFalse(view1.isShowingRetryAction)
+        
+        await sut.completeImageDataLoadingTask(at: 0)
+        XCTAssertFalse(view0.isShowingRetryAction)
+        XCTAssertTrue(view1.isShowingRetryAction)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
@@ -362,5 +382,9 @@ extension FeedImageCell {
     
     var renderedImage: Data? {
         feedImageView.image?.pngData()
+    }
+    
+    var isShowingRetryAction: Bool {
+        !retryButton.isHidden
     }
 }
