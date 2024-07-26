@@ -10,16 +10,14 @@ import EssentialFeedAgain
 
 public final class FeedViewController: UITableViewController {
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
-    private var cellControllers = [FeedImageCellController]() {
+    var cellControllers = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
     
     let refreshController: FeedRefreshViewController
-    private let imageDataLoader: FeedImageDataLoader
     
-    public init(feedLoader: FeedLoader, imageDataLoader: FeedImageDataLoader) {
-        self.refreshController = FeedRefreshViewController(feedLoader: feedLoader)
-        self.imageDataLoader = imageDataLoader
+    init(refreshController: FeedRefreshViewController) {
+        self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,15 +27,7 @@ public final class FeedViewController: UITableViewController {
         super.viewDidLoad()
         
         tableView.prefetchDataSource = self
-        FeedImageCellController.registerCellFor(tableView)
         tableView.refreshControl = refreshController.view
-        refreshController.onRefresh = { [weak self] feed in
-            guard let self else { return }
-            
-            cellControllers = feed.map { model in
-                FeedImageCellController(model: model, imageDataLoader: self.imageDataLoader)
-            }
-        }
         onViewIsAppearing = { vc in
             vc.refreshController.refresh()
             vc.onViewIsAppearing = nil
