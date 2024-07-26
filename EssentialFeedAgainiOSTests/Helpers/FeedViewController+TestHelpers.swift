@@ -39,7 +39,7 @@ extension FeedViewController {
     
     func imageDataLoadingTask(at row: Int) -> Task<Void, Never>? {
         let index = IndexPath(row: row, section: feedImagesSection)
-        return imageDataLoadingTasks[index]
+        return cellController(forRowAt: index).task
     }
     
     func simulateUserInitiatedFeedReload() {
