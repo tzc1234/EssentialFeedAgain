@@ -8,10 +8,6 @@
 import UIKit
 import EssentialFeedAgain
 
-public protocol FeedImageDataLoader {
-    func loadImageData(from url: URL) async throws -> Data
-}
-
 public final class FeedViewController: UITableViewController {
     public private(set) var feedLoadingTask: Task<Void, Never>?
     public private(set) var imageDataLoadingTasks = [IndexPath: Task<Void, Never>]()
