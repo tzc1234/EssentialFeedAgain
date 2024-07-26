@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import EssentialFeedAgainiOS
+@testable import EssentialFeedAgainiOS
 
 extension FeedViewController {
     func simulateAppearance() {
@@ -26,10 +26,11 @@ extension FeedViewController {
         }
         
         refreshControl = spy
+        refreshController.view = spy
     }
     
     func completeFeedLoadingTask() async {
-        await feedLoadingTask?.value
+        await refreshController.loadingTask?.value
     }
     
     func completeImageDataLoadingTask(at row: Int) async {
@@ -38,7 +39,7 @@ extension FeedViewController {
     
     func imageDataLoadingTask(at row: Int) -> Task<Void, Never>? {
         let index = IndexPath(row: row, section: feedImagesSection)
-        return imageDataLoadingTasks[index]
+        return cellController(forRowAt: index).task
     }
     
     func simulateUserInitiatedFeedReload() {
