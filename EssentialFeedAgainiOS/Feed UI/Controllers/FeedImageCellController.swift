@@ -32,7 +32,7 @@ final class FeedImageCellController {
         bind(cell)
     }
     
-    func bind(_ cell: FeedImageCell) {
+    private func bind(_ cell: FeedImageCell) {
         cell.locationContainer.isHidden = !viewModel.hasLocation
         cell.locationLabel.text = viewModel.location
         cell.descriptionLabel.text = viewModel.description
