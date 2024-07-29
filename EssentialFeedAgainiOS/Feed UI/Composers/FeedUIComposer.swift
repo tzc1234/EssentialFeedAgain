@@ -17,7 +17,7 @@ public enum FeedUIComposer {
         
         feedViewModel.onFeedLoad = { [weak feedController] feed in
             feedController?.cellControllers = feed.map { model in
-                FeedImageCellController(model: model, imageDataLoader: imageDataLoader)
+                FeedImageCellController(viewModel: FeedImageViewModel(model: model, imageDataLoader: imageDataLoader))
             }
         }
         

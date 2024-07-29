@@ -53,7 +53,7 @@ public final class FeedViewController: UITableViewController {
     }
     
     public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cellController(forRowAt: indexPath).cancelImageDataLoad()
+        cellController(forRowAt: indexPath).cancelLoad()
     }
     
     func cellController(forRowAt indexPath: IndexPath) -> FeedImageCellController {
@@ -64,13 +64,13 @@ public final class FeedViewController: UITableViewController {
 extension FeedViewController: UITableViewDataSourcePrefetching {
     public func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            cellController(forRowAt: indexPath).preloadImageData()
+            cellController(forRowAt: indexPath).preload()
         }
     }
     
     public func tableView(_ tableView: UITableView, cancelPrefetchingForRowsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { indexPath in
-            cellController(forRowAt: indexPath).cancelImageDataLoad()
+            cellController(forRowAt: indexPath).cancelLoad()
         }
     }
 }
