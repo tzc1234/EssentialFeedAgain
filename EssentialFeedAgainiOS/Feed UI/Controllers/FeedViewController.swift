@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import EssentialFeedAgain
 
 public final class FeedViewController: UITableViewController {
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
