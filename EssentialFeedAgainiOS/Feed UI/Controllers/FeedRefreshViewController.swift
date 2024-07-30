@@ -1,5 +1,5 @@
 //
-//  FeedRefrechViewController.swift
+//  FeedRefreshViewController.swift
 //  EssentialFeedAgainiOS
 //
 //  Created by Tsz-Lung on 26/07/2024.
@@ -7,18 +7,24 @@
 
 import UIKit
 
+protocol FeedRefreshViewControllerDelegate {
+    var task: Task<Void, Never>? { get }
+    
+    func didRequestFeedRefresh()
+}
+
 final class FeedRefreshViewController: NSObject {
-    var loadingTask: Task<Void, Never>? { presenter.task }
+    var loadingTask: Task<Void, Never>? { delegate.task }
     lazy var view = loadView()
     
-    private let presenter: FeedPresenterInput
+    private let delegate: FeedRefreshViewControllerDelegate
     
-    init(presenter: FeedPresenterInput) {
-        self.presenter = presenter
+    init(delegate: FeedRefreshViewControllerDelegate) {
+        self.delegate = delegate
     }
     
     @objc func refresh() {
-        presenter.loadFeed()
+        delegate.didRequestFeedRefresh()
     }
     
     private func loadView() -> UIRefreshControl {

@@ -11,8 +11,9 @@ import EssentialFeedAgain
 public enum FeedUIComposer {
     public static func feedComposeWith(feedLoader: FeedLoader, 
                                        imageDataLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedPresenter = FeedPresenter(feedLoader: feedLoader)
-        let refreshController = FeedRefreshViewController(presenter: feedPresenter)
+        let feedPresenter = FeedPresenter()
+        let feedPresentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader, presenter: feedPresenter)
+        let refreshController = FeedRefreshViewController(delegate: feedPresentationAdapter)
         let feedController = FeedViewController(refreshController: refreshController)
         FeedImageCellController.registerCellFor(feedController.tableView)
         
@@ -55,6 +56,33 @@ final class FeedViewAdapter: FeedView {
                     imageTransformer: UIImage.init
                 )
             )
+        }
+    }
+}
+
+final class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
+    private(set) var task: Task<Void, Never>?
+    
+    private let feedLoader: FeedLoader
+    private let presenter: FeedPresenter
+    
+    init(feedLoader: FeedLoader, presenter: FeedPresenter) {
+        self.feedLoader = feedLoader
+        self.presenter = presenter
+    }
+    
+    func didRequestFeedRefresh() {
+        presenter.didStartLoadingFeed()
+        
+        task = Task { @MainActor [weak self] in
+            guard let self else { return }
+            
+            do {
+                let feed = try await feedLoader.load()
+                presenter.didFinishLoadingFeed(with: feed)
+            } catch {
+                presenter.didFinishLoadingFeedWithError()
+            }
         }
     }
 }

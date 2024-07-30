@@ -23,35 +23,20 @@ protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
 }
 
-protocol FeedPresenterInput {
-    var task: Task<Void, Never>? { get }
-    func loadFeed()
-}
-
 final class FeedPresenter {
-    private(set) var task: Task<Void, Never>?
-    
     var feedView: FeedView?
     var loadingView: FeedLoadingView?
     
-    private let feedLoader: FeedLoader
-    
-    init(feedLoader: FeedLoader) {
-        self.feedLoader = feedLoader
-    }
-}
-
-extension FeedPresenter: FeedPresenterInput {
-    func loadFeed() {
+    func didStartLoadingFeed() {
         loadingView?.display(FeedLoadingViewModel(isLoading: true))
-        task = Task { @MainActor [weak self] in
-            guard let self else { return }
-            
-            if let feed = try? await feedLoader.load() {
-                feedView?.display(FeedViewModel(feed: feed))
-            }
-            
-            loadingView?.display(FeedLoadingViewModel(isLoading: false))
-        }
+    }
+    
+    func didFinishLoadingFeed(with feed: [FeedImage]) {
+        feedView?.display(FeedViewModel(feed: feed))
+        loadingView?.display(FeedLoadingViewModel(isLoading: false))
+    }
+    
+    func didFinishLoadingFeedWithError() {
+        loadingView?.display(FeedLoadingViewModel(isLoading: false))
     }
 }
