@@ -7,9 +7,9 @@
 
 import EssentialFeedAgain
 
-final class FeedImageDataLoaderPresentationAdapter<View: FeedImageView, Image> where View.Image == Image {
+final class FeedImageDataLoaderPresentationAdapter<View: FeedImageView> {
     private(set) var task: Task<Void, Never>?
-    var presenter: FeedImagePresenter<View, Image>?
+    var presenter: FeedImagePresenter<View>?
     
     private let model: FeedImage
     private let imageDataLoader: FeedImageDataLoader

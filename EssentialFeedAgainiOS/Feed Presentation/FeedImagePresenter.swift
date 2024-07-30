@@ -14,11 +14,11 @@ protocol FeedImageView {
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
-final class FeedImagePresenter<View: FeedImageView, Image> where View.Image == Image {
+final class FeedImagePresenter<View: FeedImageView> {
     private let view: View
-    private let imageTransformer: (Data) -> Image?
+    private let imageTransformer: (Data) -> View.Image?
     
-    init(view: View, imageTransformer: @escaping (Data) -> Image?) {
+    init(view: View, imageTransformer: @escaping (Data) -> View.Image?) {
         self.view = view
         self.imageTransformer = imageTransformer
     }
