@@ -11,22 +11,16 @@ import EssentialFeedAgain
 public enum FeedUIComposer {
     public static func feedComposeWith(feedLoader: FeedLoader, 
                                        imageDataLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedViewModel = FeedViewModel(feedLoader: feedLoader)
-        let refreshController = FeedRefreshViewController(viewModel: feedViewModel)
+        let feedPresentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader)
+        let refreshController = FeedRefreshViewController(delegate: feedPresentationAdapter)
         let feedController = FeedViewController(refreshController: refreshController)
         FeedImageCellController.registerCellFor(feedController.tableView)
         
-        feedViewModel.onFeedLoad = { [weak feedController] feed in
-            feedController?.cellControllers = feed.map { model in
-                FeedImageCellController(
-                    viewModel: FeedImageViewModel<UIImage>(
-                        model: model,
-                        imageDataLoader: imageDataLoader, 
-                        imageTransformer: UIImage.init
-                    )
-                )
-            }
-        }
+        let feedPresenter = FeedPresenter(
+            feedView: FeedViewAdapter(controller: feedController, imageDataLoader: imageDataLoader),
+            loadingView: WeakRefVirtualProxy(refreshController)
+        )
+        feedPresentationAdapter.presenter = feedPresenter
         
         return feedController
     }
