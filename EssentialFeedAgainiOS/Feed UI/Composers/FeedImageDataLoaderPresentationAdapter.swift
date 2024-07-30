@@ -24,7 +24,7 @@ extension FeedImageDataLoaderPresentationAdapter: FeedImageCellControllerDelegat
     func loadImageData() {
         presenter?.didStartImageLoading(for: model)
         
-        task = Task { @MainActor [weak self, model] in
+        task = Task { @MainActor [weak self] in
             guard let self, !Task.isCancelled else { return }
             
             do {
