@@ -16,10 +16,24 @@ public enum FeedUIComposer {
         let feedController = FeedViewController(refreshController: refreshController)
         FeedImageCellController.registerCellFor(feedController.tableView)
         
-        feedPresenter.loadingView = refreshController
+        feedPresenter.loadingView = WeakRefVirtualProxy(refreshController)
         feedPresenter.feedView = FeedViewAdapter(controller: feedController, imageDataLoader: imageDataLoader)
         
         return feedController
+    }
+}
+
+final class WeakRefVirtualProxy<T: AnyObject> {
+    private weak var object: T?
+    
+    init(_ object: T) {
+        self.object = object
+    }
+}
+
+extension WeakRefVirtualProxy: FeedLoadingView where T: FeedLoadingView {
+    func display(isLoading: Bool) {
+        object?.display(isLoading: isLoading)
     }
 }
 
