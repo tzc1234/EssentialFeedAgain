@@ -26,20 +26,6 @@ public enum FeedUIComposer {
     }
 }
 
-final class WeakRefVirtualProxy<T: AnyObject> {
-    private weak var object: T?
-    
-    init(_ object: T) {
-        self.object = object
-    }
-}
-
-extension WeakRefVirtualProxy: FeedLoadingView where T: FeedLoadingView {
-    func display(_ viewModel: FeedLoadingViewModel) {
-        object?.display(viewModel)
-    }
-}
-
 final class FeedViewAdapter: FeedView {
     private weak var controller: FeedViewController?
     private let imageDataLoader: FeedImageDataLoader
