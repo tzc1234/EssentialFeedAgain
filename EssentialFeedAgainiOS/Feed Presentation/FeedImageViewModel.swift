@@ -8,6 +8,8 @@
 import Foundation
 import EssentialFeedAgain
 
+typealias Observer<T> = (T) -> Void
+
 final class FeedImageViewModel<Image> {
     private(set) var task: Task<Void, Never>?
     
