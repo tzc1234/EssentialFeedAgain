@@ -23,6 +23,11 @@ protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
 }
 
+protocol FeedPresenterInput {
+    var task: Task<Void, Never>? { get }
+    func loadFeed()
+}
+
 final class FeedPresenter {
     private(set) var task: Task<Void, Never>?
     
@@ -34,7 +39,9 @@ final class FeedPresenter {
     init(feedLoader: FeedLoader) {
         self.feedLoader = feedLoader
     }
-    
+}
+
+extension FeedPresenter: FeedPresenterInput {
     func loadFeed() {
         loadingView?.display(FeedLoadingViewModel(isLoading: true))
         task = Task { @MainActor [weak self] in

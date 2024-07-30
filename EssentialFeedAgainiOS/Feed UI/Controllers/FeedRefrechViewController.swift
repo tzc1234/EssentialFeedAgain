@@ -11,9 +11,9 @@ final class FeedRefreshViewController: NSObject {
     var loadingTask: Task<Void, Never>? { presenter.task }
     lazy var view = loadView()
     
-    private let presenter: FeedPresenter
+    private let presenter: FeedPresenterInput
     
-    init(presenter: FeedPresenter) {
+    init(presenter: FeedPresenterInput) {
         self.presenter = presenter
     }
     
