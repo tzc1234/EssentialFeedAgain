@@ -11,14 +11,16 @@ import EssentialFeedAgain
 public enum FeedUIComposer {
     public static func feedComposeWith(feedLoader: FeedLoader, 
                                        imageDataLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedPresenter = FeedPresenter()
-        let feedPresentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader, presenter: feedPresenter)
+        let feedPresentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader)
         let refreshController = FeedRefreshViewController(delegate: feedPresentationAdapter)
         let feedController = FeedViewController(refreshController: refreshController)
         FeedImageCellController.registerCellFor(feedController.tableView)
         
-        feedPresenter.loadingView = WeakRefVirtualProxy(refreshController)
-        feedPresenter.feedView = FeedViewAdapter(controller: feedController, imageDataLoader: imageDataLoader)
+        let feedPresenter = FeedPresenter(
+            feedView: FeedViewAdapter(controller: feedController, imageDataLoader: imageDataLoader),
+            loadingView: WeakRefVirtualProxy(refreshController)
+        )
+        feedPresentationAdapter.presenter = feedPresenter
         
         return feedController
     }
@@ -63,25 +65,24 @@ final class FeedViewAdapter: FeedView {
 final class FeedLoaderPresentationAdapter: FeedRefreshViewControllerDelegate {
     private(set) var task: Task<Void, Never>?
     
+    var presenter: FeedPresenter?
     private let feedLoader: FeedLoader
-    private let presenter: FeedPresenter
     
-    init(feedLoader: FeedLoader, presenter: FeedPresenter) {
+    init(feedLoader: FeedLoader) {
         self.feedLoader = feedLoader
-        self.presenter = presenter
     }
     
     func didRequestFeedRefresh() {
-        presenter.didStartLoadingFeed()
+        presenter?.didStartLoadingFeed()
         
         task = Task { @MainActor [weak self] in
             guard let self else { return }
             
             do {
                 let feed = try await feedLoader.load()
-                presenter.didFinishLoadingFeed(with: feed)
+                presenter?.didFinishLoadingFeed(with: feed)
             } catch {
-                presenter.didFinishLoadingFeedWithError()
+                presenter?.didFinishLoadingFeedWithError()
             }
         }
     }
