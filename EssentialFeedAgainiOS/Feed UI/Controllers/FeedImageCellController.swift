@@ -39,6 +39,11 @@ final class FeedImageCellController {
         
         self.cell = cell
         cell.onRetry = delegate.loadImageData
+        cell.onReuse = { [weak self] id in
+            guard let cell = self?.cell, ObjectIdentifier(cell) == id else { return }
+            
+            self?.releaseCellForReuse()
+        }
         delegate.loadImageData()
     }
     
@@ -48,6 +53,10 @@ final class FeedImageCellController {
     
     func cancelLoad() {
         delegate.cancelImageDataLoad()
+    }
+    
+    private func releaseCellForReuse() {
+        cell = nil
     }
 }
 

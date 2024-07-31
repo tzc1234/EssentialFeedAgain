@@ -307,6 +307,45 @@ final class FeedViewControllerTests: XCTestCase {
         XCTAssertTrue(task1.isCancelled)
     }
     
+    @MainActor
+    func test_feedImageView_doesNotShowDataFromPreviousRequestWhenCellIsReused() async throws {
+        let imageData = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(
+            feedStubs: [.success([makeImage()])],
+            imageDataStubs: [.success(imageData)]
+        )
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let view = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        view.prepareForReuse()
+        
+        await sut.completeImageDataLoadingTask(at: 0)
+        
+        XCTAssertNil(view.renderedImage, "Expected no image for reused view once image loading completed successfully")
+    }
+    
+    @MainActor
+    func test_feedImageView_showsDataForNewViewRequestAfterPreviousViewIsReused() async throws {
+        let imageData = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(
+            feedStubs: [.success([makeImage()])],
+            imageDataStubs: [.success(imageData)]
+        )
+        sut.simulateAppearance()
+        await sut.completeFeedLoadingTask()
+        
+        let previousView = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        sut.simulateFeedImageViewNotVisible(for: previousView, at: 0)
+        
+        let newView = try XCTUnwrap(sut.simulateFeedImageViewVisible(at: 0))
+        previousView.prepareForReuse()
+        
+        await sut.completeImageDataLoadingTask(at: 0)
+        
+        XCTAssertEqual(newView.renderedImage, imageData)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(feedStubs: [LoaderSpy.FeedStub] = [],
