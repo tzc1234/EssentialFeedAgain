@@ -13,7 +13,7 @@ struct FeedImageCellContentView: View {
     let image: UIImage?
     let isLoading: Bool
     let shouldRetry: Bool
-    let onRetry: () -> Void
+    let onRetry: (() -> Void)?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -37,7 +37,7 @@ struct FeedImageCellContentView: View {
                     .resizable()
                     .scaledToFill()
                 
-                Button(action: onRetry) {
+                Button(action: { onRetry?() }) {
                     Text("↻")
                         .foregroundStyle(.background)
                         .font(.system(size: 75))
@@ -55,7 +55,6 @@ struct FeedImageCellContentView: View {
             }
         }
         .padding(.vertical, 6)
-        .padding(.horizontal, 12)
     }
 }
 
@@ -66,7 +65,7 @@ struct FeedImageCellContentView: View {
         image: .make(withColor: .red),
         isLoading: false,
         shouldRetry: false,
-        onRetry: {}
+        onRetry: nil
     )
 }
 
@@ -77,7 +76,7 @@ struct FeedImageCellContentView: View {
         image: .make(withColor: .green),
         isLoading: false,
         shouldRetry: true,
-        onRetry: {}
+        onRetry: nil
     )
 }
 
@@ -88,7 +87,7 @@ struct FeedImageCellContentView: View {
         image: .make(withColor: .blue),
         isLoading: false,
         shouldRetry: true,
-        onRetry: {}
+        onRetry: nil
     )
 }
 
@@ -99,7 +98,7 @@ struct FeedImageCellContentView: View {
         image: nil,
         isLoading: false,
         shouldRetry: true,
-        onRetry: {}
+        onRetry: nil
     )
 }
 
@@ -110,6 +109,6 @@ struct FeedImageCellContentView: View {
         image: nil,
         isLoading: true,
         shouldRetry: false,
-        onRetry: {}
+        onRetry: nil
     )
 }

@@ -6,34 +6,30 @@
 //
 
 import Foundation
-import EssentialFeedAgainiOS
+@testable import EssentialFeedAgainiOS
 
 extension FeedImageCell {
-    var isShowingLocation: Bool {
-        !locationContainer.isHidden
-    }
-    
     var locationText: String? {
-        locationLabel.text
+        location
     }
     
     var descriptionText: String? {
-        descriptionLabel.text
+        imageDescription
     }
     
     var isShowingLoadingIndicator: Bool {
-        feedImageContainer.isShimmering
+        isLoading
     }
     
     var renderedImage: Data? {
-        feedImageView.image?.pngData()
+        image?.pngData()
     }
     
     var isShowingRetryAction: Bool {
-        !retryButton.isHidden
+        shouldRetry
     }
     
     func simulateRetryAction() {
-        retryButton.simulateTap()
+        onRetry?()
     }
 }
