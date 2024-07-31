@@ -54,7 +54,6 @@ struct FeedImageCellContentView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .padding(.vertical, 6)
     }
 }
 
