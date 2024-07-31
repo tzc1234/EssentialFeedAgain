@@ -8,7 +8,6 @@
 import SwiftUI
 
 public final class FeedImageCell: UITableViewCell {
-    public var isShowingLocation: Bool { location != nil }
     public var location: String? {
         didSet { updateLayout() }
     }

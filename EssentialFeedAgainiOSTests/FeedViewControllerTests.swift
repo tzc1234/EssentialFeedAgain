@@ -383,15 +383,6 @@ final class FeedViewControllerTests: XCTestCase {
             return XCTFail("Expected \(FeedImageCell.self) instance", file: file, line: line)
         }
         
-        let isLocationVisible = image.location != nil
-        XCTAssertEqual(
-            cell.isShowingLocation,
-            isLocationVisible,
-            "Expected `isShowingLocation` to be \(isLocationVisible) for image view at index: \(index)",
-            file: file,
-            line: line
-        )
-        
         XCTAssertEqual(
             cell.locationText,
             image.location,

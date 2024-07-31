@@ -84,6 +84,7 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
     final class FeedImageCellControllerDelegateStub: FeedImageCellControllerDelegate {
         var task: Task<Void, Never>?
         weak var cellController: FeedImageCellController?
+        
         private let viewModel: FeedImageViewModel<UIImage>
         
         init(viewModel: FeedImageViewModel<UIImage>) {
