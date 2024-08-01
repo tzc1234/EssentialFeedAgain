@@ -103,10 +103,10 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
     FeedImageCellController.registerCellFor(feedController.tableView)
     
     func makeCellController(by viewModel: FeedImageViewModel<UIImage>) -> FeedImageCellController {
-        let cellControllerDelegateStub = FeedImageCellControllerDelegateStub(viewModel: viewModel)
-        let cellController = FeedImageCellController(delegate: cellControllerDelegateStub)
-        cellControllerDelegateStub.cellController = cellController
-        return cellController
+        let delegate = FeedImageCellControllerDelegateStub(viewModel: viewModel)
+        let controller = FeedImageCellController(delegate: delegate)
+        delegate.cellController = controller
+        return controller
     }
     
     feedController.cellControllers = [
