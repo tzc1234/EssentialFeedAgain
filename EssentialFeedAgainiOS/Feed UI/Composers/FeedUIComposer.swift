@@ -14,6 +14,7 @@ public enum FeedUIComposer {
         let feedPresentationAdapter = FeedLoaderPresentationAdapter(feedLoader: feedLoader)
         let refreshController = FeedRefreshViewController(delegate: feedPresentationAdapter)
         let feedController = FeedViewController(refreshController: refreshController)
+        feedController.title = FeedPresenter.title
         FeedImageCellController.registerCellFor(feedController.tableView)
         
         let feedPresenter = FeedPresenter(
