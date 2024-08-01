@@ -62,11 +62,10 @@ final class FeedImageCellController {
 
 extension FeedImageCellController: FeedImageView {
     func display(_ viewModel: FeedImageViewModel<UIImage>) {
-        cell?.locationContainer.isHidden = !viewModel.hasLocation
-        cell?.locationLabel.text = viewModel.location
-        cell?.descriptionLabel.text = viewModel.description
-        cell?.feedImageContainer.isShimmering = viewModel.isLoading
-        cell?.feedImageView.image = viewModel.image
-        cell?.retryButton.isHidden = !viewModel.shouldRetry
+        cell?.location = viewModel.location
+        cell?.imageDescription = viewModel.description
+        cell?.isLoading = viewModel.isLoading
+        cell?.image = viewModel.image
+        cell?.shouldRetry = viewModel.shouldRetry
     }
 }

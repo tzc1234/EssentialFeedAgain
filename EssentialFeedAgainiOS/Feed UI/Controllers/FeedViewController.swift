@@ -27,6 +27,7 @@ public final class FeedViewController: UITableViewController {
         
         tableView.prefetchDataSource = self
         tableView.refreshControl = refreshController.view
+        tableView.separatorStyle = .none
         onViewIsAppearing = { vc in
             vc.refreshController.refresh()
             vc.onViewIsAppearing = nil
@@ -72,4 +73,65 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
             cellController(forRowAt: indexPath).cancelLoad()
         }
     }
+}
+
+#Preview {
+    final class DummyRefreshDelegate: FeedRefreshViewControllerDelegate {
+        var task: Task<Void, Never>?
+        func didRequestFeedRefresh() {}
+    }
+    
+    final class FeedImageCellControllerDelegateStub: FeedImageCellControllerDelegate {
+        var task: Task<Void, Never>?
+        weak var cellController: FeedImageCellController?
+        
+        private let viewModel: FeedImageViewModel<UIImage>
+        
+        init(viewModel: FeedImageViewModel<UIImage>) {
+            self.viewModel = viewModel
+        }
+        
+        func loadImageData() {
+            cellController?.display(viewModel)
+        }
+        
+        func cancelImageDataLoad() {}
+    }
+    
+    let refreshController = FeedRefreshViewController(delegate: DummyRefreshDelegate())
+    let feedController = FeedViewController(refreshController: refreshController)
+    FeedImageCellController.registerCellFor(feedController.tableView)
+    
+    func makeCellController(by viewModel: FeedImageViewModel<UIImage>) -> FeedImageCellController {
+        let delegate = FeedImageCellControllerDelegateStub(viewModel: viewModel)
+        let controller = FeedImageCellController(delegate: delegate)
+        delegate.cellController = controller
+        return controller
+    }
+    
+    feedController.cellControllers = [
+        makeCellController(by: FeedImageViewModel(
+            description: "The East Side Gallery is an open-air gallery in Berlin. It consists of a series of murals painted directly on a 1,316 m long remnant of the Berlin Wall, located near the centre of Berlin, on Mühlenstraße in Friedrichshain-Kreuzberg. The gallery has official status as a Denkmal, or heritage-protected landmark.",
+            location: "East Side Gallery\nMemorial in Berlin, Germany",
+            image: nil,
+            isLoading: true,
+            shouldRetry: false
+        )),
+        makeCellController(by: FeedImageViewModel(
+            description: "Garth Pier is a Grade II listed structure in Bangor, Gwynedd, North Wales.",
+            location: "Garth Pier",
+            image: .make(withColor: .red),
+            isLoading: false,
+            shouldRetry: false
+        )),
+        makeCellController(by: FeedImageViewModel(
+            description: nil,
+            location: nil,
+            image: nil,
+            isLoading: false,
+            shouldRetry: true
+        ))
+    ]
+    
+    return feedController
 }
