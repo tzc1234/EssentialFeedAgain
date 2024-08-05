@@ -32,11 +32,8 @@ final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
     // MARK: - Helpers
     
     private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) async throws -> [FeedImage] {
-        let configuration = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: configuration)
-        let client = URLSessionHTTPClient(session: session)
+        let client = ephemeralClient(file: file, line: line)
         let loader = RemoteFeedLoader(url: feedTestServerURL(), client: client)
-        trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         return try await loader.load()
     }
@@ -44,13 +41,18 @@ final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
     private func getFeedImageDataResult(file: StaticString = #filePath,
                                         line: UInt = #line) async throws -> Data {
         let url = feedTestServerURL().appending(path: "\(id(at: 0))/image")
+        let client = ephemeralClient(file: file, line: line)
+        let loader = RemoteFeedImageDataLoader(client: client)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        return try await loader.loadImageData(from: url)
+    }
+    
+    private func ephemeralClient(file: StaticString = #filePath, line: UInt = #line) -> HTTPClient {
         let configuration = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: configuration)
         let client = URLSessionHTTPClient(session: session)
-        let loader = RemoteFeedImageDataLoader(client: client)
         trackForMemoryLeaks(client, file: file, line: line)
-        trackForMemoryLeaks(loader, file: file, line: line)
-        return try await loader.loadImageData(from: url)
+        return client
     }
     
     private func feedTestServerURL() -> URL {
