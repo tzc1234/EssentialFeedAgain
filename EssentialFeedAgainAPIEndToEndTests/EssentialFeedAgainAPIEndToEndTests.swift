@@ -23,6 +23,12 @@ final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
         XCTAssertEqual(feed[7], expectedImage(at: 7))
     }
     
+    func test_endToEndTestServerGETFeedImageDataResult_matchedFixedTestAccountData() async throws {
+        let data = try await getFeedImageDataResult()
+        
+        XCTAssertFalse(data.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) async throws -> [FeedImage] {
@@ -33,6 +39,18 @@ final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         return try await loader.load()
+    }
+    
+    private func getFeedImageDataResult(file: StaticString = #filePath,
+                                        line: UInt = #line) async throws -> Data {
+        let testServerURL = URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed/73A7F70C-75DA-4C2E-B5A3-EED40DC53AA6/image")!
+        let configuration = URLSessionConfiguration.ephemeral
+        let session = URLSession(configuration: configuration)
+        let client = URLSessionHTTPClient(session: session)
+        let loader = RemoteFeedImageDataLoader(client: client)
+        trackForMemoryLeaks(client, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        return try await loader.loadImageData(from: testServerURL)
     }
     
     private func testServerURL() -> URL {
