@@ -15,8 +15,8 @@ final class RemoteFeedImageDataLoader {
         self.client = client
     }
     
-    func loadImageData(from url: URL) async {
-        _ = try? await client.get(from: url)
+    func loadImageData(from url: URL) async throws {
+        _ = try await client.get(from: url)
     }
 }
 
@@ -31,7 +31,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let url = URL(string: "https://a-given-url.com")!
         let (sut, client) = makeSUT()
         
-        await sut.loadImageData(from: url)
+        try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(client.requestedURLs, [url])
     }
@@ -40,10 +40,19 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let url = URL(string: "https://a-given-url.com")!
         let (sut, client) = makeSUT()
         
-        await sut.loadImageData(from: url)
-        await sut.loadImageData(from: url)
+        try? await sut.loadImageData(from: url)
+        try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(client.requestedURLs, [url, url])
+    }
+    
+    func test_loadImageData_deliversErrorOnClientError() async {
+        let clientError = NSError(domain: "client error", code: 0)
+        let (sut, client) = makeSUT(stubs: [.failure(clientError)])
+        
+        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+            XCTAssertEqual(error as NSError, clientError)
+        }
     }
     
     // MARK: - Helpers
