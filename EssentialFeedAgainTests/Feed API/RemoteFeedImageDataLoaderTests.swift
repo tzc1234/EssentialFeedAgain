@@ -92,8 +92,4 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
     private func successOn(statusCode: Int) -> HTTPClientSpy.Stub {
         .success((anyData(), HTTPURLResponse(statusCode: statusCode)))
     }
-    
-    private func anyData() -> Data {
-        Data("any".utf8)
-    }
 }
