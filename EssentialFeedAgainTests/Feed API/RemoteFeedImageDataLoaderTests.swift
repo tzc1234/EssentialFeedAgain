@@ -20,8 +20,8 @@ final class RemoteFeedImageDataLoader {
     }
     
     func loadImageData(from url: URL) async throws {
-        let (_, response) = try await client.get(from: url)
-        guard response.statusCode == 200 else {
+        let (data, response) = try await client.get(from: url)
+        guard response.statusCode == 200, !data.isEmpty else {
             throw Error.invalidData
         }
         
@@ -77,6 +77,15 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         }
     }
     
+    func test_loadImageData_deliversInvalidDataErrorOn200HTTPResponseWithEmptyData() async {
+        let emptyData = Data()
+        let (sut, _) = makeSUT(stubs: [successOn(data: emptyData)])
+        
+        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+            XCTAssertEqual(error as? RemoteFeedImageDataLoader.Error, .invalidData)
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(stubs: [HTTPClientSpy.Stub] = [], 
@@ -87,6 +96,10 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func successOn(data: Data) -> HTTPClientSpy.Stub {
+        .success((data, HTTPURLResponse(statusCode: 200)))
     }
     
     private func successOn(statusCode: Int) -> HTTPClientSpy.Stub {
