@@ -312,8 +312,8 @@
 			children = (
 				BE4CFBA92BE116E6008F7224 /* Helpers */,
 				BE1248D02C44470600F48A89 /* LoadFeedFromRemoteUseCaseTests.swift */,
-				BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */,
 				BEB2FCC42C60C1E5007F13E1 /* RemoteFeedImageDataLoaderTests.swift */,
+				BE4CFBAA2BE14F40008F7224 /* URLSessionHTTPClientTests.swift */,
 			);
 			path = "Feed API";
 			sourceTree = "<group>";

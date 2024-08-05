@@ -19,12 +19,13 @@ final class RemoteFeedImageDataLoader {
         case invalidData
     }
     
-    func loadImageData(from url: URL) async throws {
+    func loadImageData(from url: URL) async throws -> Data {
         let (data, response) = try await client.get(from: url)
         guard response.statusCode == 200, !data.isEmpty else {
             throw Error.invalidData
         }
         
+        return data
     }
 }
 
@@ -39,7 +40,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let url = URL(string: "https://a-given-url.com")!
         let (sut, client) = makeSUT()
         
-        try? await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(client.requestedURLs, [url])
     }
@@ -48,8 +49,8 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let url = URL(string: "https://a-given-url.com")!
         let (sut, client) = makeSUT()
         
-        try? await sut.loadImageData(from: url)
-        try? await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(client.requestedURLs, [url, url])
     }
@@ -58,7 +59,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let clientError = NSError(domain: "client error", code: 0)
         let (sut, _) = makeSUT(stubs: [.failure(clientError)])
         
-        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
             XCTAssertEqual(error as NSError, clientError)
         }
     }
@@ -69,7 +70,7 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         
         for statusCode in samples {
             await assertThrowsError(
-                try await sut.loadImageData(from: anyURL()),
+                _ = try await sut.loadImageData(from: anyURL()),
                 "Expected an error on statusCode: \(statusCode)"
             ) { error in
                 XCTAssertEqual(error as? RemoteFeedImageDataLoader.Error, .invalidData)
@@ -81,9 +82,18 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         let emptyData = Data()
         let (sut, _) = makeSUT(stubs: [successOn(data: emptyData)])
         
-        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
             XCTAssertEqual(error as? RemoteFeedImageDataLoader.Error, .invalidData)
         }
+    }
+    
+    func test_loadImageData_deliversReceivedNonEmptyDataOn200Response() async throws {
+        let nonEmptyData = anyData()
+        let (sut, _) = makeSUT(stubs: [successOn(data: nonEmptyData)])
+        
+        let receivedData = try await sut.loadImageData(from: anyURL())
+        
+        XCTAssertEqual(receivedData, nonEmptyData)
     }
     
     // MARK: - Helpers
