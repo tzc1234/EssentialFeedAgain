@@ -24,10 +24,14 @@ public final class RemoteFeedImageDataLoader: FeedImageDataLoader {
             throw Error.connectivity
         }
         
-        guard response.statusCode == 200, !data.isEmpty else {
+        guard isOK(response), !data.isEmpty else {
             throw Error.invalidData
         }
         
         return data
+    }
+    
+    private func isOK(_ response: HTTPURLResponse) -> Bool {
+        response.statusCode == 200
     }
 }
