@@ -15,11 +15,15 @@ public final class RemoteFeedImageDataLoader: FeedImageDataLoader {
     }
     
     public enum Error: Swift.Error {
+        case connectivity
         case invalidData
     }
     
     public func loadImageData(from url: URL) async throws -> Data {
-        let (data, response) = try await client.get(from: url)
+        guard let (data, response) = try? await client.get(from: url) else {
+            throw Error.connectivity
+        }
+        
         guard response.statusCode == 200, !data.isEmpty else {
             throw Error.invalidData
         }
