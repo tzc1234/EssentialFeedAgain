@@ -20,6 +20,9 @@ final class HTTPClientSpy: HTTPClient {
     
     func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
         requestedURLs.append(url)
+        
+        guard !stubs.isEmpty else { return (Data(), HTTPURLResponse()) }
+        
         return try stubs.removeFirst().get()
     }
 }

@@ -23,19 +23,39 @@ final class EssentialFeedAgainAPIEndToEndTests: XCTestCase {
         XCTAssertEqual(feed[7], expectedImage(at: 7))
     }
     
+    func test_endToEndTestServerGETFeedImageDataResult_matchedFixedTestAccountData() async throws {
+        let data = try await getFeedImageDataResult()
+        
+        XCTAssertFalse(data.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private func getFeedResult(file: StaticString = #filePath, line: UInt = #line) async throws -> [FeedImage] {
-        let configuration = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: configuration)
-        let client = URLSessionHTTPClient(session: session)
-        let loader = RemoteFeedLoader(url: testServerURL(), client: client)
-        trackForMemoryLeaks(client, file: file, line: line)
+        let client = ephemeralClient(file: file, line: line)
+        let loader = RemoteFeedLoader(url: feedTestServerURL(), client: client)
         trackForMemoryLeaks(loader, file: file, line: line)
         return try await loader.load()
     }
     
-    private func testServerURL() -> URL {
+    private func getFeedImageDataResult(file: StaticString = #filePath,
+                                        line: UInt = #line) async throws -> Data {
+        let url = feedTestServerURL().appending(path: "\(id(at: 0))/image")
+        let client = ephemeralClient(file: file, line: line)
+        let loader = RemoteFeedImageDataLoader(client: client)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        return try await loader.loadImageData(from: url)
+    }
+    
+    private func ephemeralClient(file: StaticString = #filePath, line: UInt = #line) -> HTTPClient {
+        let configuration = URLSessionConfiguration.ephemeral
+        let session = URLSession(configuration: configuration)
+        let client = URLSessionHTTPClient(session: session)
+        trackForMemoryLeaks(client, file: file, line: line)
+        return client
+    }
+    
+    private func feedTestServerURL() -> URL {
         URL(string: "https://essentialdeveloper.com/feed-case-study/test-api/feed")!
     }
     
