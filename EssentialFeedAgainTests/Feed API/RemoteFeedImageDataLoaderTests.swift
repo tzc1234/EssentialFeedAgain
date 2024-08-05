@@ -15,8 +15,16 @@ final class RemoteFeedImageDataLoader {
         self.client = client
     }
     
+    enum Error: Swift.Error {
+        case invalidData
+    }
+    
     func loadImageData(from url: URL) async throws {
-        _ = try await client.get(from: url)
+        let (_, response) = try await client.get(from: url)
+        guard response.statusCode == 200 else {
+            throw Error.invalidData
+        }
+        
     }
 }
 
@@ -48,10 +56,24 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
     
     func test_loadImageData_deliversErrorOnClientError() async {
         let clientError = NSError(domain: "client error", code: 0)
-        let (sut, client) = makeSUT(stubs: [.failure(clientError)])
+        let (sut, _) = makeSUT(stubs: [.failure(clientError)])
         
         await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
             XCTAssertEqual(error as NSError, clientError)
+        }
+    }
+    
+    func test_loadImageData_deliversInvalidDataErrorOnNon200HTTPResponse() async {
+        let samples = [199, 201, 300, 400, 500]
+        let (sut, _) = makeSUT(stubs: samples.map { successOn(statusCode: $0) })
+        
+        for statusCode in samples {
+            await assertThrowsError(
+                try await sut.loadImageData(from: anyURL()),
+                "Expected an error on statusCode: \(statusCode)"
+            ) { error in
+                XCTAssertEqual(error as? RemoteFeedImageDataLoader.Error, .invalidData)
+            }
         }
     }
     
@@ -65,5 +87,13 @@ final class RemoteFeedImageDataLoaderTests: XCTestCase {
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, client)
+    }
+    
+    private func successOn(statusCode: Int) -> HTTPClientSpy.Stub {
+        .success((anyData(), HTTPURLResponse(statusCode: statusCode)))
+    }
+    
+    private func anyData() -> Data {
+        Data("any".utf8)
     }
 }
