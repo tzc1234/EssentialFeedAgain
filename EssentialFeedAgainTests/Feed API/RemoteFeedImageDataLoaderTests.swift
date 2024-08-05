@@ -8,27 +8,6 @@
 import XCTest
 import EssentialFeedAgain
 
-final class RemoteFeedImageDataLoader {
-    private let client: HTTPClient
-    
-    init(client: HTTPClient) {
-        self.client = client
-    }
-    
-    enum Error: Swift.Error {
-        case invalidData
-    }
-    
-    func loadImageData(from url: URL) async throws -> Data {
-        let (data, response) = try await client.get(from: url)
-        guard response.statusCode == 200, !data.isEmpty else {
-            throw Error.invalidData
-        }
-        
-        return data
-    }
-}
-
 final class RemoteFeedImageDataLoaderTests: XCTestCase {
     func test_init_doseNotPerformURLRequest() {
         let (_, client) = makeSUT()
