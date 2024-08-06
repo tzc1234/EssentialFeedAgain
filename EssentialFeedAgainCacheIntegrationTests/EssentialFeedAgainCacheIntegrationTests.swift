@@ -15,8 +15,10 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         try removeAllArtefactsAfterTest()
     }
     
+    // MARK: - LocalFeedLoader Tests
+    
     func test_load_deliversNoItemsOnEmptyCache() async throws {
-        let sut = try makeSUT()
+        let sut = try makeFeedLoader()
         
         let received = try await sut.load()
         
@@ -24,8 +26,8 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
     }
     
     func test_load_deliversItemsSavedOnSeparateInstances() async throws {
-        let sutPerformSave = try makeSUT()
-        let sutPerformLoad = try makeSUT()
+        let sutPerformSave = try makeFeedLoader()
+        let sutPerformLoad = try makeFeedLoader()
         let feed = uniqueImageFeed().models
         
         try await sutPerformSave.save(feed)
@@ -35,9 +37,9 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
     }
     
     func test_save_overridesItemsSavedOnSeparateInstances() async throws {
-        let sutPerformFirstSave = try makeSUT()
-        let sutPerformLastSave = try makeSUT()
-        let sutPerformLoad = try makeSUT()
+        let sutPerformFirstSave = try makeFeedLoader()
+        let sutPerformLastSave = try makeFeedLoader()
+        let sutPerformLoad = try makeFeedLoader()
         let firstFeed = uniqueImageFeed().models
         let lastFeed = uniqueImageFeed().models
         
@@ -48,14 +50,43 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         XCTAssertEqual(received, lastFeed)
     }
     
+    // MARK: - LocalFeedImageDataLoader Tests
+    
+    func test_loadImageData_deliversSavedDataOnSeparateInstance() async throws {
+        let imageLoaderToPerformSave = try makeImageLoader()
+        let imageLoaderToPerformLoad = try makeImageLoader()
+        let feedLoader = try makeFeedLoader()
+        let image = uniqueImage()
+        let dataToSave = anyData()
+        
+        try await feedLoader.save([image])
+        try await imageLoaderToPerformSave.save(dataToSave, for: image.url)
+        let receivedData = try await imageLoaderToPerformLoad.loadImageData(from: image.url)
+        
+        XCTAssertEqual(receivedData, dataToSave)
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> LocalFeedLoader {
-        let store = try CoreDataFeedStore(storeURL: testSpecificStoreURL())
+    private func makeFeedLoader(file: StaticString = #filePath, line: UInt = #line) throws -> LocalFeedLoader {
+        let store = try store(file: file, line: line)
         let sut = LocalFeedLoader(store: store)
-        trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func makeImageLoader(file: StaticString = #filePath, 
+                                 line: UInt = #line) throws -> LocalFeedImageDataLoader {
+        let store = try store(file: file, line: line)
+        let sut = LocalFeedImageDataLoader(store: store)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
+    
+    private func store(file: StaticString = #filePath, line: UInt = #line) throws -> CoreDataFeedStore {
+        let store = try CoreDataFeedStore(storeURL: testSpecificStoreURL())
+        trackForMemoryLeaks(store, file: file, line: line)
+        return store
     }
     
     private func removeAllArtefactsAfterTest() throws {
