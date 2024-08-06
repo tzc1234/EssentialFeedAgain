@@ -9,10 +9,21 @@ import Foundation
 
 extension CoreDataFeedStore: FeedImageDataStore {
     public func insert(_ data: Data, for url: URL) async throws {
-        
+        try await perform { context in
+            guard let image = try ManagedFeedImage.first(for: url, in: context) else { return }
+            
+            image.data = data
+            try context.save()
+        }
     }
     
     public func retrieve(dataFor url: URL) async throws -> Data? {
-        return nil
+        try await perform { context in
+            guard let image = try ManagedFeedImage.first(for: url, in: context) else {
+                return nil
+            }
+            
+            return image.data
+        }
     }
 }

@@ -46,7 +46,7 @@ public final class CoreDataFeedStore: FeedStore {
         }
     }
     
-    private func perform<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
+    func perform<T>(_ block: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
         try await context.perform { [context] in
             try block(context)
         }

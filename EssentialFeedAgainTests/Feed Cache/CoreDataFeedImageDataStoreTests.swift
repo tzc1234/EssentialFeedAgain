@@ -22,10 +22,21 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         let url = URL(string: "https://a-url.com")!
         let notMatchURL = URL(string: "https://not-match-url.com")!
         
-        try await sut.insert(anyData(), for: url)
+        try await insert(data: anyData(), for: url, into: sut)
         let receivedData = try await sut.retrieve(dataFor: notMatchURL)
         
         XCTAssertNil(receivedData)
+    }
+    
+    func test_retrieveDataFor_deliversFoundDataWhenStoredDataMatchingURL() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        let storedData = anyData()
+        
+        try await insert(data: storedData, for: url, into: sut)
+        let receivedData = try await sut.retrieve(dataFor: url)
+        
+        XCTAssertEqual(receivedData, storedData)
     }
 
     // MARK: - Helpers
@@ -34,5 +45,14 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         let sut = try CoreDataFeedStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func insert(data: Data, for url: URL, into sut: CoreDataFeedStore) async throws {
+        try await sut.insert([makeFeedImage(for: url)], timestamp: .now)
+        try await sut.insert(data, for: url)
+    }
+    
+    private func makeFeedImage(for url: URL) -> LocalFeedImage {
+        LocalFeedImage(id: UUID(), description: nil, location: nil, url: url)
     }
 }
