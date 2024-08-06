@@ -96,6 +96,13 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         
         await assertNoThrow(try await sut.validateCache())
     }
+    
+    func test_validateCache_succeedsOnEmptyCache() async {
+        let emptyCache = [LocalFeedImage]()
+        let (sut, store) = makeSUT(retrievalStubs: [success(with: emptyCache, timestamp: .now)])
+        
+        await assertNoThrow(try await sut.validateCache())
+    }
 
     // MARK: - Helpers
     
