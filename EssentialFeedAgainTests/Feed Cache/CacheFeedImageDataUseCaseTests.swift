@@ -34,6 +34,12 @@ final class CacheFeedImageDataUseCaseTests: XCTestCase {
         }
     }
     
+    func test_save_succeedsOnSuccessfulStoreInsertion() async throws {
+        let (sut, _) = makeSUT(insertStubs: [.success(())])
+        
+        await assertNoThrow(try await sut.save(anyData(), for: anyURL()))
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(insertStubs: [FeedImageDataStoreSpy.InsertStub] = [],
