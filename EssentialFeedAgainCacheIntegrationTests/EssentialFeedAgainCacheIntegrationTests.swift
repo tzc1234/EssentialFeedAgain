@@ -66,6 +66,23 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         XCTAssertEqual(receivedData, dataToSave)
     }
     
+    func test_saveImageData_overridesSavedImageDataOnSeparateInstance() async throws {
+        let imageLoaderToPerformFirstSave = try makeImageLoader()
+        let imageLoaderToPerformLastSave = try makeImageLoader()
+        let imageLoaderToPerformLoad = try makeImageLoader()
+        let feedLoader = try makeFeedLoader()
+        let image = uniqueImage()
+        let firstImageData = Data("first".utf8)
+        let lastImageData = Data("last".utf8)
+        
+        try await feedLoader.save([image])
+        try await imageLoaderToPerformFirstSave.save(firstImageData, for: image.url)
+        try await imageLoaderToPerformLastSave.save(lastImageData, for: image.url)
+        let receivedData = try await imageLoaderToPerformLoad.loadImageData(from: image.url)
+        
+        XCTAssertEqual(receivedData, lastImageData)
+    }
+    
     // MARK: - Helpers
     
     private func makeFeedLoader(file: StaticString = #filePath, line: UInt = #line) throws -> LocalFeedLoader {
