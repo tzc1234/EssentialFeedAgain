@@ -7,14 +7,22 @@
 
 import Foundation
 
-public final class LocalFeedImageDataLoader: FeedImageDataLoader {
+public final class LocalFeedImageDataLoader {
     private let store: FeedImageDataStore
     
     public init(store: FeedImageDataStore) {
         self.store = store
     }
-    
-    public enum Error: Swift.Error {
+}
+
+extension LocalFeedImageDataLoader {
+    public func save(_ data: Data, for url: URL) {
+        store.insert(data, for: url)
+    }
+}
+
+extension LocalFeedImageDataLoader: FeedImageDataLoader {
+    public enum LoadError: Error {
         case failed
         case notFound
     }
@@ -22,18 +30,14 @@ public final class LocalFeedImageDataLoader: FeedImageDataLoader {
     public func loadImageData(from url: URL) async throws -> Data {
         do {
             guard let data = try store.retrieve(dataFor: url) else {
-                throw Error.notFound
+                throw LoadError.notFound
             }
             
             return data
-        } catch Error.notFound {
-            throw Error.notFound
+        } catch LoadError.notFound {
+            throw LoadError.notFound
         } catch {
-            throw Error.failed
+            throw LoadError.failed
         }
-    }
-    
-    public func save(_ data: Data, for url: URL) {
-        store.insert(data, for: url)
     }
 }

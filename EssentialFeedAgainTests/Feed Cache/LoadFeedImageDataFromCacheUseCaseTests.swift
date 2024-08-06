@@ -29,7 +29,7 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
         let (sut, _) = makeSUT(retrieveStubs: [.failure(retrievalError)])
         
         await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
-            XCTAssertEqual(error as? LocalFeedImageDataLoader.Error, .failed)
+            XCTAssertEqual(error as? LocalFeedImageDataLoader.LoadError, .failed)
         }
     }
     
@@ -37,7 +37,7 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
         let (sut, _) = makeSUT(retrieveStubs: [.success(nil)])
         
         await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
-            XCTAssertEqual(error as? LocalFeedImageDataLoader.Error, .notFound)
+            XCTAssertEqual(error as? LocalFeedImageDataLoader.LoadError, .notFound)
         }
     }
     
