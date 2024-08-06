@@ -30,13 +30,26 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
     
     func test_retrieveDataFor_deliversFoundDataWhenStoredDataMatchingURL() async throws {
         let sut = try makeSUT()
-        let url = anyURL()
-        let storedData = anyData()
+        let url = URL(string: "https://a-url.com")!
+        let storedData = Data("stored".utf8)
         
         try await insert(data: storedData, for: url, into: sut)
         let receivedData = try await sut.retrieve(dataFor: url)
         
         XCTAssertEqual(receivedData, storedData)
+    }
+    
+    func test_retrieveDataFor_deliversLastInsertedData() async throws {
+        let sut = try makeSUT()
+        let url = URL(string: "https://a-url.com")!
+        let firstStoredData = Data("first".utf8)
+        let lastStoredData = Data("last".utf8)
+        
+        try await insert(data: firstStoredData, for: url, into: sut)
+        try await insert(data: lastStoredData, for: url, into: sut)
+        let receivedData = try await sut.retrieve(dataFor: url)
+        
+        XCTAssertEqual(receivedData, lastStoredData)
     }
 
     // MARK: - Helpers
