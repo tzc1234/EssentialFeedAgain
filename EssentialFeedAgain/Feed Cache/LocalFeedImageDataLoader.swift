@@ -32,4 +32,8 @@ public final class LocalFeedImageDataLoader: FeedImageDataLoader {
             throw Error.failed
         }
     }
+    
+    public func save(_ data: Data, for url: URL) {
+        store.insert(data, for: url)
+    }
 }

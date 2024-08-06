@@ -13,6 +13,7 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     enum Message: Equatable {
         case retrieve(dataFor: URL)
+        case insert(Data, for: URL)
     }
     
     private(set) var messages = [Message]()
@@ -28,5 +29,9 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         guard !retrieveStubs.isEmpty else { return nil }
         
         return try retrieveStubs.removeFirst().get()
+    }
+    
+    func insert(_ data: Data, for url: URL) {
+        messages.append(.insert(data, for: url))
     }
 }

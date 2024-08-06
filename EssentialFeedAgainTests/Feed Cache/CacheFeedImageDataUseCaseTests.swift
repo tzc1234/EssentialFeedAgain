@@ -15,6 +15,16 @@ final class CacheFeedImageDataUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
+    func test_saveImageData_requestsImageDataInsertionForURL() {
+        let (sut, store) = makeSUT()
+        let url = URL(string: "https://a-given-url.com")!
+        let data = anyData()
+        
+        sut.save(data, for: url)
+        
+        XCTAssertEqual(store.messages, [.insert(data, for: url)])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(retrieveStubs: [FeedImageDataStoreSpy.RetrieveStub] = [],
