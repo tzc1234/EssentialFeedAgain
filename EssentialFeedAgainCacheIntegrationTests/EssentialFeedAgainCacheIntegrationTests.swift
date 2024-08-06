@@ -50,6 +50,19 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         XCTAssertEqual(received, lastFeed)
     }
     
+    func test_validateFeedCache_doesNotDeleteRecentlySavedFeed() async throws {
+        let feedLoaderToPerformSave = try makeFeedLoader()
+        let feedLoaderToPerformValidation = try makeFeedLoader()
+        let feed = uniqueImageFeed().models
+        
+        try await feedLoaderToPerformSave.save(feed)
+        await feedLoaderToPerformValidation.validateCache()
+        
+        let receivedFeed = try await feedLoaderToPerformSave.load()
+        
+        XCTAssertEqual(receivedFeed, feed)
+    }
+    
     // MARK: - LocalFeedImageDataLoader Tests
     
     func test_loadImageData_deliversSavedDataOnSeparateInstance() async throws {
