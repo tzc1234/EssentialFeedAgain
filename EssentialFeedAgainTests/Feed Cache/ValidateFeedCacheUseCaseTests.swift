@@ -15,68 +15,131 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
-    func test_validateCache_deletesCacheOnRetrievalError() async {
+    func test_validateCache_deletesCacheOnRetrievalError() async throws {
         let (sut, store) = makeSUT(
             deletionStubs: [.success(())],
             retrievalStubs: [.failure(anyNSError())]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
     }
     
-    func test_validateCache_doesNotDeleteCacheOnEmptyCache() async {
+    func test_validateCache_doesNotDeleteCacheOnEmptyCache() async throws {
         let emptyCache = [LocalFeedImage]()
-        let (sut, store) = makeSUT(retrievalStubs: [success(with: emptyCache, timestamp: .now)])
+        let (sut, store) = makeSUT(retrievalStubs: [success(on: emptyCache, timestamp: .now)])
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validateCache_doesNotDeleteOnNonExpiredCache() async {
+    func test_validateCache_doesNotDeleteOnNonExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
-            retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
+            retrievalStubs: [success(on: feed.local, timestamp: nonExpiredTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validateCache_deletesOnExpirationCache() async {
+    func test_validateCache_deletesOnExpirationCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
             deletionStubs: [.success(())],
-            retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
+            retrievalStubs: [success(on: feed.local, timestamp: expirationTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
     }
     
-    func test_validateCache_deletesOnExpiredCache() async {
+    func test_validateCache_deletesOnExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
             deletionStubs: [.success(())],
-            retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
+            retrievalStubs: [success(on: feed.local, timestamp: expiredTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
+    }
+    
+    func test_validateCache_failsOnDeletionErrorOfFailedRetrieval() async {
+        let (sut, _) = makeSUT(
+            deletionStubs: [.failure(anyNSError())],
+            retrievalStubs: [.failure(anyNSError())]
+        )
+        
+        await assertThrowsError(try await sut.validateCache())
+    }
+    
+    func test_validateCache_succeedsOnSuccessfulDeletionOfFailedRetrieval() async {
+        let (sut, _) = makeSUT(
+            deletionStubs: [.success(())],
+            retrievalStubs: [.failure(anyNSError())]
+        )
+        
+        await assertNoThrow(try await sut.validateCache())
+    }
+    
+    func test_validateCache_succeedsOnEmptyCache() async {
+        let emptyCache = [LocalFeedImage]()
+        let (sut, _) = makeSUT(retrievalStubs: [success(on: emptyCache, timestamp: .now)])
+        
+        await assertNoThrow(try await sut.validateCache())
+    }
+    
+    func test_validateCache_succeedsOnNonExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixedCurrentDate = Date.now
+        let nonExpiredTimeStamp = fixedCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
+        let (sut, _) = makeSUT(
+            currentDate: { fixedCurrentDate },
+            retrievalStubs: [success(on: feed.local, timestamp: nonExpiredTimeStamp)]
+        )
+        
+        await assertNoThrow(try await sut.validateCache())
+    }
+    
+    func test_validateCache_failsOnDeletionErrorOfExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixedCurrentDate = Date.now
+        let expiredTimeStamp = fixedCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, _) = makeSUT(
+            currentDate: { fixedCurrentDate },
+            deletionStubs: [.failure(anyNSError())],
+            retrievalStubs: [success(on: feed.local, timestamp: expiredTimeStamp)]
+        )
+        
+        await assertThrowsError(try await sut.validateCache())
+    }
+    
+    func test_validateCache_succeedsOnSuccessfulDeletionOfExpiredCache() async {
+        let feed = uniqueImageFeed()
+        let fixedCurrentDate = Date.now
+        let expiredTimeStamp = fixedCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
+        let (sut, _) = makeSUT(
+            currentDate: { fixedCurrentDate },
+            deletionStubs: [.success(())],
+            retrievalStubs: [success(on: feed.local, timestamp: expiredTimeStamp)]
+        )
+        
+        await assertNoThrow(try await sut.validateCache())
     }
 
     // MARK: - Helpers
@@ -97,7 +160,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
-    private func success(with feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
+    private func success(on feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
         .success((feed, timestamp))
     }
 }
