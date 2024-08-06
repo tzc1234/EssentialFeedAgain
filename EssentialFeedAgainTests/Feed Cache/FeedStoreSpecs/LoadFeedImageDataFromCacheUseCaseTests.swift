@@ -6,37 +6,7 @@
 //
 
 import XCTest
-
-final class LocalFeedImageDataLoader {
-    private let store: FeedImageDataStore
-    
-    init(store: FeedImageDataStore) {
-        self.store = store
-    }
-    
-    enum Error: Swift.Error {
-        case failed
-        case notFound
-    }
-    
-    func loadImageData(from url: URL) async throws -> Data {
-        do {
-            guard let data = try store.retrieve(dataFor: url) else {
-                throw Error.notFound
-            }
-            
-            return data
-        } catch Error.notFound {
-            throw Error.notFound
-        } catch {
-            throw Error.failed
-        }
-    }
-}
-
-protocol FeedImageDataStore {
-    func retrieve(dataFor url: URL) throws -> Data?
-}
+import EssentialFeedAgain
 
 final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
     func test_init_doseNotMessageStoreUponCreation() {
@@ -73,7 +43,7 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
     
     func test_loadImageData_deliversCachedDataOnFoundData() async throws {
         let foundData = anyData()
-        let (sut, store) = makeSUT(retrieveStubs: [.success(foundData)])
+        let (sut, _) = makeSUT(retrieveStubs: [.success(foundData)])
         
         let receivedData = try await sut.loadImageData(from: anyURL())
         
