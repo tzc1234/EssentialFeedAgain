@@ -26,6 +26,17 @@ final class CoreDataFeedImageDataStoreTests: XCTestCase {
         
         XCTAssertNil(receivedData)
     }
+    
+    func test_retrieveDataFor_deliversNoDataWhenURLNotMatch() async throws {
+        let sut = try makeSUT()
+        let url = URL(string: "https://a-url.com")!
+        let notMatchURL = URL(string: "https://not-match-url.com")!
+        
+        try await sut.insert(anyData(), for: url)
+        let receivedData = try await sut.retrieve(dataFor: notMatchURL)
+        
+        XCTAssertNil(receivedData)
+    }
 
     // MARK: - Helpers
     
