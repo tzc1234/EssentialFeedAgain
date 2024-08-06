@@ -8,16 +8,6 @@
 import XCTest
 import EssentialFeedAgain
 
-extension CoreDataFeedStore: FeedImageDataStore {
-    public func insert(_ data: Data, for url: URL) async throws {
-        
-    }
-    
-    public func retrieve(dataFor url: URL) async throws -> Data? {
-        return nil
-    }
-}
-
 final class CoreDataFeedImageDataStoreTests: XCTestCase {
     func test_retrieveDataFor_deliversNoDataWhenEmpty() async throws {
         let sut = try makeSUT()
