@@ -8,6 +8,6 @@
 import Foundation
 
 public protocol FeedImageDataStore {
-    func insert(_ data: Data, for url: URL) throws
-    func retrieve(dataFor url: URL) throws -> Data?
+    func insert(_ data: Data, for url: URL) async throws
+    func retrieve(dataFor url: URL) async throws -> Data?
 }

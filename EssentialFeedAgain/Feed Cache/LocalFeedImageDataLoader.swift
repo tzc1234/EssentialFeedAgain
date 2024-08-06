@@ -22,7 +22,7 @@ extension LocalFeedImageDataLoader {
     
     public func save(_ data: Data, for url: URL) async throws {
         do {
-            try store.insert(data, for: url)
+            try await store.insert(data, for: url)
         } catch {
             throw SaveError.failed
         }
@@ -37,7 +37,7 @@ extension LocalFeedImageDataLoader: FeedImageDataLoader {
     
     public func loadImageData(from url: URL) async throws -> Data {
         do {
-            guard let data = try store.retrieve(dataFor: url) else {
+            guard let data = try await store.retrieve(dataFor: url) else {
                 throw LoadError.notFound
             }
             
