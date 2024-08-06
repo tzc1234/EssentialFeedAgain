@@ -19,11 +19,13 @@ final class LocalFeedImageDataLoader {
         case notFound
     }
     
-    func loadImageData(from url: URL) async throws {
+    func loadImageData(from url: URL) async throws -> Data {
         do {
             guard let data = try store.retrieve(dataFor: url) else {
                 throw Error.notFound
             }
+            
+            return data
         } catch Error.notFound {
             throw Error.notFound
         } catch {
@@ -47,26 +49,35 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT()
         let url = URL(string: "https://a-given-url.com")!
         
-        try? await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(store.messages, [.retrieve(dataFor: url)])
     }
     
     func test_loadImageData_failsOnStoreError() async {
         let retrievalError = anyNSError()
-        let (sut, store) = makeSUT(retrieveStubs: [.failure(retrievalError)])
+        let (sut, _) = makeSUT(retrieveStubs: [.failure(retrievalError)])
         
-        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
             XCTAssertEqual(error as? LocalFeedImageDataLoader.Error, .failed)
         }
     }
     
     func test_loadImageData_deliversNotFoundErrorOnCacheNotFound() async throws {
-        let (sut, store) = makeSUT(retrieveStubs: [.success(nil)])
+        let (sut, _) = makeSUT(retrieveStubs: [.success(nil)])
         
-        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
             XCTAssertEqual(error as? LocalFeedImageDataLoader.Error, .notFound)
         }
+    }
+    
+    func test_loadImageData_deliversCachedDataOnFoundData() async throws {
+        let foundData = anyData()
+        let (sut, store) = makeSUT(retrieveStubs: [.success(foundData)])
+        
+        let receivedData = try await sut.loadImageData(from: anyURL())
+        
+        XCTAssertEqual(receivedData, foundData)
     }
     
     // MARK: - Helpers
