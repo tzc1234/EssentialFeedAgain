@@ -42,11 +42,11 @@ extension LocalFeedLoader {
             guard let cache, !FeedCachePolicy.validate(cache.timestamp, against: currentDate()) else {
                 return
             }
-            
-            try? await store.deleteCachedFeed()
         } catch {
-            try await store.deleteCachedFeed()
+            return try await store.deleteCachedFeed()
         }
+        
+        try await store.deleteCachedFeed()
     }
 }
 
