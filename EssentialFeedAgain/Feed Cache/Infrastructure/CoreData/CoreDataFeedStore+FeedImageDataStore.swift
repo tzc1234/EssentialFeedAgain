@@ -19,11 +19,8 @@ extension CoreDataFeedStore: FeedImageDataStore {
     
     public func retrieve(dataFor url: URL) async throws -> Data? {
         try await perform { context in
-            guard let image = try ManagedFeedImage.first(for: url, in: context) else {
-                return nil
-            }
-            
-            return image.data
+            let image = try ManagedFeedImage.first(for: url, in: context)
+            return image?.data
         }
     }
 }
