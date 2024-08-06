@@ -17,35 +17,35 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
     
     // MARK: - LocalFeedLoader Tests
     
-    func test_load_deliversNoItemsOnEmptyCache() async throws {
-        let sut = try makeFeedLoader()
+    func test_loadFeed_deliversNoItemsOnEmptyCache() async throws {
+        let feedLoader = try makeFeedLoader()
         
-        let received = try await sut.load()
+        let received = try await feedLoader.load()
         
         XCTAssertTrue(received.isEmpty)
     }
     
-    func test_load_deliversItemsSavedOnSeparateInstances() async throws {
-        let sutPerformSave = try makeFeedLoader()
-        let sutPerformLoad = try makeFeedLoader()
+    func test_loadFeed_deliversItemsSavedOnSeparateInstances() async throws {
+        let feedLoaderToPerformSave = try makeFeedLoader()
+        let feedLoaderToPerformLoad = try makeFeedLoader()
         let feed = uniqueImageFeed().models
         
-        try await sutPerformSave.save(feed)
-        let received = try await sutPerformLoad.load()
+        try await feedLoaderToPerformSave.save(feed)
+        let received = try await feedLoaderToPerformLoad.load()
         
         XCTAssertEqual(received, feed)
     }
     
-    func test_save_overridesItemsSavedOnSeparateInstances() async throws {
-        let sutPerformFirstSave = try makeFeedLoader()
-        let sutPerformLastSave = try makeFeedLoader()
-        let sutPerformLoad = try makeFeedLoader()
+    func test_saveFeed_overridesItemsSavedOnSeparateInstances() async throws {
+        let feedLoaderToPerformFirstSave = try makeFeedLoader()
+        let feedLoaderToPerformLastSave = try makeFeedLoader()
+        let feedLoaderToPerformLoad = try makeFeedLoader()
         let firstFeed = uniqueImageFeed().models
         let lastFeed = uniqueImageFeed().models
         
-        try await sutPerformFirstSave.save(firstFeed)
-        try await sutPerformLastSave.save(lastFeed)
-        let received = try await sutPerformLoad.load()
+        try await feedLoaderToPerformFirstSave.save(firstFeed)
+        try await feedLoaderToPerformLastSave.save(lastFeed)
+        let received = try await feedLoaderToPerformLoad.load()
         
         XCTAssertEqual(received, lastFeed)
     }
