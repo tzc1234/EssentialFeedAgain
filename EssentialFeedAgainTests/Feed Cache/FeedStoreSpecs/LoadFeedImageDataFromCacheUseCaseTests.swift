@@ -16,16 +16,24 @@ final class LocalFeedImageDataLoader {
     
     enum Error: Swift.Error {
         case failed
+        case notFound
     }
     
     func loadImageData(from url: URL) async throws {
-        try? store.retrieve(dataFor: url)
-        throw Error.failed
+        do {
+            guard let data = try store.retrieve(dataFor: url) else {
+                throw Error.notFound
+            }
+        } catch Error.notFound {
+            throw Error.notFound
+        } catch {
+            throw Error.failed
+        }
     }
 }
 
 protocol FeedImageDataStore {
-    func retrieve(dataFor url: URL) throws
+    func retrieve(dataFor url: URL) throws -> Data?
 }
 
 final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
@@ -53,6 +61,14 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
         }
     }
     
+    func test_loadImageData_deliversNotFoundErrorOnCacheNotFound() async throws {
+        let (sut, store) = makeSUT(retrieveStubs: [.success(nil)])
+        
+        await assertThrowsError(try await sut.loadImageData(from: anyURL())) { error in
+            XCTAssertEqual(error as? LocalFeedImageDataLoader.Error, .notFound)
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(retrieveStubs: [StoreSpy.RetrieveStub] = [],
@@ -66,7 +82,7 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
     }
     
     final class StoreSpy: FeedImageDataStore {
-        typealias RetrieveStub = Result<Void, Error>
+        typealias RetrieveStub = Result<Data?, Error>
         
         enum Message: Equatable {
             case retrieve(dataFor: URL)
@@ -79,12 +95,12 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
             self.retrieveStubs = retrieveStubs
         }
         
-        func retrieve(dataFor url: URL) throws {
+        func retrieve(dataFor url: URL) throws -> Data? {
             messages.append(.retrieve(dataFor: url))
             
-            guard !retrieveStubs.isEmpty else { return }
+            guard !retrieveStubs.isEmpty else { return nil }
             
-            try retrieveStubs.removeFirst().get()
+            return try retrieveStubs.removeFirst().get()
         }
     }
 }
