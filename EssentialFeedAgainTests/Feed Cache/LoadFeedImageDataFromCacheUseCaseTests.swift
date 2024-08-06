@@ -52,36 +52,13 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(retrieveStubs: [StoreSpy.RetrieveStub] = [],
+    private func makeSUT(retrieveStubs: [FeedImageDataStoreSpy.RetrieveStub] = [],
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: StoreSpy) {
-        let store = StoreSpy(retrieveStubs: retrieveStubs)
+                         line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedImageDataStoreSpy) {
+        let store = FeedImageDataStoreSpy(retrieveStubs: retrieveStubs)
         let sut = LocalFeedImageDataLoader(store: store)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, store)
-    }
-    
-    final class StoreSpy: FeedImageDataStore {
-        typealias RetrieveStub = Result<Data?, Error>
-        
-        enum Message: Equatable {
-            case retrieve(dataFor: URL)
-        }
-        
-        private(set) var messages = [Message]()
-        private var retrieveStubs = [RetrieveStub]()
-        
-        init(retrieveStubs: [RetrieveStub]) {
-            self.retrieveStubs = retrieveStubs
-        }
-        
-        func retrieve(dataFor url: URL) throws -> Data? {
-            messages.append(.retrieve(dataFor: url))
-            
-            guard !retrieveStubs.isEmpty else { return nil }
-            
-            return try retrieveStubs.removeFirst().get()
-        }
     }
 }
