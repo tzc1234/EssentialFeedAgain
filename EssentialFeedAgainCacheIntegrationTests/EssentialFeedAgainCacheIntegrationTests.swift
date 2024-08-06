@@ -20,9 +20,9 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
     func test_loadFeed_deliversNoItemsOnEmptyCache() async throws {
         let feedLoader = try makeFeedLoader()
         
-        let received = try await feedLoader.load()
+        let receivedFeed = try await feedLoader.load()
         
-        XCTAssertTrue(received.isEmpty)
+        XCTAssertTrue(receivedFeed.isEmpty)
     }
     
     func test_loadFeed_deliversItemsSavedOnSeparateInstances() async throws {
@@ -31,9 +31,9 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         let feed = uniqueImageFeed().models
         
         try await feedLoaderToPerformSave.save(feed)
-        let received = try await feedLoaderToPerformLoad.load()
+        let receivedFeed = try await feedLoaderToPerformLoad.load()
         
-        XCTAssertEqual(received, feed)
+        XCTAssertEqual(receivedFeed, feed)
     }
     
     func test_saveFeed_overridesItemsSavedOnSeparateInstances() async throws {
@@ -45,9 +45,9 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         
         try await feedLoaderToPerformFirstSave.save(firstFeed)
         try await feedLoaderToPerformLastSave.save(lastFeed)
-        let received = try await feedLoaderToPerformLoad.load()
+        let receivedFeed = try await feedLoaderToPerformLoad.load()
         
-        XCTAssertEqual(received, lastFeed)
+        XCTAssertEqual(receivedFeed, lastFeed)
     }
     
     func test_validateFeedCache_doesNotDeleteRecentlySavedFeed() async throws {
@@ -57,10 +57,21 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         
         try await feedLoaderToPerformSave.save(feed)
         await feedLoaderToPerformValidation.validateCache()
-        
         let receivedFeed = try await feedLoaderToPerformSave.load()
         
         XCTAssertEqual(receivedFeed, feed)
+    }
+    
+    func test_validateFeedCache_deletesFeedSavedInADistancePast() async throws {
+        let feedLoaderToPerformSave = try makeFeedLoader(currentDate: .distantPast)
+        let feedLoaderToPerformValidation = try makeFeedLoader(currentDate: .now)
+        let feed = uniqueImageFeed().models
+        
+        try await feedLoaderToPerformSave.save(feed)
+        await feedLoaderToPerformValidation.validateCache()
+        let receivedFeed = try await feedLoaderToPerformSave.load()
+        
+        XCTAssertEqual(receivedFeed, [])
     }
     
     // MARK: - LocalFeedImageDataLoader Tests
@@ -98,9 +109,11 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeFeedLoader(file: StaticString = #filePath, line: UInt = #line) throws -> LocalFeedLoader {
+    private func makeFeedLoader(currentDate: Date = Date(),
+                                file: StaticString = #filePath,
+                                line: UInt = #line) throws -> LocalFeedLoader {
         let store = try store(file: file, line: line)
-        let sut = LocalFeedLoader(store: store)
+        let sut = LocalFeedLoader(store: store, currentDate: { currentDate })
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
