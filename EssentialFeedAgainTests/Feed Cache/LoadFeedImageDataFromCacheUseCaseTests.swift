@@ -55,7 +55,7 @@ final class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
     private func makeSUT(retrieveStubs: [FeedImageDataStoreSpy.RetrieveStub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedImageDataLoader, store: FeedImageDataStoreSpy) {
-        let store = FeedImageDataStoreSpy(retrieveStubs: retrieveStubs)
+        let store = FeedImageDataStoreSpy(retrieveStubs: retrieveStubs, insertStubs: [])
         let sut = LocalFeedImageDataLoader(store: store)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)

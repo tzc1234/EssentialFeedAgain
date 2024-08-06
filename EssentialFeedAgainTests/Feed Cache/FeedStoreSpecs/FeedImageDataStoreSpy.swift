@@ -10,6 +10,7 @@ import EssentialFeedAgain
 
 final class FeedImageDataStoreSpy: FeedImageDataStore {
     typealias RetrieveStub = Result<Data?, Error>
+    typealias InsertStub = Result<Void, Error>
     
     enum Message: Equatable {
         case retrieve(dataFor: URL)
@@ -18,9 +19,11 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     private(set) var messages = [Message]()
     private var retrieveStubs = [RetrieveStub]()
+    private var insertStubs = [InsertStub]()
     
-    init(retrieveStubs: [RetrieveStub]) {
+    init(retrieveStubs: [RetrieveStub], insertStubs: [InsertStub]) {
         self.retrieveStubs = retrieveStubs
+        self.insertStubs = insertStubs
     }
     
     func retrieve(dataFor url: URL) throws -> Data? {
@@ -31,7 +34,11 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         return try retrieveStubs.removeFirst().get()
     }
     
-    func insert(_ data: Data, for url: URL) {
+    func insert(_ data: Data, for url: URL) throws {
         messages.append(.insert(data, for: url))
+        
+        guard !insertStubs.isEmpty else { return }
+        
+        try insertStubs.removeFirst().get()
     }
 }

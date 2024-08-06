@@ -16,8 +16,16 @@ public final class LocalFeedImageDataLoader {
 }
 
 extension LocalFeedImageDataLoader {
-    public func save(_ data: Data, for url: URL) {
-        store.insert(data, for: url)
+    public enum SaveError: Error {
+        case failed
+    }
+    
+    public func save(_ data: Data, for url: URL) async throws {
+        do {
+            try store.insert(data, for: url)
+        } catch {
+            throw SaveError.failed
+        }
     }
 }
 
