@@ -56,7 +56,7 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         let feed = uniqueImageFeed().models
         
         try await feedLoaderToPerformSave.save(feed)
-        await feedLoaderToPerformValidation.validateCache()
+        try await feedLoaderToPerformValidation.validateCache()
         let receivedFeed = try await feedLoaderToPerformSave.load()
         
         XCTAssertEqual(receivedFeed, feed)
@@ -68,7 +68,7 @@ final class EssentialFeedAgainCacheIntegrationTests: XCTestCase {
         let feed = uniqueImageFeed().models
         
         try await feedLoaderToPerformSave.save(feed)
-        await feedLoaderToPerformValidation.validateCache()
+        try await feedLoaderToPerformValidation.validateCache()
         let receivedFeed = try await feedLoaderToPerformSave.load()
         
         XCTAssertEqual(receivedFeed, [])

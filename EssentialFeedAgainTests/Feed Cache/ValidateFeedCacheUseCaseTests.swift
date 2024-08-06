@@ -15,27 +15,27 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         XCTAssertTrue(store.messages.isEmpty)
     }
     
-    func test_validateCache_deletesCacheOnRetrievalError() async {
+    func test_validateCache_deletesCacheOnRetrievalError() async throws {
         let (sut, store) = makeSUT(
             deletionStubs: [.success(())],
             retrievalStubs: [.failure(anyNSError())]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
     }
     
-    func test_validateCache_doesNotDeleteCacheOnEmptyCache() async {
+    func test_validateCache_doesNotDeleteCacheOnEmptyCache() async throws {
         let emptyCache = [LocalFeedImage]()
         let (sut, store) = makeSUT(retrievalStubs: [success(with: emptyCache, timestamp: .now)])
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validateCache_doesNotDeleteOnNonExpiredCache() async {
+    func test_validateCache_doesNotDeleteOnNonExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let nonExpiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: 1)
@@ -44,12 +44,12 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
             retrievalStubs: [success(with: feed.local, timestamp: nonExpiredTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve])
     }
     
-    func test_validateCache_deletesOnExpirationCache() async {
+    func test_validateCache_deletesOnExpirationCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
@@ -59,12 +59,12 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
             retrievalStubs: [success(with: feed.local, timestamp: expirationTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
     }
     
-    func test_validateCache_deletesOnExpiredCache() async {
+    func test_validateCache_deletesOnExpiredCache() async throws {
         let feed = uniqueImageFeed()
         let fixCurrentDate = Date.now
         let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
@@ -74,9 +74,27 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
             retrievalStubs: [success(with: feed.local, timestamp: expiredTimestamp)]
         )
         
-        await sut.validateCache()
+        try await sut.validateCache()
         
         XCTAssertEqual(store.messages, [.retrieve, .deleteCachedFeed])
+    }
+    
+    func test_validateCache_failsOnDeletionErrorOfFailedRetrieval() async {
+        let (sut, store) = makeSUT(
+            deletionStubs: [.failure(anyNSError())],
+            retrievalStubs: [.failure(anyNSError())]
+        )
+        
+        await assertThrowsError(try await sut.validateCache())
+    }
+    
+    func test_validateCache_succeedsOnSuccessfulDeletionOfFailedRetrieval() async {
+        let (sut, store) = makeSUT(
+            deletionStubs: [.success(())],
+            retrievalStubs: [.failure(anyNSError())]
+        )
+        
+        await assertNoThrow(try await sut.validateCache())
     }
 
     // MARK: - Helpers

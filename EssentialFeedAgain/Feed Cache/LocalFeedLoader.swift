@@ -36,7 +36,7 @@ extension LocalFeedLoader: FeedLoader {
 }
 
 extension LocalFeedLoader {
-    public func validateCache() async {
+    public func validateCache() async throws {
         do {
             let cache = try await store.retrieve()
             guard let cache, !FeedCachePolicy.validate(cache.timestamp, against: currentDate()) else {
@@ -45,7 +45,7 @@ extension LocalFeedLoader {
             
             try? await store.deleteCachedFeed()
         } catch {
-            try? await store.deleteCachedFeed()
+            try await store.deleteCachedFeed()
         }
     }
 }
