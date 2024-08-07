@@ -36,16 +36,15 @@ extension LocalFeedImageDataLoader: FeedImageDataLoader {
     }
     
     public func loadImageData(from url: URL) async throws -> Data {
+        var data: Data?
         do {
-            guard let data = try await store.retrieve(dataFor: url) else {
-                throw LoadError.notFound
-            }
-            
-            return data
-        } catch LoadError.notFound {
-            throw LoadError.notFound
+            data = try await store.retrieve(dataFor: url)
         } catch {
             throw LoadError.failed
         }
+        
+        guard let data else { throw LoadError.notFound }
+        
+        return data
     }
 }
