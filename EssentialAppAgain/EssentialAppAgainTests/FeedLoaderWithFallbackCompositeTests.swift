@@ -46,6 +46,12 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         XCTAssertEqual(receivedFeed, fallbackFeed)
     }
     
+    func test_load_deliversErrorOnBothPrimaryAndFallbackLoaderFailure() async {
+        let sut = makeSUT(primaryStub: .failure(anyNSError()), fallbackStub: .failure(anyNSError()))
+        
+        await assertThrowsError(_ = try await sut.load())
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(primaryStub: LoaderStub.FeedStub,

@@ -17,6 +17,7 @@
 		BE16868E2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE16868A2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE4F01CD2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4F01CC2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift */; };
 		BE4F01D72C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */; };
+		BE4F01D92C63C6BF002D059D /* XCTestCase+AssertThrows.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4F01D82C63C6BF002D059D /* XCTestCase+AssertThrows.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		BE4F01CC2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 		BE4F01D32C63BBE0002D059D /* EssentialAppAgain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = EssentialAppAgain.xctestplan; path = /Users/lung/Documents/practice/EssentialFeedAgain/EssentialAppAgain/EssentialAppAgainTests/EssentialAppAgain.xctestplan; sourceTree = "<absolute>"; };
 		BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
+		BE4F01D82C63C6BF002D059D /* XCTestCase+AssertThrows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+AssertThrows.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 			isa = PBXGroup;
 			children = (
 				BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */,
+				BE4F01D82C63C6BF002D059D /* XCTestCase+AssertThrows.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 			files = (
 				BE4F01CD2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift in Sources */,
 				BE4F01D72C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift in Sources */,
+				BE4F01D92C63C6BF002D059D /* XCTestCase+AssertThrows.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
