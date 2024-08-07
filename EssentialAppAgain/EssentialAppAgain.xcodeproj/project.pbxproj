@@ -16,6 +16,7 @@
 		BE16868D2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE16868A2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework */; };
 		BE16868E2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE16868A2C636C21006ED4A7 /* EssentialFeedAgainiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE4F01CD2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4F01CC2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift */; };
+		BE4F01D72C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,7 @@
 		BE4F01CA2C63BB26002D059D /* EssentialAppAgainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialAppAgainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE4F01CC2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 		BE4F01D32C63BBE0002D059D /* EssentialAppAgain.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = EssentialAppAgain.xctestplan; path = /Users/lung/Documents/practice/EssentialFeedAgain/EssentialAppAgain/EssentialAppAgainTests/EssentialAppAgain.xctestplan; sourceTree = "<absolute>"; };
+		BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,9 +123,18 @@
 			isa = PBXGroup;
 			children = (
 				BE4F01D32C63BBE0002D059D /* EssentialAppAgain.xctestplan */,
+				BE4F01D52C63C458002D059D /* Helpers */,
 				BE4F01CC2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift */,
 			);
 			path = EssentialAppAgainTests;
+			sourceTree = "<group>";
+		};
+		BE4F01D52C63C458002D059D /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE4F01D62C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -237,6 +248,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE4F01CD2C63BB26002D059D /* FeedLoaderWithFallbackCompositeTests.swift in Sources */,
+				BE4F01D72C63C468002D059D /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
