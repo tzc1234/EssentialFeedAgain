@@ -17,8 +17,8 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     func test_validateCache_deletesCacheOnRetrievalError() async throws {
         let (sut, store) = makeSUT(
-            deletionStubs: [.success(())],
-            retrievalStubs: [.failure(anyNSError())]
+            deletionStubs: [success()],
+            retrievalStubs: [failure()]
         )
         
         try await sut.validateCache()
@@ -55,7 +55,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let expirationTimestamp = fixCurrentDate.minusMaxCacheAgeInDays()
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
-            deletionStubs: [.success(())],
+            deletionStubs: [success()],
             retrievalStubs: [success(on: feed.local, timestamp: expirationTimestamp)]
         )
         
@@ -70,7 +70,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let expiredTimestamp = fixCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, store) = makeSUT(
             currentDate: { fixCurrentDate },
-            deletionStubs: [.success(())],
+            deletionStubs: [success()],
             retrievalStubs: [success(on: feed.local, timestamp: expiredTimestamp)]
         )
         
@@ -81,8 +81,8 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     func test_validateCache_failsOnDeletionErrorOfFailedRetrieval() async {
         let (sut, _) = makeSUT(
-            deletionStubs: [.failure(anyNSError())],
-            retrievalStubs: [.failure(anyNSError())]
+            deletionStubs: [failure()],
+            retrievalStubs: [failure()]
         )
         
         await assertThrowsError(try await sut.validateCache())
@@ -90,8 +90,8 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     func test_validateCache_succeedsOnSuccessfulDeletionOfFailedRetrieval() async {
         let (sut, _) = makeSUT(
-            deletionStubs: [.success(())],
-            retrievalStubs: [.failure(anyNSError())]
+            deletionStubs: [success()],
+            retrievalStubs: [failure()]
         )
         
         await assertNoThrow(try await sut.validateCache())
@@ -122,7 +122,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let expiredTimeStamp = fixedCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, _) = makeSUT(
             currentDate: { fixedCurrentDate },
-            deletionStubs: [.failure(anyNSError())],
+            deletionStubs: [failure()],
             retrievalStubs: [success(on: feed.local, timestamp: expiredTimeStamp)]
         )
         
@@ -135,7 +135,7 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
         let expiredTimeStamp = fixedCurrentDate.minusMaxCacheAgeInDays().adding(seconds: -1)
         let (sut, _) = makeSUT(
             currentDate: { fixedCurrentDate },
-            deletionStubs: [.success(())],
+            deletionStubs: [success()],
             retrievalStubs: [success(on: feed.local, timestamp: expiredTimeStamp)]
         )
         
@@ -162,5 +162,17 @@ final class ValidateFeedCacheUseCaseTests: XCTestCase {
     
     private func success(on feed: [LocalFeedImage], timestamp: Date) -> FeedStoreSpy.RetrieveStub {
         .success((feed, timestamp))
+    }
+    
+    private func failure() -> FeedStoreSpy.RetrieveStub {
+        .failure(anyNSError())
+    }
+    
+    private func success() -> FeedStoreSpy.DeletionStub {
+        .success(())
+    }
+    
+    private func failure() -> FeedStoreSpy.DeletionStub {
+        .failure(anyNSError())
     }
 }
