@@ -215,7 +215,6 @@
 		BEA7ED002C50F63C004FF429 /* EssentialFeedAgainiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EssentialFeedAgainiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEA7ED072C50F63C004FF429 /* EssentialFeedAgainiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EssentialFeedAgainiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEA7ED152C50F6CC004FF429 /* EssentialFeedAgainiOS.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = EssentialFeedAgainiOS.xctestplan; sourceTree = "<group>"; };
-		BEA7ED162C50F906004FF429 /* iOS_CI.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iOS_CI.xctestplan; sourceTree = "<group>"; };
 		BEA7ED172C50FCCB004FF429 /* FeedUIIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedUIIntegrationTests.swift; sourceTree = "<group>"; };
 		BEA7ED1B2C51173D004FF429 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		BEA7ED1E2C51189D004FF429 /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
@@ -480,7 +479,6 @@
 			isa = PBXGroup;
 			children = (
 				BEA828572BE29B6000E553CB /* Mac_CI.xctestplan */,
-				BEA7ED162C50F906004FF429 /* iOS_CI.xctestplan */,
 				BEA633782BDFC4840088E107 /* EssentialFeedAgain */,
 				BEA7ED012C50F63C004FF429 /* EssentialFeedAgainiOS */,
 				BEA633822BDFC4840088E107 /* EssentialFeedAgainTests */,
