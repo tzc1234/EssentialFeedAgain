@@ -18,7 +18,7 @@
                BlueprintIdentifier = "BEA633752BDFC4840088E107"
                BuildableName = "EssentialFeedAgain.framework"
                BlueprintName = "EssentialFeedAgain"
-               ReferencedContainer = "container:EssentialFeedAgain.xcodeproj">
+               ReferencedContainer = "container:../EssentialFeedAgain.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -32,7 +32,7 @@
                BlueprintIdentifier = "BEA7ECFF2C50F63C004FF429"
                BuildableName = "EssentialFeedAgainiOS.framework"
                BlueprintName = "EssentialFeedAgainiOS"
-               ReferencedContainer = "container:EssentialFeedAgain.xcodeproj">
+               ReferencedContainer = "container:../EssentialFeedAgain.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
