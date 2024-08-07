@@ -18,7 +18,11 @@ final class FeedLoaderWithFallbackComposite: FeedLoader {
     }
     
     func load() async throws -> [FeedImage] {
-        try await primary.load()
+        do {
+            return try await primary.load()
+        } catch {
+            return try await fallback.load()
+        }
     }
 }
 
@@ -31,6 +35,15 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         let receivedFeed = try await sut.load()
         
         XCTAssertEqual(receivedFeed, primaryFeed)
+    }
+    
+    func test_load_deliversFallbackFeedOnPrimaryFailure() async throws {
+        let fallbackFeed = uniqueFeed()
+        let sut = makeSUT(primaryStub: .failure(anyNSError()), fallbackStub: .success(fallbackFeed))
+        
+        let receivedFeed = try await sut.load()
+        
+        XCTAssertEqual(receivedFeed, fallbackFeed)
     }
     
     // MARK: - Helpers
@@ -46,6 +59,10 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         trackForMemoryLeaks(fallbackLoader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    func anyNSError() -> NSError {
+        NSError(domain: "any", code: 0)
     }
     
     private func uniqueFeed() -> [FeedImage] {
