@@ -7,24 +7,7 @@
 
 import XCTest
 import EssentialFeedAgain
-
-final class FeedLoaderWithFallbackComposite: FeedLoader {
-    private let primary: FeedLoader
-    private let fallback: FeedLoader
-    
-    init(primary: FeedLoader, fallback: FeedLoader) {
-        self.primary = primary
-        self.fallback = fallback
-    }
-    
-    func load() async throws -> [FeedImage] {
-        do {
-            return try await primary.load()
-        } catch {
-            return try await fallback.load()
-        }
-    }
-}
+import EssentialAppAgain
 
 final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
     func test_load_deliversPrimaryFeedOnPrimaryLoaderSuccess() async throws {
