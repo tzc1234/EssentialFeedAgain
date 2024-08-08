@@ -29,8 +29,8 @@ final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
 final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_loadImageData_loadsFromPrimaryLoaderFirst() async throws {
         let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(
-            primaryStub: .success(anyData()),
-            fallbackStub: .success(anyData())
+            primaryStub: success(with: anyData()),
+            fallbackStub: success(with: anyData())
         )
         let url = anyURL()
         
@@ -43,7 +43,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_loadImageData_loadsFromFallbackLoaderOnPrimaryLoaderFailure() async throws {
         let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(
             primaryStub: failure(),
-            fallbackStub: .success(anyData())
+            fallbackStub: success(with: anyData())
         )
         let url = anyURL()
         
@@ -56,7 +56,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_loadImageData_deliversPrimaryDataOnPrimaryLoaderSuccess() async throws {
         let primaryData = Data("primary".utf8)
         let fallbackData = Data("fallback".utf8)
-        let (sut, _, _) = makeSUT(primaryStub: .success(primaryData), fallbackStub: .success(fallbackData))
+        let (sut, _, _) = makeSUT(primaryStub: success(with: primaryData), fallbackStub: success(with: fallbackData))
         
         let receivedData = try await sut.loadImageData(from: anyURL())
         
@@ -80,6 +80,10 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     
     private func failure() -> LoaderSpy.Stub {
         .failure(anyNSError())
+    }
+    
+    private func success(with data: Data) -> LoaderSpy.Stub {
+        .success(data)
     }
     
     private func anyData() -> Data {
