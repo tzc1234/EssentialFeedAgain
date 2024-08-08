@@ -72,6 +72,12 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         XCTAssertEqual(receivedData, fallbackData)
     }
     
+    func test_loadImageData_deliversErrorOnBothPrimaryAndFallbackLoadersFailure() async {
+        let (sut, _, _) = makeSUT(primaryStub: failure(), fallbackStub: failure())
+        
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL()))
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(primaryStub: LoaderSpy.Stub,
