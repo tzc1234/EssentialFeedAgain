@@ -62,10 +62,6 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         .success(Data("any".utf8))
     }
     
-    private func anyURL() -> URL {
-        URL(string: "http://any-url.com")!
-    }
-    
     private class LoaderSpy: FeedImageDataLoader {
         typealias Stub = Result<Data, Error>
         
