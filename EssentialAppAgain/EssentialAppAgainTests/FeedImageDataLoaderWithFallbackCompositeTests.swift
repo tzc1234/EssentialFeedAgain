@@ -18,19 +18,39 @@ final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
     }
     
     func loadImageData(from url: URL) async throws -> Data {
-        try await primary.loadImageData(from: url)
+        do {
+            return try await primary.loadImageData(from: url)
+        } catch {
+            return try await fallback.loadImageData(from: url)
+        }
     }
 }
 
 final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_loadImageData_loadsFromPrimaryLoaderFirst() async throws {
-        let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(primaryStub: anyStub(), fallbackStub: anyStub())
+        let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(
+            primaryStub: .success(anyData()),
+            fallbackStub: .success(anyData())
+        )
         let url = anyURL()
         
         _ = try await sut.loadImageData(from: url)
         
         XCTAssertEqual(primaryImageLoader.loadURLs, [url])
         XCTAssertEqual(fallbackImageLoader.loadURLs, [])
+    }
+    
+    func test_loadImageData_loadsFromFallbackLoaderOnPrimaryLoaderFailure() async throws {
+        let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(
+            primaryStub: failure(),
+            fallbackStub: .success(anyData())
+        )
+        let url = anyURL()
+        
+        _ = try await sut.loadImageData(from: url)
+        
+        XCTAssertEqual(primaryImageLoader.loadURLs, [url])
+        XCTAssertEqual(fallbackImageLoader.loadURLs, [url])
     }
     
     func test_loadImageData_deliversPrimaryDataOnPrimaryLoaderSuccess() async throws {
@@ -58,8 +78,12 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         return (sut, primaryImageLoader, fallbackImageLoader)
     }
     
-    private func anyStub() -> LoaderSpy.Stub {
-        .success(Data("any".utf8))
+    private func failure() -> LoaderSpy.Stub {
+        .failure(anyNSError())
+    }
+    
+    private func anyData() -> Data {
+        Data("any".utf8)
     }
     
     private class LoaderSpy: FeedImageDataLoader {
