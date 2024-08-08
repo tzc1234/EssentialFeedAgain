@@ -23,10 +23,20 @@ final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
 }
 
 final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
+    func test_loadImageData_loadsFromPrimaryLoaderFirst() async throws {
+        let (sut, primaryImageLoader, fallbackImageLoader) = makeSUT(primaryStub: anyStub(), fallbackStub: anyStub())
+        let url = anyURL()
+        
+        _ = try await sut.loadImageData(from: url)
+        
+        XCTAssertEqual(primaryImageLoader.loadURLs, [url])
+        XCTAssertEqual(fallbackImageLoader.loadURLs, [])
+    }
+    
     func test_loadImageData_deliversPrimaryDataOnPrimaryLoaderSuccess() async throws {
         let primaryData = Data("primary".utf8)
         let fallbackData = Data("fallback".utf8)
-        let sut = makeSUT(primaryStub: .success(primaryData), fallbackStub: .success(fallbackData))
+        let (sut, _, _) = makeSUT(primaryStub: .success(primaryData), fallbackStub: .success(fallbackData))
         
         let receivedData = try await sut.loadImageData(from: anyURL())
         
@@ -38,14 +48,18 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     private func makeSUT(primaryStub: LoaderSpy.Stub,
                          fallbackStub: LoaderSpy.Stub,
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> FeedImageDataLoader {
+                         line: UInt = #line) -> (sut: FeedImageDataLoader, primary: LoaderSpy, fallback: LoaderSpy) {
         let primaryImageLoader = LoaderSpy(stub: primaryStub)
         let fallbackImageLoader = LoaderSpy(stub: fallbackStub)
         let sut = FeedImageDataLoaderWithFallbackComposite(primary: primaryImageLoader, fallback: fallbackImageLoader)
         trackForMemoryLeaks(primaryImageLoader, file: file, line: line)
         trackForMemoryLeaks(fallbackImageLoader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
-        return sut
+        return (sut, primaryImageLoader, fallbackImageLoader)
+    }
+    
+    private func anyStub() -> LoaderSpy.Stub {
+        .success(Data("any".utf8))
     }
     
     private func anyURL() -> URL {
@@ -55,6 +69,7 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     private class LoaderSpy: FeedImageDataLoader {
         typealias Stub = Result<Data, Error>
         
+        private(set) var loadURLs = [URL]()
         private let stub: Stub
         
         init(stub: Stub) {
@@ -62,7 +77,8 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         }
         
         func loadImageData(from url: URL) async throws -> Data {
-            try stub.get()
+            loadURLs.append(url)
+            return try stub.get()
         }
     }
 }
