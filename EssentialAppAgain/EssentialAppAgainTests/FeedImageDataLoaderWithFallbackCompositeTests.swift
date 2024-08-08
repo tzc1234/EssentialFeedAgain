@@ -7,24 +7,7 @@
 
 import XCTest
 import EssentialFeedAgain
-
-final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
-    private let primary: FeedImageDataLoader
-    private let fallback: FeedImageDataLoader
-    
-    init(primary: FeedImageDataLoader, fallback: FeedImageDataLoader) {
-        self.primary = primary
-        self.fallback = fallback
-    }
-    
-    func loadImageData(from url: URL) async throws -> Data {
-        do {
-            return try await primary.loadImageData(from: url)
-        } catch {
-            return try await fallback.loadImageData(from: url)
-        }
-    }
-}
+import EssentialAppAgain
 
 final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     func test_loadImageData_loadsFromPrimaryLoaderFirst() async throws {
