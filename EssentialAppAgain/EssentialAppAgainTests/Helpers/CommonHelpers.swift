@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EssentialFeedAgain
 
 func anyURL() -> URL {
     URL(string: "http://any-url.com")!
@@ -13,4 +14,8 @@ func anyURL() -> URL {
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 0)
+}
+
+func uniqueFeed() -> [FeedImage] {
+    [FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())]
 }

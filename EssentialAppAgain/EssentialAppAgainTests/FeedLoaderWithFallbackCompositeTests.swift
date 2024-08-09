@@ -50,10 +50,6 @@ final class FeedLoaderWithFallbackCompositeTests: XCTestCase {
         return sut
     }
     
-    private func uniqueFeed() -> [FeedImage] {
-        [FeedImage(id: UUID(), description: "any", location: "any", url: anyURL())]
-    }
-    
     private final class LoaderStub: FeedLoader {
         typealias FeedStub = Result<[FeedImage], Error>
         
