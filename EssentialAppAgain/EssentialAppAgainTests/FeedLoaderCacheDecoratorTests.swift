@@ -23,7 +23,7 @@ final class FeedLoaderCacheDecorator: FeedLoader {
 final class FeedLoaderCacheDecoratorTests: XCTestCase {
     func test_load_deliversFeedOnLoaderSuccess() async throws {
         let feed = uniqueFeed()
-        let loader = LoaderStub(stub: .success(feed))
+        let loader = FeedLoaderStub(stub: .success(feed))
         let sut = FeedLoaderCacheDecorator(decoratee: loader)
         
         let receivedFeed = try await sut.load()
@@ -33,7 +33,7 @@ final class FeedLoaderCacheDecoratorTests: XCTestCase {
     
     func test_load_deliversErrorOnLoaderFailure() async {
         let loaderError = anyNSError()
-        let loader = LoaderStub(stub: .failure(loaderError))
+        let loader = FeedLoaderStub(stub: .failure(loaderError))
         let sut = FeedLoaderCacheDecorator(decoratee: loader)
         
         await assertThrowsError(_ = try await sut.load()) { error in
@@ -43,17 +43,5 @@ final class FeedLoaderCacheDecoratorTests: XCTestCase {
     
     // MARK: - Helpers
 
-    private final class LoaderStub: FeedLoader {
-        typealias FeedStub = Result<[FeedImage], Error>
-        
-        private var stub: FeedStub
-        
-        init(stub: FeedStub) {
-            self.stub = stub
-        }
-        
-        func load() async throws -> [FeedImage] {
-            try stub.get()
-        }
-    }
+    
 }
