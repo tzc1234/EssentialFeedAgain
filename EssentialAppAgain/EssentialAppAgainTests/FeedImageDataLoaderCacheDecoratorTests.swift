@@ -36,9 +36,27 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         XCTAssertEqual(loader.loadURLs, [url])
     }
     
+    func test_loadImageData_deliversDataOnLoaderSuccess() async throws {
+        let imageData = anyData()
+        let (sut, _) = makeSUT(imageDataStub: .success(imageData))
+        
+        let receivedData = try await sut.loadImageData(from: anyURL())
+        
+        XCTAssertEqual(receivedData, imageData)
+    }
+    
+    func test_loadImageData_deliversErrorOnLoaderFailure() async {
+        let loaderError = anyNSError()
+        let (sut, _) = makeSUT(imageDataStub: .failure(loaderError))
+        
+        await assertThrowsError(_ = try await sut.loadImageData(from: anyURL())) { error in
+            XCTAssertEqual(error as NSError, loaderError)
+        }
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(anyData()),
+    private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(Data()),
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedImageDataLoader, loader: FeedImageDataLoaderSpy) {
         let loader = FeedImageDataLoaderSpy(stub: imageDataStub)
