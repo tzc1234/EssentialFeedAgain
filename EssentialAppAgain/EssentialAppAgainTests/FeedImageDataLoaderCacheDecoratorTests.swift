@@ -19,7 +19,7 @@ final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
     
     func loadImageData(from url: URL) async throws -> Data {
         let data = try await decoratee.loadImageData(from: url)
-        try await cache.save(data, for: url)
+        try? await cache.save(data, for: url)
         return data
     }
 }
@@ -82,6 +82,14 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         XCTAssertEqual(cache.messages, [])
     }
     
+    func test_loadImageData_ignoresCacheError() async {
+        let cache = CacheSpy(stub: .failure(anyNSError()))
+        let imageData = anyData()
+        let (sut, _) = makeSUT(imageDataStub: .success(imageData), cache: cache)
+        
+        await assertNoThrow(_ = try await sut.loadImageData(from: anyURL()))
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(Data()),
@@ -96,14 +104,22 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
     }
     
     private final class CacheSpy: FeedImageDataCache {
+        typealias Stub = Result<Void, Error>
+        
         enum Message: Equatable {
             case save(Data, for: URL)
         }
         
         private(set) var messages = [Message]()
+        private let stub: Stub
+        
+        init(stub: Stub = .success(())) {
+            self.stub = stub
+        }
         
         func save(_ data: Data, for url: URL) async throws {
             messages.append(.save(data, for: url))
+            try stub.get()
         }
     }
 }
