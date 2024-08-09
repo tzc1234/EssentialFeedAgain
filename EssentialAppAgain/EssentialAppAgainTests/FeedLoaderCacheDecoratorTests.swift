@@ -7,22 +7,7 @@
 
 import XCTest
 import EssentialFeedAgain
-
-final class FeedLoaderCacheDecorator: FeedLoader {
-    private let decoratee: FeedLoader
-    private let cache: FeedCache
-    
-    init(decoratee: FeedLoader, cache: FeedCache) {
-        self.decoratee = decoratee
-        self.cache = cache
-    }
-    
-    func load() async throws -> [FeedImage] {
-        let feed = try await decoratee.load()
-        try? await cache.save(feed)
-        return feed
-    }
-}
+import EssentialAppAgain
 
 final class FeedLoaderCacheDecoratorTests: XCTestCase {
     func test_load_deliversFeedOnLoaderSuccess() async throws {
