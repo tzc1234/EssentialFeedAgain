@@ -10,14 +10,22 @@ import EssentialFeedAgain
 
 final class FeedImageDataLoaderCacheDecorator: FeedImageDataLoader {
     private let decoratee: FeedImageDataLoader
+    private let cache: FeedImageDataCache
     
-    init(decoratee: FeedImageDataLoader) {
+    init(decoratee: FeedImageDataLoader, cache: FeedImageDataCache) {
         self.decoratee = decoratee
+        self.cache = cache
     }
     
     func loadImageData(from url: URL) async throws -> Data {
-        try await decoratee.loadImageData(from: url)
+        let data = try await decoratee.loadImageData(from: url)
+        try await cache.save(data, for: url)
+        return data
     }
+}
+
+protocol FeedImageDataCache {
+    func save(_ data: Data, for url: URL) async throws
 }
 
 final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
@@ -54,15 +62,39 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
         }
     }
     
+    func test_loadImageData_cachesLoadedDataOnLoaderSuccess() async throws {
+        let cache = CacheSpy()
+        let url = anyURL()
+        let imageData = anyData()
+        let (sut, _) = makeSUT(imageDataStub: .success(imageData), cache: cache)
+        
+        let receivedData = try await sut.loadImageData(from: anyURL())
+        
+        XCTAssertEqual(cache.messages, [.save(imageData, for: url)])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(Data()),
+                         cache: FeedImageDataCache? = nil,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedImageDataLoader, loader: FeedImageDataLoaderSpy) {
         let loader = FeedImageDataLoaderSpy(stub: imageDataStub)
-        let sut = FeedImageDataLoaderCacheDecorator(decoratee: loader)
+        let sut = FeedImageDataLoaderCacheDecorator(decoratee: loader, cache: cache ?? CacheSpy())
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)
+    }
+    
+    private final class CacheSpy: FeedImageDataCache {
+        enum Message: Equatable {
+            case save(Data, for: URL)
+        }
+        
+        private(set) var messages = [Message]()
+        
+        func save(_ data: Data, for url: URL) async throws {
+            messages.append(.save(data, for: url))
+        }
     }
 }
