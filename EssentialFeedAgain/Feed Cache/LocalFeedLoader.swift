@@ -17,7 +17,7 @@ public final class LocalFeedLoader {
     }
 }
 
-extension LocalFeedLoader {
+extension LocalFeedLoader: FeedCache {
     public func save(_ feed: [FeedImage]) async throws {
         try await store.deleteCachedFeed()
         try await store.insert(feed.local, timestamp: currentDate())
