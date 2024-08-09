@@ -56,6 +56,14 @@ final class FeedLoaderCacheDecoratorTests: XCTestCase {
         XCTAssertEqual(cache.messages, [.save(feed)])
     }
     
+    func test_load_doesNotCacheOnLoaderFailure() async {
+        let (sut, cache) = makeSUT(stub: .failure(anyNSError()))
+        
+        _ = try? await sut.load()
+        
+        XCTAssertEqual(cache.messages, [])
+    }
+    
     // MARK: - Helpers
 
     private func makeSUT(stub: FeedLoaderStub.FeedStub,
