@@ -38,7 +38,7 @@ final class FeedImageDataLoaderCacheDecoratorTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(Data()),
+    private func makeSUT(imageDataStub: FeedImageDataLoaderSpy.Stub = .success(anyData()),
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: FeedImageDataLoader, loader: FeedImageDataLoaderSpy) {
         let loader = FeedImageDataLoaderSpy(stub: imageDataStub)

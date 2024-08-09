@@ -83,8 +83,4 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     private func success(with data: Data) -> FeedImageDataLoaderSpy.Stub {
         .success(data)
     }
-    
-    private func anyData() -> Data {
-        Data("any".utf8)
-    }
 }
