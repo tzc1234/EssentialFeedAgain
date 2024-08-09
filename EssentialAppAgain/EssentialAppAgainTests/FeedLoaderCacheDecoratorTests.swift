@@ -24,10 +24,6 @@ final class FeedLoaderCacheDecorator: FeedLoader {
     }
 }
 
-protocol FeedCache {
-    func save(_ feed: [FeedImage]) async throws
-}
-
 final class FeedLoaderCacheDecoratorTests: XCTestCase {
     func test_load_deliversFeedOnLoaderSuccess() async throws {
         let feed = uniqueFeed()
@@ -66,7 +62,7 @@ final class FeedLoaderCacheDecoratorTests: XCTestCase {
     
     func test_load_ignoresCacheError() async {
         let feed = uniqueFeed()
-        let (sut, cache) = makeSUT(feedStub: .success(feed), cacheStub: .failure(anyNSError()))
+        let (sut, _) = makeSUT(feedStub: .success(feed), cacheStub: .failure(anyNSError()))
         
         await assertNoThrow(_ = try await sut.load())
     }
