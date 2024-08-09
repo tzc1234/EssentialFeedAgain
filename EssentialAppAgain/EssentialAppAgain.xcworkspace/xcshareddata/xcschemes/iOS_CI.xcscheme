@@ -44,7 +44,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:EssentialAppAgain/iOS_CI.xctestplan"
+            reference = "container:iOS_CI.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>

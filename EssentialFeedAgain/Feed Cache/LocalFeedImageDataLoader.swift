@@ -15,7 +15,7 @@ public final class LocalFeedImageDataLoader {
     }
 }
 
-extension LocalFeedImageDataLoader {
+extension LocalFeedImageDataLoader: FeedImageDataCache {
     public enum SaveError: Error {
         case failed
     }
