@@ -63,12 +63,12 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(primaryStub: LoaderSpy.Stub,
-                         fallbackStub: LoaderSpy.Stub,
+    private func makeSUT(primaryStub: FeedImageDataLoaderSpy.Stub,
+                         fallbackStub: FeedImageDataLoaderSpy.Stub,
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: FeedImageDataLoader, primary: LoaderSpy, fallback: LoaderSpy) {
-        let primaryImageLoader = LoaderSpy(stub: primaryStub)
-        let fallbackImageLoader = LoaderSpy(stub: fallbackStub)
+                         line: UInt = #line) -> (sut: FeedImageDataLoader, primary: FeedImageDataLoaderSpy, fallback: FeedImageDataLoaderSpy) {
+        let primaryImageLoader = FeedImageDataLoaderSpy(stub: primaryStub)
+        let fallbackImageLoader = FeedImageDataLoaderSpy(stub: fallbackStub)
         let sut = FeedImageDataLoaderWithFallbackComposite(primary: primaryImageLoader, fallback: fallbackImageLoader)
         trackForMemoryLeaks(primaryImageLoader, file: file, line: line)
         trackForMemoryLeaks(fallbackImageLoader, file: file, line: line)
@@ -76,31 +76,15 @@ final class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         return (sut, primaryImageLoader, fallbackImageLoader)
     }
     
-    private func failure() -> LoaderSpy.Stub {
+    private func failure() -> FeedImageDataLoaderSpy.Stub {
         .failure(anyNSError())
     }
     
-    private func success(with data: Data) -> LoaderSpy.Stub {
+    private func success(with data: Data) -> FeedImageDataLoaderSpy.Stub {
         .success(data)
     }
     
     private func anyData() -> Data {
         Data("any".utf8)
-    }
-    
-    private class LoaderSpy: FeedImageDataLoader {
-        typealias Stub = Result<Data, Error>
-        
-        private(set) var loadURLs = [URL]()
-        private let stub: Stub
-        
-        init(stub: Stub) {
-            self.stub = stub
-        }
-        
-        func loadImageData(from url: URL) async throws -> Data {
-            loadURLs.append(url)
-            return try stub.get()
-        }
     }
 }
