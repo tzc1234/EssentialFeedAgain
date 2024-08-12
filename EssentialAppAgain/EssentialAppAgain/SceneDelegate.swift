@@ -26,9 +26,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let localFeedLoader = LocalFeedLoader(store: localStore)
         let localImageDataLoader = LocalFeedImageDataLoader(store: localStore)
         
+        #if DEBUG
         if CommandLine.arguments.contains("-reset") {
             try? FileManager.default.removeItem(at: localStoreURL)
         }
+        #endif
         
         let feedViewController = FeedUIComposer.feedComposeWith(
             feedLoader: FeedLoaderWithFallbackComposite(
@@ -52,17 +54,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func makeRemoteClient() -> HTTPClient {
-        switch UserDefaults.standard.string(forKey: "connectivity") {
-        case "offline":
+        #if DEBUG
+        if UserDefaults.standard.string(forKey: "connectivity") == "offline" {
             return AlwaysFailingHTTPClient()
-        default:
-            return URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         }
+        #endif
+        
+        return URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
     }
 }
 
+#if DEBUG
 private final class AlwaysFailingHTTPClient: HTTPClient {
     func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
         throw NSError(domain: "offline", code: 0)
     }
 }
+#endif
