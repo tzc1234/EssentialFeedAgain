@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 import EssentialFeedAgain
 import EssentialFeedAgainiOS
 
@@ -16,18 +17,48 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         
         let url = URL(string: "https://ile-api.essentialdeveloper.com/essential-feed/v1/feed")!
-        let session = URLSession(configuration: .ephemeral)
-        let client = URLSessionHTTPClient(session: session)
-        let remoteFeedLoader = RemoteFeedLoader(url: url, client: client)
-        let remoteImageLoader = RemoteFeedImageDataLoader(client: client)
+        let remoteClient = makeRemoteClient()
+        let remoteFeedLoader = RemoteFeedLoader(url: url, client: remoteClient)
+        let remoteImageLoader = RemoteFeedImageDataLoader(client: remoteClient)
+        
+        let storeURL = NSPersistentContainer.defaultDirectoryURL().appending(component: "feed-store.sqlite")
+        let localStore = try! CoreDataFeedStore(storeURL: storeURL)
+        let localFeedLoader = LocalFeedLoader(store: localStore)
+        let localImageDataLoader = LocalFeedImageDataLoader(store: localStore)
         
         let feedViewController = FeedUIComposer.feedComposeWith(
-            feedLoader: remoteFeedLoader,
-            imageDataLoader: remoteImageLoader
+            feedLoader: FeedLoaderWithFallbackComposite(
+                primary: FeedLoaderCacheDecorator(
+                    decoratee: remoteFeedLoader,
+                    cache: localFeedLoader
+                ),
+                fallback: localFeedLoader),
+            imageDataLoader: FeedImageDataLoaderWithFallbackComposite(
+                primary: localImageDataLoader,
+                fallback: FeedImageDataLoaderCacheDecorator(
+                    decoratee: remoteImageLoader,
+                    cache: localImageDataLoader
+                )
+            )
         )
         
         window = UIWindow(windowScene: scene)
         window?.rootViewController = feedViewController
         window?.makeKeyAndVisible()
+    }
+    
+    private func makeRemoteClient() -> HTTPClient {
+        switch UserDefaults.standard.string(forKey: "connectivity") {
+        case "offline":
+            return AlwaysFailingHTTPClient()
+        default:
+            return URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
+        }
+    }
+}
+
+private final class AlwaysFailingHTTPClient: HTTPClient {
+    func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
+        throw NSError(domain: "offline", code: 0)
     }
 }
