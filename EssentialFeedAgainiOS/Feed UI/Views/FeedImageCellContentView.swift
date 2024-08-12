@@ -35,7 +35,8 @@ struct FeedImageCellContentView: View {
                 
                 Image(uiImage: image ?? UIImage())
                     .resizable()
-                    .scaledToFill()
+                    .aspectRatio(1, contentMode: .fit)
+                    .accessibilityIdentifier("feed-image-view")
                 
                 Button(action: { onRetry?() }) {
                     Text("↻")
@@ -45,7 +46,6 @@ struct FeedImageCellContentView: View {
                 .opacity(shouldRetry ? 1 : 0)
             }
             .clipShape(RoundedRectangle(cornerRadius: 22))
-            .aspectRatio(1, contentMode: .fit)
             .shimmering(active: isLoading)
             
             if let description {

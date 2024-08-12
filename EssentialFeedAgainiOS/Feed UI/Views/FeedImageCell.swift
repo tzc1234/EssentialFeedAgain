@@ -33,6 +33,7 @@ public final class FeedImageCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         selectionStyle = .none
+        accessibilityIdentifier = "feed-image-cell"
         updateLayout()
     }
     
