@@ -9,53 +9,92 @@ import XCTest
 
 final class EssentialAppAgainUIAcceptanceTests: XCTestCase {
     func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() {
-        let app = XCUIApplication()
-        app.launchArguments = ["-reset", "-connectivity", "online"]
+        let app = App(state: .online)
         app.launch()
         
-        let feedCells = app.cells.matching(identifier: "feed-image-cell")
-        XCTAssertEqual(feedCells.count, 2)
+        XCTAssertEqual(app.feedCells.count, 2)
         
-        let firstCell = feedCells.firstMatch
-        let firstDescription = firstCell.staticTexts["feed-description"].firstMatch
-        XCTAssertEqual(firstDescription.label, "any description")
+        let firstCell = app.feedCell(at: 0)
+        XCTAssertEqual(firstCell.imageDescriptionText, "any description")
+        XCTAssertEqual(firstCell.locationText, "any location")
+        XCTAssertTrue(firstCell.image.exists)
         
-        let firstLocation = firstCell.staticTexts["feed-location"].firstMatch
-        XCTAssertEqual(firstLocation.label, "any location")
-        
-        let firstImage = firstCell.images["feed-image-view"].firstMatch
-        XCTAssertTrue(firstImage.exists)
-        
-        let secondCell = feedCells.element(boundBy: 1)
-        let secondDescription = secondCell.staticTexts["feed-description"].firstMatch
-        let secondLocation = secondCell.staticTexts["feed-location"].firstMatch
-        XCTAssertTrue(secondCell.exists)
-        XCTAssertFalse(secondDescription.exists)
-        XCTAssertFalse(secondLocation.exists)
+        let secondCell = app.feedCell(at: 1)
+        XCTAssertFalse(secondCell.imageDescription.exists)
+        XCTAssertFalse(secondCell.location.exists)
+        XCTAssertTrue(secondCell.image.exists)
     }
     
     func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
-        let onlineApp = XCUIApplication()
-        onlineApp.launchArguments = ["-reset", "-connectivity", "online"]
+        let onlineApp = App(state: .online)
         onlineApp.launch()
         
-        let offlineApp = XCUIApplication()
-        offlineApp.launchArguments = ["-connectivity", "offline"]
+        let offlineApp = App(state: .offline(cacheReset: false))
         offlineApp.launch()
         
-        let cachedFeedCells = offlineApp.cells.matching(identifier: "feed-image-cell")
-        XCTAssertEqual(cachedFeedCells.count, 2)
+        XCTAssertEqual(offlineApp.feedCells.count, 2)
         
-        let firstCachedImage = offlineApp.images.matching(identifier: "feed-image-view").firstMatch
+        let firstCachedImage = offlineApp.feedCell(at: 0).image
         XCTAssertTrue(firstCachedImage.exists)
     }
     
     func test_onLaunch_displaysEmptyFeedWhenCustomerHasNoConnectivityAndNoCache() {
-        let app = XCUIApplication()
-        app.launchArguments = ["-reset", "-connectivity", "offline"]
+        let app = App(state: .offline(cacheReset: true))
+        
         app.launch()
         
-        let feedCells = app.cells.matching(identifier: "feed-image-cell")
-        XCTAssertEqual(feedCells.count, 0)
+        XCTAssertEqual(app.feedCells.count, 0)
+    }
+    
+    // MARK: - Helpers
+    
+    private final class App: XCUIApplication {
+        enum State {
+            case online
+            case offline(cacheReset: Bool)
+        }
+        
+        init(state: State) {
+            super.init()
+            switch state {
+            case .online:
+                self.launchArguments = ["-reset", "-connectivity", "online"]
+            case let .offline(cacheReset):
+                self.launchArguments = ["-connectivity", "offline"]
+                if cacheReset {
+                    self.launchArguments.append("-reset")
+                }
+            }
+        }
+        
+        var feedCells: XCUIElementQuery {
+            cells.matching(identifier: "feed-image-cell")
+        }
+        
+        func feedCell(at index: Int) -> XCUIElement {
+            feedCells.element(boundBy: index)
+        }
+    }
+}
+
+private extension XCUIElement {
+    var imageDescription: XCUIElement {
+        staticTexts["feed-description"].firstMatch
+    }
+    
+    var imageDescriptionText: String {
+        imageDescription.label
+    }
+    
+    var location: XCUIElement {
+        staticTexts["feed-location"].firstMatch
+    }
+    
+    var locationText: String {
+        location.label
+    }
+    
+    var image: XCUIElement {
+        images["feed-image-view"].firstMatch
     }
 }
