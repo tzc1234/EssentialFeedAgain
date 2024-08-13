@@ -26,6 +26,7 @@ struct FeedImageCellContentView: View {
                     Text(location)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("feed-location")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -52,6 +53,7 @@ struct FeedImageCellContentView: View {
                 Text(description)
                     .font(.body)
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier("feed-description")
             }
         }
     }

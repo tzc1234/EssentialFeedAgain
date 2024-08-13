@@ -72,7 +72,7 @@ private final class DebuggingHTTPClient: HTTPClient {
     private func makeFeedData() -> Data {
         let json: [String: Any] = [
             "items": [
-                ["id": UUID().uuidString, "image": "http://image.com"],
+                ["id": UUID().uuidString, "description": "any description", "location": "any location", "image": "http://image.com"],
                 ["id": UUID().uuidString, "image": "http://image.com"]
             ]
         ]
