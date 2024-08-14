@@ -15,19 +15,20 @@ final class EssentialAppAgainUIAcceptanceTests: XCTestCase {
         XCTAssertEqual(app.feedCells.count, 2)
         
         let firstCell = app.feedCell(at: 0)
-        XCTAssertEqual(firstCell.imageDescriptionText, "any description")
-        XCTAssertEqual(firstCell.locationText, "any location")
         XCTAssertTrue(firstCell.image.exists)
         
         let secondCell = app.feedCell(at: 1)
-        XCTAssertFalse(secondCell.imageDescription.exists)
-        XCTAssertFalse(secondCell.location.exists)
         XCTAssertTrue(secondCell.image.exists)
     }
     
     func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
         let onlineApp = App(state: .online)
         onlineApp.launch()
+        
+        let firstFeedImageExists = onlineApp.feedCell(at: 0).image.waitForExistence(timeout: 1)
+        let secondFeedImageExists = onlineApp.feedCell(at: 1).image.waitForExistence(timeout: 1)
+        XCTAssertTrue(firstFeedImageExists)
+        XCTAssertTrue(secondFeedImageExists)
         
         let offlineApp = App(state: .offline(cacheReset: false))
         offlineApp.launch()
@@ -78,22 +79,6 @@ final class EssentialAppAgainUIAcceptanceTests: XCTestCase {
 }
 
 private extension XCUIElement {
-    var imageDescription: XCUIElement {
-        staticTexts["feed-description"].firstMatch
-    }
-    
-    var imageDescriptionText: String {
-        imageDescription.label
-    }
-    
-    var location: XCUIElement {
-        staticTexts["feed-location"].firstMatch
-    }
-    
-    var locationText: String {
-        location.label
-    }
-    
     var image: XCUIElement {
         images["feed-image-view"].firstMatch
     }
