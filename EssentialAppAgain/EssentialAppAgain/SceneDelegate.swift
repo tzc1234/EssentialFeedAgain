@@ -43,7 +43,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
         
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = feedViewController
+        window?.rootViewController = UINavigationController(rootViewController: feedViewController)
         window?.makeKeyAndVisible()
     }
     
