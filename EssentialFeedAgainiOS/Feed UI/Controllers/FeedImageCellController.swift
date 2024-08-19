@@ -7,24 +7,24 @@
 
 import UIKit
 
-protocol FeedImageCellControllerDelegate {
+public protocol FeedImageCellControllerDelegate {
     var task: Task<Void, Never>? { get }
     
     func loadImageData()
     func cancelImageDataLoad()
 }
 
-final class FeedImageCellController {
+public final class FeedImageCellController {
     var task: Task<Void, Never>? { delegate.task }
     private var cell: FeedImageCell?
     
     private let delegate: FeedImageCellControllerDelegate
     
-    init(delegate: FeedImageCellControllerDelegate) {
+    public init(delegate: FeedImageCellControllerDelegate) {
         self.delegate = delegate
     }
     
-    static func registerCellFor(_ tableView: UITableView) {
+    public static func registerCellFor(_ tableView: UITableView) {
         tableView.register(FeedImageCell.self, forCellReuseIdentifier: FeedImageCell.cellIdentifier)
     }
     
@@ -61,7 +61,7 @@ final class FeedImageCellController {
 }
 
 extension FeedImageCellController: FeedImageView {
-    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+    public func display(_ viewModel: FeedImageViewModel<UIImage>) {
         cell?.location = viewModel.location
         cell?.imageDescription = viewModel.description
         cell?.isLoading = viewModel.isLoading

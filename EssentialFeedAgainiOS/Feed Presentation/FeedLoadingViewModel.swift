@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct FeedLoadingViewModel {
+public struct FeedLoadingViewModel {
     let isLoading: Bool
 }

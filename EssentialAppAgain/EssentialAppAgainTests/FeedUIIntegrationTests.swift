@@ -8,6 +8,7 @@
 import XCTest
 import EssentialFeedAgain
 import EssentialFeedAgainiOS
+import EssentialAppAgain
 
 final class FeedUIIntegrationTests: XCTestCase {
     func test_feedView_hasTitle() {

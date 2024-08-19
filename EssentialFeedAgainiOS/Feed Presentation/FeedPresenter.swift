@@ -8,37 +8,37 @@
 import Foundation
 import EssentialFeedAgain
 
-protocol FeedView {
+public protocol FeedView {
     func display(_ viewModel: FeedViewModel)
 }
 
-protocol FeedLoadingView {
+public protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
 }
 
-final class FeedPresenter {
+public final class FeedPresenter {
     private let feedView: FeedView
     private let loadingView: FeedLoadingView
     
-    init(feedView: FeedView, loadingView: FeedLoadingView) {
+    public init(feedView: FeedView, loadingView: FeedLoadingView) {
         self.feedView = feedView
         self.loadingView = loadingView
     }
     
-    static var title: String {
+    public static var title: String {
         String(localized: "FEED_VIEW_TITLE", table: "Feed", bundle: Bundle(for: Self.self))
     }
     
-    func didStartLoadingFeed() {
+    public func didStartLoadingFeed() {
         loadingView.display(FeedLoadingViewModel(isLoading: true))
     }
     
-    func didFinishLoadingFeed(with feed: [FeedImage]) {
+    public func didFinishLoadingFeed(with feed: [FeedImage]) {
         feedView.display(FeedViewModel(feed: feed))
         loadingView.display(FeedLoadingViewModel(isLoading: false))
     }
     
-    func didFinishLoadingFeedWithError() {
+    public func didFinishLoadingFeedWithError() {
         loadingView.display(FeedLoadingViewModel(isLoading: false))
     }
 }

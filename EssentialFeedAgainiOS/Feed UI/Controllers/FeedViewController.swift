@@ -9,13 +9,13 @@ import UIKit
 
 public final class FeedViewController: UITableViewController {
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
-    var cellControllers = [FeedImageCellController]() {
+    private var cellControllers = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
     }
     
     let refreshController: FeedRefreshViewController
     
-    init(refreshController: FeedRefreshViewController) {
+    public init(refreshController: FeedRefreshViewController) {
         self.refreshController = refreshController
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,6 +38,10 @@ public final class FeedViewController: UITableViewController {
         super.viewIsAppearing(animated)
         
         onViewIsAppearing?(self)
+    }
+    
+    public func display(_ cellControllers: [FeedImageCellController]) {
+        self.cellControllers = cellControllers
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -109,7 +113,7 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
         return controller
     }
     
-    feedController.cellControllers = [
+    feedController.display([
         makeCellController(by: FeedImageViewModel(
             description: "The East Side Gallery is an open-air gallery in Berlin. It consists of a series of murals painted directly on a 1,316 m long remnant of the Berlin Wall, located near the centre of Berlin, on Mühlenstraße in Friedrichshain-Kreuzberg. The gallery has official status as a Denkmal, or heritage-protected landmark.",
             location: "East Side Gallery\nMemorial in Berlin, Germany",
@@ -131,7 +135,7 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
             isLoading: false,
             shouldRetry: true
         ))
-    ]
+    ])
     
     return feedController
 }
