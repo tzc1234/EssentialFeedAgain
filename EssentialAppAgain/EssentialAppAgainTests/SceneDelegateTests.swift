@@ -30,7 +30,7 @@ final class SceneDelegateTests: XCTestCase {
     }
 }
 
-private extension NSObject {
+extension NSObject {
     static func initClass() -> Self {
         let name = String(describing: Self.self)
         let klass = NSClassFromString(name) as? NSObject.Type

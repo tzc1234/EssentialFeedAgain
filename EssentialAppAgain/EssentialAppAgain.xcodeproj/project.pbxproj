@@ -45,6 +45,7 @@
 		BEBE75672C735F1900C9D7F7 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE755C2C735F1800C9D7F7 /* UIImage+TestHelpers.swift */; };
 		BEBE75682C735F1900C9D7F7 /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE75602C735F1800C9D7F7 /* RefreshControlSpy.swift */; };
 		BEBE75692C735F1900C9D7F7 /* UIButton+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE755E2C735F1800C9D7F7 /* UIButton+TestHelpers.swift */; };
+		BEBE756B2C736F2800C9D7F7 /* FeedAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,7 @@
 		BEBE755F2C735F1800C9D7F7 /* FeedViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BEBE75602C735F1800C9D7F7 /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
 		BEBE75612C735F1900C9D7F7 /* FeedViewControllerTests+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewControllerTests+Localization.swift"; sourceTree = "<group>"; };
+		BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAcceptanceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -214,6 +216,7 @@
 				BE41D1C72C64B39900A126BD /* FeedImageDataLoaderWithFallbackCompositeTests.swift */,
 				BE42CD3C2C66257000C67503 /* FeedLoaderCacheDecoratorTests.swift */,
 				BE42CD442C663BBF00C67503 /* FeedImageDataLoaderCacheDecoratorTests.swift */,
+				BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */,
 			);
 			path = EssentialAppAgainTests;
 			sourceTree = "<group>";
@@ -399,6 +402,7 @@
 			files = (
 				BE41D1C82C64B39900A126BD /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */,
 				BE42CD452C663BBF00C67503 /* FeedImageDataLoaderCacheDecoratorTests.swift in Sources */,
+				BEBE756B2C736F2800C9D7F7 /* FeedAcceptanceTests.swift in Sources */,
 				BE42CD3F2C66287C00C67503 /* FeedLoaderStub.swift in Sources */,
 				BEBE75692C735F1900C9D7F7 /* UIButton+TestHelpers.swift in Sources */,
 				BEBE75652C735F1900C9D7F7 /* UIControl+TestHelpers.swift in Sources */,
