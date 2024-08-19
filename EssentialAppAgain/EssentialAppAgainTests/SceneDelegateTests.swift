@@ -13,19 +13,10 @@ final class SceneDelegateTests: XCTestCase {
     func test_sceneWillConnectToSession_configuresRootViewController() throws {
         let sut = SceneDelegate()
         
-        showScene(on: sut)
+        sut.showScene()
         
         let rootNavigation = try XCTUnwrap(sut.window?.rootViewController as? UINavigationController)
         let topController = rootNavigation.topViewController as? FeedViewController
         XCTAssertNotNil(topController)
-    }
-    
-    // MARK: - Helpers
-    
-    private func showScene(on sut: SceneDelegate) {
-        let session = UISceneSession.initClass()
-        let sceneConnectionOptions = UIScene.ConnectionOptions.initClass()
-        let scene = UIWindowScene.initClass()
-        sut.scene(scene, willConnectTo: session, options: sceneConnectionOptions)
     }
 }

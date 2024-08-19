@@ -75,7 +75,7 @@ final class FeedAcceptanceTests: XCTestCase {
     private func launch(httpClient: HTTPClientStub,
                         store: InMemoryStore) async throws -> FeedViewController {
         let sceneDelegate = SceneDelegate(httpClient: httpClient, store: store)
-        showScene(on: sceneDelegate)
+        sceneDelegate.showScene()
         
         let nav = try XCTUnwrap(sceneDelegate.window?.rootViewController as? UINavigationController)
         let feed = try XCTUnwrap(nav.topViewController as? FeedViewController)
@@ -83,13 +83,6 @@ final class FeedAcceptanceTests: XCTestCase {
         await feed.completeFeedLoadingTask()
         
         return feed
-    }
-    
-    private func showScene(on sceneDelegate: SceneDelegate) {
-        let session = UISceneSession.initClass()
-        let sceneConnectionOptions = UIScene.ConnectionOptions.initClass()
-        let scene = UIWindowScene.initClass()
-        sceneDelegate.scene(scene, willConnectTo: session, options: sceneConnectionOptions)
     }
     
     @MainActor

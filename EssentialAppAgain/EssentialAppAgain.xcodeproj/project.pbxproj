@@ -45,6 +45,7 @@
 		BEBE75692C735F1900C9D7F7 /* UIButton+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE755E2C735F1800C9D7F7 /* UIButton+TestHelpers.swift */; };
 		BEBE756B2C736F2800C9D7F7 /* FeedAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */; };
 		BEBE756D2C7386A900C9D7F7 /* NSObject+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */; };
+		BEBE756F2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -113,6 +114,7 @@
 		BEBE75612C735F1900C9D7F7 /* FeedViewControllerTests+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewControllerTests+Localization.swift"; sourceTree = "<group>"; };
 		BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAcceptanceTests.swift; sourceTree = "<group>"; };
 		BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+TestHelpers.swift"; sourceTree = "<group>"; };
+		BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+TestHelpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -217,6 +219,7 @@
 				BEBE755F2C735F1800C9D7F7 /* FeedViewController+TestHelpers.swift */,
 				BEBE75612C735F1900C9D7F7 /* FeedViewControllerTests+Localization.swift */,
 				BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */,
+				BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE41D1C82C64B39900A126BD /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */,
+				BEBE756F2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift in Sources */,
 				BE42CD452C663BBF00C67503 /* FeedImageDataLoaderCacheDecoratorTests.swift in Sources */,
 				BEBE756B2C736F2800C9D7F7 /* FeedAcceptanceTests.swift in Sources */,
 				BEBE756D2C7386A900C9D7F7 /* NSObject+TestHelpers.swift in Sources */,
