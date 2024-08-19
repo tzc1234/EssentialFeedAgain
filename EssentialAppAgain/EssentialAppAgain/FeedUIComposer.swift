@@ -7,6 +7,7 @@
 
 import UIKit
 import EssentialFeedAgain
+import EssentialFeedAgainiOS
 
 public enum FeedUIComposer {
     public static func feedComposeWith(feedLoader: FeedLoader, 

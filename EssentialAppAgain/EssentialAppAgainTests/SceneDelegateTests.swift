@@ -10,7 +10,7 @@ import EssentialFeedAgainiOS
 @testable import EssentialAppAgain
 
 final class SceneDelegateTests: XCTestCase {
-    func test_sceneWillConnectToSession_configureRootViewController() throws {
+    func test_sceneWillConnectToSession_configuresRootViewController() throws {
         let sut = SceneDelegate()
         
         showScene(on: sut)
