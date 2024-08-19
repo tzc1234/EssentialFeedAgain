@@ -93,9 +93,10 @@ final class FeedAcceptanceTests: XCTestCase {
         try? await Task.sleep(for: .seconds(0.02)) // Give a little bit time for cache validation
     }
     
+    @MainActor
     private func completeFeedImageViewRendering(on feed: FeedViewController) async {
-        await feed.simulateFeedImageViewVisible(at: 0)
-        await feed.simulateFeedImageViewVisible(at: 1)
+        feed.simulateFeedImageViewVisible(at: 0)
+        feed.simulateFeedImageViewVisible(at: 1)
         await feed.completeImageDataLoadingTask(at: 0)
         await feed.completeImageDataLoadingTask(at: 1)
     }
