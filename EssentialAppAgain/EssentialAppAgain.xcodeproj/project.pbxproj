@@ -46,6 +46,7 @@
 		BEBE756B2C736F2800C9D7F7 /* FeedAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */; };
 		BEBE756D2C7386A900C9D7F7 /* NSObject+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */; };
 		BEBE756F2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */; };
+		BEBE75712C738D1100C9D7F7 /* HTTPClientStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBE75702C738D1100C9D7F7 /* HTTPClientStub.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,6 +116,7 @@
 		BEBE756A2C736F2800C9D7F7 /* FeedAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAcceptanceTests.swift; sourceTree = "<group>"; };
 		BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSObject+TestHelpers.swift"; sourceTree = "<group>"; };
 		BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SceneDelegate+TestHelpers.swift"; sourceTree = "<group>"; };
+		BEBE75702C738D1100C9D7F7 /* HTTPClientStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientStub.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +222,7 @@
 				BEBE75612C735F1900C9D7F7 /* FeedViewControllerTests+Localization.swift */,
 				BEBE756C2C7386A900C9D7F7 /* NSObject+TestHelpers.swift */,
 				BEBE756E2C738BD000C9D7F7 /* SceneDelegate+TestHelpers.swift */,
+				BEBE75702C738D1100C9D7F7 /* HTTPClientStub.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -358,6 +361,7 @@
 				BE41D1CA2C64BAC300A126BD /* CommonHelpers.swift in Sources */,
 				BEBE75672C735F1900C9D7F7 /* UIImage+TestHelpers.swift in Sources */,
 				BEBE75632C735F1900C9D7F7 /* FeedViewController+TestHelpers.swift in Sources */,
+				BEBE75712C738D1100C9D7F7 /* HTTPClientStub.swift in Sources */,
 				BE4F01D92C63C6BF002D059D /* XCTestCase+AssertThrows.swift in Sources */,
 				BEBE75682C735F1900C9D7F7 /* RefreshControlSpy.swift in Sources */,
 				BEBE75592C735F0800C9D7F7 /* FeedUIIntegrationTests.swift in Sources */,
