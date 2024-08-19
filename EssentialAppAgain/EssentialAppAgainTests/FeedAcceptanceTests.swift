@@ -51,15 +51,33 @@ final class FeedAcceptanceTests: XCTestCase {
         XCTAssertEqual(offlineFeed.numberOfRenderedFeedImageView(), 0)
     }
     
+    @MainActor
+    func test_onEnteringBackground_deletesExpiredFeedCache() async throws {
+        let store = InMemoryStore.withExpiredFeedCache
+        
+        await enterBackground(with: store)
+        
+        XCTAssertNil(store.feedCache)
+    }
+    
+    @MainActor
+    func test_onEnteringBackground_keepsNonExpiredFeedCache() async throws {
+        let store = InMemoryStore.withNonExpiredFeedCache
+        
+        await enterBackground(with: store)
+        
+        XCTAssertNotNil(store.feedCache)
+    }
+    
     // MARK: - Helpers
     
     @MainActor
     private func launch(httpClient: HTTPClientStub,
                         store: InMemoryStore) async throws -> FeedViewController {
-        let scene = SceneDelegate(httpClient: httpClient, store: store)
-        show(scene)
+        let sceneDelegate = SceneDelegate(httpClient: httpClient, store: store)
+        showScene(on: sceneDelegate)
         
-        let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
+        let nav = try XCTUnwrap(sceneDelegate.window?.rootViewController as? UINavigationController)
         let feed = try XCTUnwrap(nav.topViewController as? FeedViewController)
         feed.simulateAppearance()
         await feed.completeFeedLoadingTask()
@@ -67,11 +85,19 @@ final class FeedAcceptanceTests: XCTestCase {
         return feed
     }
     
-    private func show(_ sceneDelegate: SceneDelegate) {
+    private func showScene(on sceneDelegate: SceneDelegate) {
         let session = UISceneSession.initClass()
         let sceneConnectionOptions = UIScene.ConnectionOptions.initClass()
         let scene = UIWindowScene.initClass()
         sceneDelegate.scene(scene, willConnectTo: session, options: sceneConnectionOptions)
+    }
+    
+    @MainActor
+    private func enterBackground(with store: InMemoryStore) async {
+        let sceneDelegate = SceneDelegate(httpClient: HTTPClientStub.offline, store: store)
+        let scene = UIWindowScene.initClass()
+        sceneDelegate.sceneWillResignActive(scene)
+        try? await Task.sleep(for: .seconds(0.02)) // Give a little bit time for cache validation
     }
     
     private func completeFeedImageViewRendering(on feed: FeedViewController) async {
@@ -106,8 +132,12 @@ final class FeedAcceptanceTests: XCTestCase {
     private final class InMemoryStore: FeedStore, FeedImageDataStore {
         typealias CachedFeed = (feed: [LocalFeedImage], timestamp: Date)
         
-        private var feedCache: CachedFeed?
+        private(set) var feedCache: CachedFeed?
         private var feedImageDataCache = [URL: Data]()
+        
+        init(feedCache: CachedFeed? = nil) {
+            self.feedCache = feedCache
+        }
         
         func retrieve() async throws -> CachedFeed? {
             feedCache
@@ -134,6 +164,14 @@ final class FeedAcceptanceTests: XCTestCase {
         
         static var empty: InMemoryStore {
             InMemoryStore()
+        }
+        
+        static var withExpiredFeedCache: InMemoryStore {
+            InMemoryStore(feedCache: ([], .distantPast))
+        }
+        
+        static var withNonExpiredFeedCache: InMemoryStore {
+            InMemoryStore(feedCache: ([], .now))
         }
     }
     
