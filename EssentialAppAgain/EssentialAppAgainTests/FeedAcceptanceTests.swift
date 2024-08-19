@@ -20,13 +20,28 @@ final class FeedAcceptanceTests: XCTestCase {
         let view0 = try XCTUnwrap(feed.simulateFeedImageViewVisible(at: 0))
         let view1 = try XCTUnwrap(feed.simulateFeedImageViewVisible(at: 1))
         await feed.completeImageDataLoadingTask(at: 0)
+        await feed.completeImageDataLoadingTask(at: 1)
         
-        XCTAssertEqual(view0.renderedImage, makeImageData())
-        XCTAssertEqual(view1.renderedImage, makeImageData())
+        XCTAssertEqual(view0.renderedImage, makeImageData0())
+        XCTAssertEqual(view1.renderedImage, makeImageData1())
     }
     
-    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
+    @MainActor
+    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() async throws {
+        let shareStore = InMemoryStore.empty
+        let onlineFeed = try await launch(httpClient: .online(response), store: shareStore)
+        await completeFeedImageViewRendering(on: onlineFeed)
         
+        let offlineFeed = try await launch(httpClient: .offline, store: shareStore)
+        
+        XCTAssertEqual(offlineFeed.numberOfRenderedFeedImageView(), 2)
+        
+        let view0 = try XCTUnwrap(offlineFeed.simulateFeedImageViewVisible(at: 0))
+        let view1 = try XCTUnwrap(offlineFeed.simulateFeedImageViewVisible(at: 1))
+        await offlineFeed.completeImageDataLoadingTask(at: 0)
+        
+        XCTAssertEqual(view0.renderedImage, makeImageData0())
+        XCTAssertEqual(view1.renderedImage, makeImageData1())
     }
     
     func test_onLaunch_displaysEmptyFeedWhenCustomerHasNoConnectivityAndNoCache() {
@@ -54,6 +69,13 @@ final class FeedAcceptanceTests: XCTestCase {
         let sceneConnectionOptions = UIScene.ConnectionOptions.initClass()
         let scene = UIWindowScene.initClass()
         sceneDelegate.scene(scene, willConnectTo: session, options: sceneConnectionOptions)
+    }
+    
+    private func completeFeedImageViewRendering(on feed: FeedViewController) async {
+        await feed.simulateFeedImageViewVisible(at: 0)
+        await feed.simulateFeedImageViewVisible(at: 1)
+        await feed.completeImageDataLoadingTask(at: 0)
+        await feed.completeImageDataLoadingTask(at: 1)
     }
     
     private final class HTTPClientStub: HTTPClient {
@@ -118,23 +140,29 @@ final class FeedAcceptanceTests: XCTestCase {
     }
     
     private func makeData(for url: URL) -> Data {
-        switch url.absoluteString {
-        case "http://image.com":
-            return makeImageData()
+        switch url.path() {
+        case "/image-0":
+            return makeImageData0()
+        case "/image-1":
+            return makeImageData1()
         default:
             return makeFeedData()
         }
     }
     
-    private func makeImageData() -> Data {
+    private func makeImageData0() -> Data {
         UIImage.makeData(withColor: .red)
+    }
+    
+    private func makeImageData1() -> Data {
+        UIImage.makeData(withColor: .green)
     }
     
     private func makeFeedData() -> Data {
         let json: [String: Any] = [
             "items": [
-                ["id": UUID().uuidString, "image": "http://image.com"],
-                ["id": UUID().uuidString, "image": "http://image.com"]
+                ["id": UUID().uuidString, "image": "http://feed.com/image-0"],
+                ["id": UUID().uuidString, "image": "http://feed.com/image-1"]
             ]
         ]
         return try! JSONSerialization.data(withJSONObject: json)
