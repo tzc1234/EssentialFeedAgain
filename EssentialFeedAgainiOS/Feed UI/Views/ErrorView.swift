@@ -8,8 +8,8 @@
 import SwiftUI
 
 @Observable
-final class ErrorContentStore: ObservableObject {
-    var message: String?
+final class ErrorViewStore {
+    public var message: String?
     var onHide: (() -> Void)?
     
     func buttonTap() {
@@ -18,7 +18,7 @@ final class ErrorContentStore: ObservableObject {
 }
 
 struct ErrorView: View {
-    var store: ErrorContentStore
+    var store: ErrorViewStore
     
     var body: some View {
         if let message = store.message {
@@ -48,7 +48,7 @@ extension UIColor {
 }
 
 #Preview {
-    let store = ErrorContentStore()
+    let store = ErrorViewStore()
     store.message = "Error!"
     return ErrorView(store: store)
 }

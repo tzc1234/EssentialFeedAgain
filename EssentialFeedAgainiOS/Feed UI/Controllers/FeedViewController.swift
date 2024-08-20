@@ -9,7 +9,7 @@ import SwiftUI
 import EssentialFeedAgain
 
 public final class FeedViewController: UITableViewController {
-    private let errorViewStore = ErrorContentStore()
+    private let errorViewStore = ErrorViewStore()
     private lazy var errorView = {
         UIHostingConfiguration {
             ErrorView(store: errorViewStore)
