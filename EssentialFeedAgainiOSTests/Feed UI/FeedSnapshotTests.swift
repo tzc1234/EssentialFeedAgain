@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import EssentialFeedAgainiOS
+@testable import EssentialFeedAgainiOS
 
 final class FeedSnapshotTests: XCTestCase {
     func test_emptyFeed() {
@@ -17,18 +17,38 @@ final class FeedSnapshotTests: XCTestCase {
         record(sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED")
     }
     
+    func test_feedWithContent() {
+        let sut = makeSUT()
+        
+        sut.display(feedWithContent())
+        
+        record(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT() -> FeedViewController {
         let refresh = FeedRefreshViewController(delegate: DummyFeedRefreshDelegate())
         let sut = FeedViewController(refreshController: refresh)
         FeedImageCellController.registerCellFor(sut.tableView)
-        sut.simulateAppearance()
         return sut
     }
     
     private func emptyFeed() -> [FeedImageCellController] {
         []
+    }
+    
+    private func feedWithContent() -> [ImageStub] {
+        [
+            ImageStub(
+                description: "The East Side Gallery is an open-air gallery in Berlin. It consists of a series of murals painted directly on a 1,316 m long remnant of the Berlin Wall, located near the centre of Berlin, on Mühlenstraße in Friedrichshain-Kreuzberg. The gallery has official status as a Denkmal, or heritage-protected landmark.",
+                location: "East Side Gallery\nMemorial in Berlin, Germany",
+                image: UIImage.make(withColor: .red)),
+            ImageStub(
+                description: "Garth Pier is a Grade II listed structure in Bangor, Gwynedd, North Wales.",
+                location: "Garth Pier",
+                image: UIImage.make(withColor: .green))
+        ]
     }
     
     private func record(_ snapshot: UIImage, named name: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -135,8 +155,36 @@ extension UIViewController {
 }
 
 private extension FeedViewController {
-    func simulateAppearance() {
-        beginAppearanceTransition(true, animated: false)
-        endAppearanceTransition()
+    func display(_ stubs: [ImageStub]) {
+        let cells: [FeedImageCellController] = stubs.map { stub in
+            let cellController = FeedImageCellController(delegate: stub)
+            stub.cellController = cellController
+            return cellController
+        }
+        
+        display(cells)
     }
+}
+
+private final class ImageStub: FeedImageCellControllerDelegate {
+    var task: Task<Void, Never>?
+    weak var cellController: FeedImageCellController?
+    
+    private let viewModel: FeedImageViewModel<UIImage>
+    
+    init(description: String?, location: String?, image: UIImage?) {
+        self.viewModel = FeedImageViewModel<UIImage>(
+            description: description,
+            location: location,
+            image: image,
+            isLoading: false,
+            shouldRetry: image == nil
+        )
+    }
+    
+    func loadImageData() {
+        cellController?.display(viewModel)
+    }
+    
+    func cancelImageDataLoad() {}
 }
