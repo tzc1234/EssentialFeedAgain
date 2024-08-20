@@ -8,5 +8,5 @@
 import Foundation
 
 public struct FeedLoadingViewModel {
-    let isLoading: Bool
+    public let isLoading: Bool
 }

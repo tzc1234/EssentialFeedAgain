@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import EssentialFeedAgain
 import EssentialFeedAgainiOS
 
 final class WeakRefVirtualProxy<T: AnyObject> {

@@ -6,7 +6,8 @@
 //
 
 import XCTest
-@testable import EssentialFeedAgainiOS
+import EssentialFeedAgain
+import EssentialFeedAgainiOS
 
 final class FeedSnapshotTests: XCTestCase {
     func test_emptyFeed() {

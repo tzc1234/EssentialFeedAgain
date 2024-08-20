@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import EssentialFeedAgain
 
 public protocol FeedView {
     func display(_ viewModel: FeedViewModel)
