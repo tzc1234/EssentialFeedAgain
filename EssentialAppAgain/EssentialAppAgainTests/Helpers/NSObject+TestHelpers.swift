@@ -8,7 +8,7 @@
 import Foundation
 
 extension NSObject {
-    static func initClass() -> Self {
+    static func initFromNSObject() -> Self {
         let name = String(describing: Self.self)
         let klass = NSClassFromString(name) as? NSObject.Type
         return klass?.init() as! Self

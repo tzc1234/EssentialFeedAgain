@@ -10,9 +10,9 @@ import UIKit
 
 extension SceneDelegate {
     func showScene() {
-        let session = UISceneSession.initClass()
-        let sceneConnectionOptions = UIScene.ConnectionOptions.initClass()
-        let scene = UIWindowScene.initClass()
+        let session = UISceneSession.initFromNSObject()
+        let sceneConnectionOptions = UIScene.ConnectionOptions.initFromNSObject()
+        let scene = UIWindowScene.initFromNSObject()
         self.scene(scene, willConnectTo: session, options: sceneConnectionOptions)
     }
 }
