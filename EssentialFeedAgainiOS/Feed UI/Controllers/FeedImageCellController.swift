@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeedAgain
 
 public protocol FeedImageCellControllerDelegate {
     var task: Task<Void, Never>? { get }

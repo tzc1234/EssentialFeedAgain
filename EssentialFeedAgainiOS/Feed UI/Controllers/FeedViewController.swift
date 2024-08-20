@@ -5,9 +5,19 @@
 //  Created by Tsz-Lung on 24/07/2024.
 //
 
-import UIKit
+import SwiftUI
+import EssentialFeedAgain
 
 public final class FeedViewController: UITableViewController {
+    private let errorViewStore = ErrorContentStore()
+    private lazy var errorView = {
+        UIHostingConfiguration {
+            ErrorView(store: errorViewStore)
+        }
+        .margins(.all, 0)
+        .makeContentView()
+    }()
+    
     private var onViewIsAppearing: ((FeedViewController) -> Void)?
     private var cellControllers = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
@@ -28,9 +38,17 @@ public final class FeedViewController: UITableViewController {
         tableView.prefetchDataSource = self
         tableView.refreshControl = refreshController.view
         tableView.separatorStyle = .none
+        tableView.tableHeaderView = errorView
+        
         onViewIsAppearing = { vc in
             vc.refreshController.refresh()
             vc.onViewIsAppearing = nil
+        }
+        
+        errorViewStore.onHide = { [weak self] in
+            self?.tableView.beginUpdates()
+            self?.tableView.sizeTableHeaderToFit()
+            self?.tableView.endUpdates()
         }
     }
     
@@ -38,6 +56,12 @@ public final class FeedViewController: UITableViewController {
         super.viewIsAppearing(animated)
         
         onViewIsAppearing?(self)
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        tableView.sizeTableHeaderToFit()
     }
     
     public func display(_ cellControllers: [FeedImageCellController]) {
@@ -76,6 +100,12 @@ extension FeedViewController: UITableViewDataSourcePrefetching {
         indexPaths.forEach { indexPath in
             cellController(forRowAt: indexPath).cancelLoad()
         }
+    }
+}
+
+extension FeedViewController: FeedErrorView {
+    public func display(_ viewModel: FeedErrorViewModel) {
+        errorViewStore.message = viewModel.errorMessage
     }
 }
 

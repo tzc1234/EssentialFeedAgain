@@ -88,7 +88,7 @@ final class FeedAcceptanceTests: XCTestCase {
     @MainActor
     private func enterBackground(with store: InMemoryStore) async {
         let sceneDelegate = SceneDelegate(httpClient: HTTPClientStub.offline, store: store)
-        let scene = UIWindowScene.initClass()
+        let scene = UIWindowScene.initFromNSObject()
         sceneDelegate.sceneWillResignActive(scene)
         try? await Task.sleep(for: .seconds(0.02)) // Give a little bit time for cache validation
     }

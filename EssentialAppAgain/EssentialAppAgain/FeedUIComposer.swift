@@ -20,7 +20,8 @@ public enum FeedUIComposer {
         
         let feedPresenter = FeedPresenter(
             feedView: FeedViewAdapter(controller: feedController, imageDataLoader: imageDataLoader),
-            loadingView: WeakRefVirtualProxy(refreshController)
+            loadingView: WeakRefVirtualProxy(refreshController), 
+            errorView: WeakRefVirtualProxy(feedController)
         )
         feedPresentationAdapter.presenter = feedPresenter
         
