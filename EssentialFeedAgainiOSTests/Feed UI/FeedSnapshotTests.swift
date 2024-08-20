@@ -15,7 +15,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(emptyFeed())
         
-        record(sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED")
     }
     
     func test_feedWithContent() {
@@ -23,7 +23,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(feedWithContent())
         
-        record(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT")
     }
     
     func test_feedWithErrorMessage() {
@@ -31,7 +31,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(FeedErrorViewModel(errorMessage: "This is a\nmulti-line\nerror message"))
         
-        record(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_EERROR_MESSAGE")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_EERROR_MESSAGE")
     }
     
     func test_feedWithFailedImageLoading() {
@@ -39,7 +39,7 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(feedWithFailedImageLoading())
         
-        record(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_FAILED_IMAGE_LOADING")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_FAILED_IMAGE_LOADING")
     }
     
     // MARK: - Helpers
@@ -73,6 +73,31 @@ final class FeedSnapshotTests: XCTestCase {
             ImageStub(description: nil, location: "Cannon Street, London", image: nil),
             ImageStub(description: nil, location: "Brighton Seafront", image: nil)
         ]
+    }
+    
+    private func assert(_ snapshot: UIImage, named name: String, file: StaticString = #filePath, line: UInt = #line) {
+        let snapshotData = snapshotData(for: snapshot, file: file, line: line)
+        let snapshotURL = snapshotURL(name: name, file: file)
+        
+        guard let storedSnapshotData = try? Data(contentsOf: snapshotURL) else {
+            XCTFail(
+                "Failed to load stored snapshot at URL: \(snapshotURL). Use the `record` method to store a snapshot before asserting.",
+                file: file,
+                line: line
+            )
+            return
+        }
+        
+        if snapshotData != storedSnapshotData {
+            let temporarySnapshotURL = URL.temporaryDirectory.appending(component: snapshotURL.lastPathComponent)
+            try? snapshotData?.write(to: temporarySnapshotURL)
+            
+            XCTFail(
+                "New snapshot does not match stored snapshot. New snapshot URL: \(temporarySnapshotURL), stored snapshot URL: \(snapshotURL)",
+                file: file,
+                line: line
+            )
+        }
     }
     
     private func record(_ snapshot: UIImage, named name: String, file: StaticString = #filePath, line: UInt = #line) {
