@@ -15,7 +15,8 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(emptyFeed())
         
-        assert(sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "EMPTY_FEED_light")
+        assert(sut.snapshot(for: .iPhone(style: .dark)), named: "EMPTY_FEED_dark")
     }
     
     func test_feedWithContent() {
@@ -23,7 +24,8 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(feedWithContent())
         
-        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_CONTENT_light")
+        assert(sut.snapshot(for: .iPhone(style: .dark)), named: "FEED_WITH_CONTENT_dark")
     }
     
     func test_feedWithErrorMessage() {
@@ -31,7 +33,8 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(FeedErrorViewModel(errorMessage: "This is a\nmulti-line\nerror message"))
         
-        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_EERROR_MESSAGE")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_EERROR_MESSAGE_light")
+        assert(sut.snapshot(for: .iPhone(style: .dark)), named: "FEED_WITH_EERROR_MESSAGE_dark")
     }
     
     func test_feedWithFailedImageLoading() {
@@ -39,7 +42,8 @@ final class FeedSnapshotTests: XCTestCase {
         
         sut.display(feedWithFailedImageLoading())
         
-        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_FAILED_IMAGE_LOADING")
+        assert(sut.snapshot(for: .iPhone(style: .light)), named: "FEED_WITH_FAILED_IMAGE_LOADING_light")
+        assert(sut.snapshot(for: .iPhone(style: .dark)), named: "FEED_WITH_FAILED_IMAGE_LOADING_dark")
     }
     
     // MARK: - Helpers
@@ -48,6 +52,8 @@ final class FeedSnapshotTests: XCTestCase {
         let refresh = FeedRefreshViewController(delegate: DummyFeedRefreshDelegate())
         let sut = FeedViewController(refreshController: refresh)
         FeedImageCellController.registerCellFor(sut.tableView)
+        sut.tableView.showsVerticalScrollIndicator = false
+        sut.tableView.showsHorizontalScrollIndicator = false
         return sut
     }
     
@@ -81,7 +87,10 @@ final class FeedSnapshotTests: XCTestCase {
         
         guard let storedSnapshotData = try? Data(contentsOf: snapshotURL) else {
             XCTFail(
-                "Failed to load stored snapshot at URL: \(snapshotURL). Use the `record` method to store a snapshot before asserting.",
+                """
+                Failed to load stored snapshot at URL: \(snapshotURL).
+                Use the `record` method to store a snapshot before asserting.
+                """,
                 file: file,
                 line: line
             )
@@ -93,7 +102,10 @@ final class FeedSnapshotTests: XCTestCase {
             try? snapshotData?.write(to: temporarySnapshotURL)
             
             XCTFail(
-                "New snapshot does not match stored snapshot. New snapshot URL: \(temporarySnapshotURL), stored snapshot URL: \(snapshotURL)",
+                """
+                New snapshot does not match stored snapshot. New snapshot URL: \(temporarySnapshotURL),
+                stored snapshot URL: \(snapshotURL)
+                """,
                 file: file,
                 line: line
             )
@@ -110,6 +122,7 @@ final class FeedSnapshotTests: XCTestCase {
                 withIntermediateDirectories: true
             )
             try snapshotData?.write(to: snapshotURL)
+            XCTFail("Record succeeded - use `assert` to compare the snapshot.", file: file, line: line)
         } catch {
             XCTFail("Failed to record snapshot with error: \(error)", file: file, line: line)
         }
