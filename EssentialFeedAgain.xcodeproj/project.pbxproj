@@ -29,6 +29,7 @@
 		BE2A96332C74C3E10052A60E /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2A96322C74C3E10052A60E /* ErrorView.swift */; };
 		BE2A96352C74C4A90052A60E /* FEED_WITH_EERROR_MESSAGE.png in Resources */ = {isa = PBXBuildFile; fileRef = BE2A96342C74C4A90052A60E /* FEED_WITH_EERROR_MESSAGE.png */; };
 		BE2A96372C74C65E0052A60E /* UITableView+HeaderSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2A96362C74C65E0052A60E /* UITableView+HeaderSizing.swift */; };
+		BE2A96392C74CEA30052A60E /* FEED_WITH_FAILED_IMAGE_LOADING.png in Resources */ = {isa = PBXBuildFile; fileRef = BE2A96382C74CEA30052A60E /* FEED_WITH_FAILED_IMAGE_LOADING.png */; };
 		BE3FEF3B2C5BA4B10095B686 /* FeedLocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3FEF3A2C5BA4B10095B686 /* FeedLocalizationTests.swift */; };
 		BE42CD412C6630CA00C67503 /* FeedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42CD402C6630CA00C67503 /* FeedCache.swift */; };
 		BE42CD492C665B0E00C67503 /* FeedImageDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE42CD482C665B0E00C67503 /* FeedImageDataCache.swift */; };
@@ -168,6 +169,7 @@
 		BE2A96322C74C3E10052A60E /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		BE2A96342C74C4A90052A60E /* FEED_WITH_EERROR_MESSAGE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FEED_WITH_EERROR_MESSAGE.png; sourceTree = "<group>"; };
 		BE2A96362C74C65E0052A60E /* UITableView+HeaderSizing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+HeaderSizing.swift"; sourceTree = "<group>"; };
+		BE2A96382C74CEA30052A60E /* FEED_WITH_FAILED_IMAGE_LOADING.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FEED_WITH_FAILED_IMAGE_LOADING.png; sourceTree = "<group>"; };
 		BE3FEF2F2C5B847D0095B686 /* Feed.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Feed.xcstrings; sourceTree = "<group>"; };
 		BE3FEF3A2C5BA4B10095B686 /* FeedLocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLocalizationTests.swift; sourceTree = "<group>"; };
 		BE42CD402C6630CA00C67503 /* FeedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCache.swift; sourceTree = "<group>"; };
@@ -289,6 +291,7 @@
 				BE2A96242C74A51C0052A60E /* EMPTY_FEED.png */,
 				BE2A96282C74ADDD0052A60E /* FEED_WITH_CONTENT.png */,
 				BE2A96342C74C4A90052A60E /* FEED_WITH_EERROR_MESSAGE.png */,
+				BE2A96382C74CEA30052A60E /* FEED_WITH_FAILED_IMAGE_LOADING.png */,
 			);
 			path = snapshots;
 			sourceTree = "<group>";
@@ -823,6 +826,7 @@
 				BE2A96252C74A51C0052A60E /* EMPTY_FEED.png in Resources */,
 				BE2A96352C74C4A90052A60E /* FEED_WITH_EERROR_MESSAGE.png in Resources */,
 				BE2A96292C74ADDD0052A60E /* FEED_WITH_CONTENT.png in Resources */,
+				BE2A96392C74CEA30052A60E /* FEED_WITH_FAILED_IMAGE_LOADING.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
