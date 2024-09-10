@@ -27,7 +27,8 @@
           "name" : "EssentialAppAgain"
         }
       ]
-    }
+    },
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

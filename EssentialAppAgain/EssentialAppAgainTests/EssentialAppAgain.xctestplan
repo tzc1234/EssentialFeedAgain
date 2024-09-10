@@ -22,7 +22,8 @@
       "containerPath" : "container:EssentialAppAgain.xcodeproj",
       "identifier" : "BE0682D82C63678D00652101",
       "name" : "EssentialAppAgain"
-    }
+    },
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {
